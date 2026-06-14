@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chocopingu — Chocolate que diverte!</title>
+  <link rel="icon" href="../site-chocopingu/imagens/logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ===== NAVBAR ===== -->
+  <header class="navbar" id="navbar">
+    <a href="#inicio" class="navbar-logo">
+      <img src="../imagens chocopingo/logo.png" alt="Chocopingu" />
+    </a>
+    <button class="menu-toggle" id="menuToggle" aria-label="Menu">&#9776;</button>
+    <nav class="nav-links" id="navLinks">
+      <a href="#pilares">Sobre</a>
+      <a href="#produtos">Produtos</a>
+      <a href="#" class="nav-chocopontos" id="btnChocopontos">Chocopontos &#9733;</a>
+      <a href="#" class="nav-endereco" id="btnAbrirEndereco">&#128205; Endereço</a>
+    </nav>
+    <div id="navAuth" class="nav-auth"></div>
+    <button class="btn-carrinho" id="btnCarrinho" aria-label="Carrinho">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+      <span class="carrinho-badge hidden" id="carrinhoBadge">0</span>
+    </button>
+  </header>
+
+  <!-- ===== HERO ===== -->
+  <section class="hero" id="inicio">
+    <div class="hero-bg-texture"></div>
+    <div class="hero-center">
+      <img src="../site-chocopingu/imagens/logo.png" alt="Chocopingu" class="hero-logo" />
+      <p class="hero-tagline">O chocolate que faz a alegria de cada momento</p>
+      <div class="hero-preco-badge">
+        <span class="badge-estrela">&#9733;</span>
+        Com os <strong>menores preços</strong>
+        <span class="badge-estrela">&#9733;</span>
+      </div>
+      <a href="#produtos" class="btn-ouro">Descobrir produtos</a>
+    </div>
+    <div class="hero-produtos-preview">
+      <div class="preview-wrap">
+        <img src="../imagens chocopingo/produto3.jpeg" alt="Pirulitos" />
+        <span>Pirulitos</span>
+      </div>
+      <div class="preview-wrap preview-center">
+        <img src="../imagens chocopingo/produto1.jpeg" alt="Boneguinhos" />
+        <span>Boneguinhos</span>
+      </div>
+      <div class="preview-wrap">
+        <img src="../imagens chocopingo/produto2.jpeg" alt="Barra Crocante" />
+        <span>Barra Crocante</span>
+      </div>
+    </div>
+    <div class="hero-bubbles">
+      <span></span><span></span><span></span><span></span><span></span>
+    </div>
+  </section>
+
+  <!-- ===== RACHADURAS + PINGOS ===== -->
+  <div class="choco-drip">
+    <svg viewBox="0 0 1440 200" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="chocoBase" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%"   stop-color="#2a1000"/>
+          <stop offset="100%" stop-color="#4a2000"/>
+        </linearGradient>
+        <linearGradient id="dripColor" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%"   stop-color="#3d1800"/>
+          <stop offset="70%"  stop-color="#5a2800"/>
+          <stop offset="100%" stop-color="#7a3c00"/>
+        </linearGradient>
+      </defs>
+      <rect x="0" y="0" width="1440" height="82" fill="url(#chocoBase)"/>
+      <path d="M 0,33 L 50,31 L 105,35 L 165,30 L 220,34 L 285,29 L 345,33
+               L 410,30 L 475,35 L 535,29 L 600,33 L 660,30 L 720,35 L 785,29
+               L 845,33 L 905,30 L 965,34 L 1030,29 L 1090,33 L 1155,30 L 1215,35
+               L 1275,30 L 1340,34 L 1395,30 L 1440,33
+               L 1440,41 L 1395,38 L 1340,42 L 1275,38 L 1215,43 L 1155,38 L 1090,41
+               L 1030,37 L 965,42 L 905,38 L 845,41 L 785,37 L 720,43 L 660,38
+               L 600,41 L 535,37 L 475,43 L 410,38 L 345,41 L 285,37 L 220,42
+               L 165,38 L 105,43 L 50,39 L 0,41 Z" fill="#050200"/>
+      <polyline points="0,33 50,31 105,35 165,30 220,34 285,29 345,33 410,30 475,35 535,29 600,33 660,30 720,35 785,29 845,33 905,30 965,34 1030,29 1090,33 1155,30 1215,35 1275,30 1340,34 1395,30 1440,33"
+                stroke="rgba(160,70,0,0.45)" stroke-width="1.2" fill="none"/>
+      <path d="M 0,63 L 42,60 L 95,65 L 152,59 L 208,64 L 265,58 L 322,64
+               L 380,59 L 438,65 L 498,58 L 557,64 L 615,59 L 672,65 L 732,59
+               L 792,64 L 850,59 L 908,65 L 967,59 L 1025,64 L 1083,59 L 1140,65
+               L 1198,59 L 1258,64 L 1315,59 L 1375,65 L 1440,60
+               L 1440,82 L 1375,79 L 1315,82 L 1258,78 L 1198,82 L 1140,78 L 1083,82
+               L 1025,77 L 967,82 L 908,77 L 850,82 L 792,77 L 732,82 L 672,77
+               L 615,82 L 557,77 L 498,82 L 438,77 L 380,82 L 322,77 L 265,82
+               L 208,77 L 152,82 L 95,77 L 42,82 L 0,79 Z" fill="#050200"/>
+      <polyline points="0,63 42,60 95,65 152,59 208,64 265,58 322,64 380,59 438,65 498,58 557,64 615,59 672,65 732,59 792,64 850,59 908,65 967,59 1025,64 1083,59 1140,65 1198,59 1258,64 1315,59 1375,65 1440,60"
+                stroke="rgba(160,70,0,0.45)" stroke-width="1.2" fill="none"/>
+      <path d="M 530,64 L 545,72 L 552,68 L 558,76 L 548,80" stroke="#050200" stroke-width="4" fill="none"/>
+      <path d="M 880,64 L 868,71 L 874,68 L 866,77 L 876,82" stroke="#050200" stroke-width="3" fill="none"/>
+      <path d="M 1150,64 L 1162,73 L 1155,69 L 1163,78" stroke="#050200" stroke-width="3" fill="none"/>
+      <path d="M 58,81  C 55,98  52,118 60,135  C 68,118 65,98  62,81  Z" fill="url(#dripColor)"/>
+      <path d="M 170,81 C 167,94  165,108 172,118 C 179,108 177,94  174,81 Z" fill="url(#dripColor)"/>
+      <path d="M 295,81 C 291,102 288,128 297,148 C 306,128 303,102 299,81 Z" fill="url(#dripColor)"/>
+      <path d="M 410,81 C 407,96  404,114 412,126 C 420,114 417,96  414,81 Z" fill="url(#dripColor)"/>
+      <path d="M 530,81 C 526,106 522,136 532,158 C 542,136 538,106 534,81 Z" fill="url(#dripColor)"/>
+      <path d="M 645,81 C 642,96  639,112 647,122 C 655,112 652,96  649,81 Z" fill="url(#dripColor)"/>
+      <path d="M 762,81 C 758,104 754,132 764,152 C 774,132 770,104 766,81 Z" fill="url(#dripColor)"/>
+      <path d="M 875,81 C 872,100 869,122 877,136 C 885,122 882,100 879,81 Z" fill="url(#dripColor)"/>
+      <path d="M 992,81 C 988,108 984,140 994,162 C 1004,140 1000,108 996,81 Z" fill="url(#dripColor)"/>
+      <path d="M 1105,81 C 1102,96 1099,112 1107,124 C 1115,112 1112,96 1109,81 Z" fill="url(#dripColor)"/>
+      <path d="M 1220,81 C 1216,106 1212,136 1222,156 C 1232,136 1228,106 1224,81 Z" fill="url(#dripColor)"/>
+      <path d="M 1335,81 C 1332,100 1329,118 1337,132 C 1345,118 1342,100 1339,81 Z" fill="url(#dripColor)"/>
+    </svg>
+  </div>
+
+  <!-- ===== COPA DO MUNDO 2026 ===== -->
+  <section class="copa-section" id="copa">
+    <div class="copa-flags-strip">
+      <div class="copa-flags-track">
+        <span>🇧🇷</span><span>🇦🇷</span><span>🇫🇷</span><span>🇩🇪</span><span>🇵🇹</span><span>🇪🇸</span><span>🇺🇾</span><span>🇯🇵</span><span>🇲🇽</span><span>🇳🇱</span><span>🇲🇦</span><span>🇬🇧</span><span>🇺🇸</span><span>🇨🇦</span><span>🇨🇴</span><span>🇸🇳</span>
+        <span>🇧🇷</span><span>🇦🇷</span><span>🇫🇷</span><span>🇩🇪</span><span>🇵🇹</span><span>🇪🇸</span><span>🇺🇾</span><span>🇯🇵</span><span>🇲🇽</span><span>🇳🇱</span><span>🇲🇦</span><span>🇬🇧</span><span>🇺🇸</span><span>🇨🇦</span><span>🇨🇴</span><span>🇸🇳</span>
+      </div>
+    </div>
+    <div class="copa-main">
+      <div class="copa-esq">
+        <span class="copa-pill">⚽ Edição Especial 2026</span>
+        <h2>Copa do <span>Mundo</span></h2>
+        <p>Chocolates Chocopingu com a cara de cada seleção. Torça com sabor em cada mordida!</p>
+        <button class="btn-ouro btn-copa-cta" onclick="document.getElementById('produtos').scrollIntoView({behavior:'smooth'});setTimeout(()=>mudarAba('copa'),700)">
+          Ver coleção Copa &#127942;
+        </button>
+      </div>
+      <div class="copa-dir">
+        <div class="copa-trofeu">🏆</div>
+        <div class="copa-paises">
+          <span>🇧🇷</span><span>🇦🇷</span><span>🇫🇷</span><span>🇩🇪</span>
+          <span>🇵🇹</span><span>🇪🇸</span><span>🇳🇱</span><span>🇯🇵</span>
+        </div>
+      </div>
+    </div>
+    <div class="copa-flags-strip copa-flags-bottom">
+      <div class="copa-flags-track copa-flags-rtl">
+        <span>🇸🇳</span><span>🇨🇴</span><span>🇨🇦</span><span>🇺🇸</span><span>🇬🇧</span><span>🇲🇦</span><span>🇳🇱</span><span>🇲🇽</span><span>🇯🇵</span><span>🇺🇾</span><span>🇪🇸</span><span>🇵🇹</span><span>🇩🇪</span><span>🇫🇷</span><span>🇦🇷</span><span>🇧🇷</span>
+        <span>🇸🇳</span><span>🇨🇴</span><span>🇨🇦</span><span>🇺🇸</span><span>🇬🇧</span><span>🇲🇦</span><span>🇳🇱</span><span>🇲🇽</span><span>🇯🇵</span><span>🇺🇾</span><span>🇪🇸</span><span>🇵🇹</span><span>🇩🇪</span><span>🇫🇷</span><span>🇦🇷</span><span>🇧🇷</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== PILARES ===== -->
+  <section class="pilares" id="pilares">
+    <div class="pilares-grid">
+      <div class="pilar">
+        <div class="pilar-icone">&#9670;</div>
+        <h3>Cacau Puro</h3>
+        <p>Selecionamos os melhores grãos para garantir sabor intenso e irresistível em cada produto.</p>
+      </div>
+      <div class="pilar pilar-destaque">
+        <div class="pilar-icone">&#9829;</div>
+        <h3>Feito com Amor</h3>
+        <p>Cada embalagem é criada com cuidado especial para trazer alegria a cada mordida.</p>
+      </div>
+      <div class="pilar">
+        <div class="pilar-icone">&#9733;</div>
+        <h3>Qualidade Premium</h3>
+        <p>Padrão de excelência do sabor à apresentação, em toda a nossa linha de chocolates.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== PRODUTOS ===== -->
+  <section class="produtos" id="produtos">
+    <div class="section-header">
+      <span class="section-tag">Nossa Linha</span>
+      <h2>Produtos <span>Chocopingu</span></h2>
+      <p class="section-sub">Descubra os sabores que conquistaram o coração do Brasil</p>
+    </div>
+
+    <div class="catalogo-tabs">
+      <button class="catalogo-tab ativo" id="tabTodos" onclick="mudarAba('todos')">Todos os produtos</button>
+      <button class="catalogo-tab" id="tabCopa" onclick="mudarAba('copa')">⚽ Copa do Mundo 2026</button>
+    </div>
+
+    <div class="produtos-grid" id="gridTodos">
+
+      <div class="produto-card">
+        <div class="produto-img-wrap">
+          <img src="../imagens chocopingo/produto3.jpeg" alt="Pirulitos Chocopingu" />
+        </div>
+        <div class="produto-info">
+          <h3>Pirulitos</h3>
+          <p>Chocolate ao leite e branco em espiral. Irresistível a cada giro!</p>
+          <span class="tag">Chocolate ao leite + branco</span>
+          <button class="btn-add-carrinho" onclick="adicionarAoCarrinho('Pirulitos','../imagens chocopingo/produto3.jpeg')">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+            Adicionar ao carrinho
+          </button>
+        </div>
+      </div>
+
+      <div class="produto-card destaque">
+        <span class="badge">Mais vendido</span>
+        <div class="produto-img-wrap">
+          <img src="../imagens chocopingo/produto1.jpeg" alt="Boneguinhos Chocopingu" />
+        </div>
+        <div class="produto-info">
+          <h3>Boneguinhos</h3>
+          <p>Bonequinhos fofos de chocolate ao leite e branco. Diversão garantida!</p>
+          <span class="tag">Chocolate ao leite + branco</span>
+          <button class="btn-add-carrinho" onclick="adicionarAoCarrinho('Boneguinhos','../imagens chocopingo/produto1.jpeg')">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+            Adicionar ao carrinho
+          </button>
+        </div>
+      </div>
+
+      <div class="produto-card">
+        <div class="produto-img-wrap">
+          <img src="../imagens chocopingo/produto2.jpeg" alt="Barra Crocante" />
+        </div>
+        <div class="produto-info">
+          <h3>Barra Crocante</h3>
+          <p>Tablete com recheio crocante que estoura na boca. Puro prazer!</p>
+          <span class="tag">Recheio crocante</span>
+          <button class="btn-add-carrinho" onclick="adicionarAoCarrinho('Barra Crocante','../imagens chocopingo/produto2.jpeg')">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+            Adicionar ao carrinho
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ===== COPA DO MUNDO — VOTAÇÃO ===== -->
+    <div class="hidden" id="gridCopa">
+      <div class="copa-vote-section">
+        <div class="copa-vote-hero">
+          <span class="copa-pill-cat">⚽ Copa do Mundo 2026</span>
+          <h3 class="copa-vote-titulo">Quem vai ganhar a Copa?</h3>
+          <p class="copa-vote-sub">Vote no seu favorito e veja o placar em tempo real!</p>
+          <div id="copaVotadoInfo" class="copa-votado-info hidden">
+            Você votou em <strong id="copaVotadoNome"></strong> <span id="copaVotadoFlag"></span>
+            <button class="copa-mudar-voto" onclick="mudarVotoCopa()">Mudar voto</button>
+          </div>
+          <p class="copa-total-votos"><span id="copaTotalVotos">0</span> votos registrados</p>
+        </div>
+        <div class="copa-paises-grid" id="copaPaisesGrid"></div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ===== BANNER CHOCOPONTOS ===== -->
+  <div class="banner-chocopontos">
+    <div class="banner-content">
+      <span class="section-tag tag-ouro">Programa de fidelidade</span>
+      <h2>Acumule <span>Chocopontos</span></h2>
+      <p>Compre seus chocolates favoritos, acumule pontos e troque por produtos incríveis. Quanto mais você come, mais você ganha!</p>
+      <button class="btn-ouro" id="btnChocopontosBanner">Ver como funciona &#9733;</button>
+    </div>
+    <img src="../imagens chocopingo/pingu_squared.png" alt="Pingu" class="banner-pingu" />
+  </div>
+
+  <!-- ===== MODAL CHOCOPONTOS ===== -->
+  <div class="modal-overlay" id="modalChocopontos">
+    <div class="modal-box">
+      <button class="modal-fechar" id="fecharModal">&#10005;</button>
+      <div class="modal-header">
+        <img src="../imagens chocopingo/logo.png" alt="Chocopingu" class="modal-logo" />
+        <h2>Chocopontos <span>&#9733;</span></h2>
+        <p>Acumule pontos em cada compra e troque por produtos deliciosos!</p>
+      </div>
+      <div class="modal-produtos">
+        <div class="modal-card">
+          <div class="modal-img-wrap">
+            <img src="../imagens chocopingo/produto3.jpeg" alt="Pirulitos" />
+          </div>
+          <div class="modal-info">
+            <h3>Pirulitos</h3>
+            <p>Chocolate ao leite + branco em espiral.</p>
+          </div>
+        </div>
+        <div class="modal-card">
+          <div class="modal-img-wrap">
+            <img src="../imagens chocopingo/produto1.jpeg" alt="Boneguinhos" />
+          </div>
+          <div class="modal-info">
+            <h3>Boneguinhos</h3>
+            <p>Bonequinhos de chocolate ao leite e branco.</p>
+          </div>
+        </div>
+        <div class="modal-card">
+          <div class="modal-img-wrap">
+            <img src="../imagens chocopingo/produto2.jpeg" alt="Barra Crocante" />
+          </div>
+          <div class="modal-info">
+            <h3>Barra Crocante</h3>
+            <p>Tablete com recheio crocante irresistível.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== MODAL AUTH ===== -->
+  <div class="modal-overlay" id="modalAuth">
+    <div class="modal-box auth-box">
+      <button class="modal-fechar" id="fecharAuth">&#10005;</button>
+
+      <div class="auth-logo">
+        <img src="../imagens chocopingo/logo.png" alt="Chocopingu" />
+      </div>
+
+      <div class="auth-tabs">
+        <button class="auth-tab active" id="tabCriar">Criar conta</button>
+        <button class="auth-tab" id="tabEntrar">Entrar</button>
+      </div>
+
+      <!-- CRIAR CONTA -->
+      <div class="auth-form" id="formCriar">
+        <button class="btn-google" id="btnGoogleCriar">
+          <svg width="20" height="20" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9 3.2l6.7-6.7C35.8 2.5 30.2 0 24 0 14.8 0 6.9 5.4 3 13.3l7.8 6C12.8 13.2 17.9 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v8.5h12.7c-.6 3-2.3 5.5-4.8 7.2l7.5 5.8c4.4-4 7.1-10 7.1-17z"/><path fill="#FBBC05" d="M10.8 28.7A14.8 14.8 0 0 1 9.5 24c0-1.6.3-3.2.8-4.7L2.5 13.3A24 24 0 0 0 0 24c0 3.8.9 7.4 2.5 10.6l8.3-5.9z"/><path fill="#34A853" d="M24 48c6.2 0 11.4-2 15.2-5.5l-7.5-5.8c-2 1.4-4.6 2.2-7.7 2.2-6.1 0-11.2-3.7-13.2-9l-7.8 6C6.9 42.6 14.8 48 24 48z"/></svg>
+          Continuar com Google
+        </button>
+        <div class="auth-divider"><span>ou</span></div>
+        <input type="text"     class="auth-input" id="criarNome"  placeholder="Seu nome completo" />
+        <input type="email"    class="auth-input" id="criarEmail" placeholder="Seu e-mail" />
+        <input type="password" class="auth-input" id="criarSenha" placeholder="Criar senha (mín. 6 caracteres)" />
+        <button class="btn-ouro auth-submit" id="btnCriar">Criar conta</button>
+        <p class="auth-msg" id="msgCriar"></p>
+        <p class="auth-switch">Já tem conta? <a href="#" id="switchEntrar">Entrar</a></p>
+      </div>
+
+      <!-- ENTRAR -->
+      <div class="auth-form hidden" id="formEntrar">
+        <button class="btn-google" id="btnGoogleEntrar">
+          <svg width="20" height="20" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9 3.2l6.7-6.7C35.8 2.5 30.2 0 24 0 14.8 0 6.9 5.4 3 13.3l7.8 6C12.8 13.2 17.9 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v8.5h12.7c-.6 3-2.3 5.5-4.8 7.2l7.5 5.8c4.4-4 7.1-10 7.1-17z"/><path fill="#FBBC05" d="M10.8 28.7A14.8 14.8 0 0 1 9.5 24c0-1.6.3-3.2.8-4.7L2.5 13.3A24 24 0 0 0 0 24c0 3.8.9 7.4 2.5 10.6l8.3-5.9z"/><path fill="#34A853" d="M24 48c6.2 0 11.4-2 15.2-5.5l-7.5-5.8c-2 1.4-4.6 2.2-7.7 2.2-6.1 0-11.2-3.7-13.2-9l-7.8 6C6.9 42.6 14.8 48 24 48z"/></svg>
+          Continuar com Google
+        </button>
+        <div class="auth-divider"><span>ou</span></div>
+        <input type="email"    class="auth-input" id="entrarEmail" placeholder="Seu e-mail" />
+        <input type="password" class="auth-input" id="entrarSenha" placeholder="Sua senha" />
+        <button class="btn-ouro auth-submit" id="btnEntrar">Entrar</button>
+        <p class="auth-msg" id="msgEntrar"></p>
+        <p class="auth-switch">Não tem conta? <a href="#" id="switchCriar">Criar conta</a></p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ===== CARRINHO (sidebar) ===== -->
+  <div class="carrinho-overlay" id="carrinhoOverlay"></div>
+  <aside class="carrinho-sidebar" id="carrinhoSidebar">
+    <div class="carrinho-header">
+      <h2>&#128722; Meu carrinho</h2>
+      <button class="carrinho-fechar" id="fecharCarrinho">&#10005;</button>
+    </div>
+    <div class="carrinho-itens" id="carrinhoItens"></div>
+    <div class="carrinho-rodape" id="carrinhoRodape"></div>
+  </aside>
+
+  <!-- ===== MODAL ENDEREÇO ===== -->
+  <div class="modal-overlay" id="modalEndereco">
+    <div class="modal-box endereco-box">
+      <button class="modal-fechar" id="fecharEndereco">&#10005;</button>
+
+      <div class="auth-logo">
+        <img src="../imagens chocopingo/logo.png" alt="Chocopingu" />
+      </div>
+      <h2 class="endereco-titulo">&#128205; Endereço de entrega</h2>
+      <p class="endereco-sub">Salve seu endereço e ele será preenchido automaticamente no seu pedido.</p>
+
+      <div class="endereco-cep-row">
+        <input type="text" class="auth-input" id="endCep" placeholder="CEP (00000-000)" maxlength="9" />
+        <button class="btn-buscar-cep" id="btnBuscarCep">Buscar</button>
+      </div>
+      <p class="cep-msg" id="msgCep"></p>
+
+      <div class="endereco-grid">
+        <div class="endereco-campo campo-rua">
+          <label>Rua / Avenida</label>
+          <input type="text" class="auth-input" id="endRua" placeholder="Ex: Rua das Flores" />
+        </div>
+        <div class="endereco-campo campo-numero">
+          <label>Número</label>
+          <input type="text" class="auth-input" id="endNumero" placeholder="123" />
+        </div>
+        <div class="endereco-campo campo-complemento">
+          <label>Complemento <span class="opcional">(opcional)</span></label>
+          <input type="text" class="auth-input" id="endComplemento" placeholder="Apto, bloco..." />
+        </div>
+        <div class="endereco-campo campo-bairro">
+          <label>Bairro</label>
+          <input type="text" class="auth-input" id="endBairro" placeholder="Centro" />
+        </div>
+        <div class="endereco-campo campo-cidade">
+          <label>Cidade</label>
+          <input type="text" class="auth-input" id="endCidade" placeholder="Recife" />
+        </div>
+        <div class="endereco-campo campo-estado">
+          <label>Estado</label>
+          <select class="auth-input" id="endEstado">
+            <option value="">UF</option>
+            <option>AC</option><option>AL</option><option>AP</option><option>AM</option>
+            <option>BA</option><option>CE</option><option>DF</option><option>ES</option>
+            <option>GO</option><option>MA</option><option>MT</option><option>MS</option>
+            <option>MG</option><option>PA</option><option>PB</option><option>PR</option>
+            <option>PE</option><option>PI</option><option>RJ</option><option>RN</option>
+            <option>RS</option><option>RO</option><option>RR</option><option>SC</option>
+            <option>SP</option><option>SE</option><option>TO</option>
+          </select>
+        </div>
+      </div>
+
+      <button class="btn-ouro auth-submit" id="btnSalvarEndereco">Salvar endereço</button>
+      <p class="auth-msg" id="msgEndereco"></p>
+    </div>
+  </div>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="footer">
+    <div class="footer-top">
+      <img src="../imagens chocopingo/logo.png" alt="Chocopingu" class="footer-logo" />
+      <p class="footer-slogan">O chocolate que faz a alegria de cada momento.</p>
+      <div class="footer-social">
+        <a href="https://www.instagram.com/lojadopingu" target="_blank" rel="noopener" class="social-btn">&#128247; @lojadopingu</a>
+        <a href="https://wa.me/5581981553632" target="_blank" rel="noopener" class="social-btn">&#128172; (81) 98155-3632</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 Chocopingu. Todos os direitos reservados.</p>
+    </div>
+  </footer>
+
+  <div class="cursor-dot" id="cursorDot"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
