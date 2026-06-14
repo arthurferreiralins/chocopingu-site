@@ -162,10 +162,7 @@ h2 span { color: var(--ouro-escuro); }
 /* ===== HERO ===== */
 .hero {
   min-height: 100vh;
-  background:
-    radial-gradient(ellipse at 20% 50%, rgba(107,51,0,.55) 0%, transparent 55%),
-    radial-gradient(ellipse at 80% 20%, rgba(74,30,0,.5) 0%, transparent 50%),
-    linear-gradient(160deg, rgba(14,4,0,.75) 0%, rgba(59,21,0,.65) 40%, rgba(26,8,0,.75) 100%);
+  background: #0e0400;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -180,7 +177,11 @@ h2 span { color: var(--ouro-escuro); }
   width: 100%; height: 100%;
   object-fit: cover;
   z-index: 0;
-  opacity: .55;
+}
+.hero-overlay {
+  position: absolute; inset: 0;
+  background: rgba(10, 3, 0, .55);
+  z-index: 1;
 }
 
 /* textura sutil */
