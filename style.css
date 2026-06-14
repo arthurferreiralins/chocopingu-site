@@ -210,9 +210,18 @@ h2 span { color: var(--ouro-escuro); }
   gap: 1.4rem;
 }
 
+.hero-logo-wrap {
+  background: #ffffff;
+  border-radius: 24px;
+  padding: 1.2rem 2rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 32px rgba(0,0,0,.18);
+}
 .hero-logo {
-  width: min(750px, 92vw);
-  filter: drop-shadow(0 0 40px rgba(200,148,26,.25));
+  width: min(320px, 72vw);
+  display: block;
   animation: flutua 4s ease-in-out infinite;
 }
 @keyframes flutua { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-14px)} }
