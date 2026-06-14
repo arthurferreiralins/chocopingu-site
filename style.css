@@ -216,7 +216,7 @@ h2 span { color: var(--ouro-escuro); }
   justify-content: center;
 }
 .hero-logo {
-  width: min(200px, 45vw);
+  width: min(280px, 60vw);
   display: block;
   mix-blend-mode: multiply;
   animation: flutua 4s ease-in-out infinite;
