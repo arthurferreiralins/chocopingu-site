@@ -162,11 +162,7 @@ h2 span { color: var(--ouro-escuro); }
 /* ===== HERO ===== */
 .hero {
   min-height: 100vh;
-  background:
-    radial-gradient(ellipse at 20% 50%, #6b3300 0%, transparent 55%),
-    radial-gradient(ellipse at 80% 20%, #4a1e00 0%, transparent 50%),
-    radial-gradient(ellipse at 60% 80%, #5a2800 0%, transparent 45%),
-    linear-gradient(160deg, #0e0400 0%, #3b1500 40%, #1a0800 70%, #4a2000 100%);
+  background: #ffffff;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -179,7 +175,7 @@ h2 span { color: var(--ouro-escuro); }
 
 /* textura sutil */
 .hero-bg-texture {
-  position: absolute; inset: 0; z-index: 0;
+  display: none;
   background: repeating-linear-gradient(
     45deg, transparent, transparent 3px,
     rgba(255,255,255,.012) 3px, rgba(255,255,255,.012) 6px
@@ -202,7 +198,7 @@ h2 span { color: var(--ouro-escuro); }
 
 .hero-tagline {
   font-size: clamp(1rem, 2.5vw, 1.25rem);
-  color: rgba(255,255,255,.82);
+  color: var(--choco-mid);
   font-weight: 600;
   letter-spacing: .3px;
   max-width: 420px;
@@ -215,15 +211,14 @@ h2 span { color: var(--ouro-escuro); }
   gap: .6rem;
   background: rgba(200,148,26,.15);
   border: 1.5px solid rgba(200,148,26,.5);
-  color: var(--ouro-claro);
+  color: var(--ouro-escuro);
   font-size: 1rem;
   font-weight: 700;
   padding: .55rem 1.4rem;
   border-radius: 50px;
   letter-spacing: .3px;
-  backdrop-filter: blur(4px);
 }
-.hero-preco-badge strong { color: var(--ouro-claro); font-weight: 900; }
+.hero-preco-badge strong { color: var(--ouro-escuro); font-weight: 900; }
 .badge-estrela { font-size: .75rem; opacity: .8; }
 
 /* preview dos produtos no rodapé do hero */
@@ -254,9 +249,7 @@ h2 span { color: var(--ouro-escuro); }
 
 /* bolhas */
 .hero-bubbles span {
-  position: absolute; border-radius: 50%;
-  background: rgba(200,148,26,.07);
-  animation: sobe linear infinite;
+  display: none;
 }
 .hero-bubbles span:nth-child(1){width:80px;height:80px;left:8%;animation-duration:9s}
 .hero-bubbles span:nth-child(2){width:50px;height:50px;left:28%;animation-duration:12s;animation-delay:2s}
