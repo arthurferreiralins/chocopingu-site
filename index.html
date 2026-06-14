@@ -156,6 +156,9 @@
         <div class="pilar-icone">&#9670;</div>
         <h3>Cacau Puro</h3>
         <p>Selecionamos os melhores grãos para garantir sabor intenso e irresistível em cada produto.</p>
+        <button class="btn-play-video" id="btnAbrirVideo" aria-label="Ver vídeo do cacau">
+          <span class="play-icon">&#9654;</span> Ver vídeo
+        </button>
       </div>
       <div class="pilar pilar-destaque">
         <div class="pilar-icone">&#9829;</div>
@@ -433,6 +436,17 @@
       <p>&copy; 2026 Chocopingu. Todos os direitos reservados.</p>
     </div>
   </footer>
+
+  <!-- ===== MODAL VÍDEO CACAU ===== -->
+  <div class="modal-overlay" id="modalVideo">
+    <div class="modal-box video-box">
+      <button class="modal-fechar" id="fecharVideo">&#10005;</button>
+      <h2 class="video-titulo">&#9670; Cacau Puro</h2>
+      <video id="playerCacau" controls playsinline style="width:100%;border-radius:12px;margin-top:.8rem;">
+        <source src="imagens/videu cacau.mp4" type="video/mp4" />
+      </video>
+    </div>
+  </div>
 
   <div class="cursor-dot" id="cursorDot"></div>
   <div class="cursor-ring" id="cursorRing"></div>

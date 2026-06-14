@@ -491,4 +491,22 @@ document.getElementById('btnChocopontos').addEventListener('click', e => { e.pre
 document.getElementById('btnChocopontosBanner').addEventListener('click', abrirModal);
 fecharModal.addEventListener('click', fechar);
 modal.addEventListener('click', e => { if (e.target === modal) fechar(); });
-document.addEventListener('keydown', e => { if (e.key === 'Escape') { fechar(); fecharAuthModal(); fecharEnderecoModal(); fecharCarrinho(); } });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { fechar(); fecharAuthModal(); fecharEnderecoModal(); fecharCarrinho(); fecharVideo(); } });
+
+/* ===== MODAL VÍDEO CACAU ===== */
+const modalVideo  = document.getElementById('modalVideo');
+const playerCacau = document.getElementById('playerCacau');
+
+function abrirVideo() {
+  modalVideo.classList.add('aberto');
+  document.body.style.overflow = 'hidden';
+}
+function fecharVideo() {
+  modalVideo.classList.remove('aberto');
+  playerCacau.pause();
+  document.body.style.overflow = '';
+}
+
+document.getElementById('btnAbrirVideo').addEventListener('click', abrirVideo);
+document.getElementById('fecharVideo').addEventListener('click', fecharVideo);
+modalVideo.addEventListener('click', e => { if (e.target === modalVideo) fecharVideo(); });
