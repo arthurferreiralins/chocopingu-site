@@ -216,10 +216,9 @@ h2 span { color: var(--ouro-escuro); }
   justify-content: center;
 }
 .hero-logo {
-  width: min(260px, 60vw);
+  width: min(200px, 45vw);
   display: block;
   mix-blend-mode: multiply;
-  filter: brightness(0.95);
   animation: flutua 4s ease-in-out infinite;
 }
 @keyframes flutua { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-14px)} }
