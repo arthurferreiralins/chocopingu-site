@@ -326,10 +326,14 @@ h2 span { color: var(--ouro-escuro); }
 .btn-play-video:hover { background: var(--ouro-escuro); transform: scale(1.05); }
 .play-icon { font-size: 1rem; }
 
-.video-box { max-width: 700px; width: 95%; }
+.video-box {
+  max-width: 640px; width: 92%;
+  max-height: 90vh; overflow: hidden;
+}
+.video-box video { max-height: 65vh; object-fit: contain; }
 .video-titulo {
   font-family: 'Playfair Display', serif;
-  color: var(--ouro); font-size: 1.3rem;
+  color: var(--ouro); font-size: 1.1rem;
 }
 
 /* ===== PRODUTOS ===== */
