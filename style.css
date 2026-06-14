@@ -212,7 +212,7 @@ h2 span { color: var(--ouro-escuro); }
 .hero-logo {
   width: min(240px, 55vw);
   display: block;
-  filter: drop-shadow(0 4px 24px rgba(0,0,0,.5));
+  mix-blend-mode: multiply;
   animation: flutua 4s ease-in-out infinite;
 }
 @keyframes flutua { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-14px)} }
