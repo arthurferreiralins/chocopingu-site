@@ -161,6 +161,7 @@ h2 span { color: var(--ouro-escuro); }
 
 /* ===== HERO ===== */
 .hero {
+  height: 100vh;
   min-height: 100vh;
   background: #0e0400;
   display: flex;
@@ -171,16 +172,21 @@ h2 span { color: var(--ouro-escuro); }
   overflow: hidden;
   padding: 7rem 5% 10rem;
   gap: 3rem;
+  box-sizing: border-box;
 }
 .hero-video-bg {
   position: absolute;
   top: 0; left: 0;
-  width: 100vw; height: 100vh;
+  width: 100%;
+  height: 100%;
   object-fit: cover;
+  object-position: center;
   z-index: 0;
 }
 .hero-overlay {
-  position: absolute; inset: 0;
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
   background: rgba(10, 3, 0, .55);
   z-index: 1;
 }
