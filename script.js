@@ -493,6 +493,25 @@ fecharModal.addEventListener('click', fechar);
 modal.addEventListener('click', e => { if (e.target === modal) fechar(); });
 document.addEventListener('keydown', e => { if (e.key === 'Escape') { fechar(); fecharAuthModal(); fecharEnderecoModal(); fecharCarrinho(); fecharVideo(); } });
 
+/* ===== CONTADOR ANIMADO ===== */
+function animarContador(el) {
+  const meta = parseInt(el.dataset.meta);
+  const duracao = 1800;
+  const inicio = performance.now();
+  function tick(agora) {
+    const progresso = Math.min((agora - inicio) / duracao, 1);
+    const ease = 1 - Math.pow(1 - progresso, 3);
+    el.textContent = Math.floor(ease * meta);
+    if (progresso < 1) requestAnimationFrame(tick);
+    else el.textContent = meta;
+  }
+  requestAnimationFrame(tick);
+}
+const obsContador = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) { animarContador(e.target); obsContador.unobserve(e.target); } });
+}, { threshold: 0.5 });
+document.querySelectorAll('.contador-num').forEach(el => obsContador.observe(el));
+
 /* ===== MODAL VÍDEO CACAU ===== */
 const modalVideo  = document.getElementById('modalVideo');
 const playerCacau = document.getElementById('playerCacau');
