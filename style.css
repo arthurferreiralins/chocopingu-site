@@ -1141,17 +1141,32 @@ h2 span { color: var(--ouro-escuro); }
   border-color: var(--ouro);
   box-shadow: 0 4px 16px rgba(200,148,26,.35);
 }
-.catalogo-tab-admin {
-  border-color: var(--choco-claro);
+.catalogo-admin-bar {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 2rem;
+}
+.btn-area-restrita {
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  padding: .7rem 2rem;
   background: var(--choco-mid);
   color: var(--ouro-claro);
-  font-size: .88rem;
-  padding: .65rem 1.4rem;
+  border: 2px solid var(--choco-claro);
+  border-radius: 50px;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 800;
+  font-size: .95rem;
+  cursor: pointer;
+  letter-spacing: .3px;
+  transition: all .2s;
 }
-.catalogo-tab-admin:hover {
-  background: var(--choco) !important;
-  border-color: var(--ouro) !important;
-  color: var(--ouro-claro) !important;
+.btn-area-restrita:hover {
+  background: var(--choco);
+  border-color: var(--ouro);
+  color: var(--ouro-claro);
+  box-shadow: 0 4px 16px rgba(13,4,0,.3);
 }
 
 /* ===== MODAL ADMIN LOGIN ===== */
