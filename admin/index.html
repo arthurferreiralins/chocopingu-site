@@ -980,10 +980,37 @@ const DEF={
     {id:3,nome:'Barra Crocante', emoji:'🍫',custo:2.48,venda:6.00,desc:'Tablete com recheio crocante que estoura na boca. Puro prazer!'},
   ]
 };
-let db=JSON.parse(localStorage.getItem('cpdb_v9')||'null')||JSON.parse(JSON.stringify(DEF));
-let nid={g:100,v:200,p:20};
+const DBKEY='chocopingu_db';
 let ch={};
-function save(){localStorage.setItem('cpdb_v9',JSON.stringify(db));}
+let nid={g:100,v:200,p:20};
+
+function loadDB(){
+  try{
+    // tenta chave estável nova
+    let raw=localStorage.getItem(DBKEY);
+    // migra de chaves antigas se existirem
+    if(!raw){
+      for(const k of ['cpdb_v9','cpdb_v8','cpdb_v7','cpdb_v6','cpdb_v5','cpdb_v4','cpdb_v3']){
+        const old=localStorage.getItem(k);
+        if(old){raw=old;break;}
+      }
+    }
+    if(!raw)return JSON.parse(JSON.stringify(DEF));
+    const saved=JSON.parse(raw);
+    // garante que todos os produtos padrão existem (não apaga edições do usuário)
+    DEF.produtos.forEach(dp=>{
+      if(!saved.produtos.find(p=>p.id===dp.id))saved.produtos.push({...dp});
+    });
+    if(!Array.isArray(saved.gastos))saved.gastos=JSON.parse(JSON.stringify(DEF.gastos));
+    if(!Array.isArray(saved.vendas))saved.vendas=[];
+    // salva imediatamente na chave estável
+    localStorage.setItem(DBKEY,JSON.stringify(saved));
+    return saved;
+  }catch(e){return JSON.parse(JSON.stringify(DEF));}
+}
+
+let db=loadDB();
+function save(){localStorage.setItem(DBKEY,JSON.stringify(db));}
 function f(v){return 'R$ '+Number(v||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});}
 function fp(v){return Number(v||0).toLocaleString('pt-BR',{minimumFractionDigits:1,maximumFractionDigits:1})+'%';}
 function fd(s){return s?s.split('-').reverse().join('/'):'—';}
