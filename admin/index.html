@@ -349,7 +349,6 @@ tr:hover td{background:#FDFAF7}tr:last-child td{border-bottom:none}
     <button class="tab"     onclick="go(this,'dash')"><span class="ti">📊</span> Dashboard</button>
     <button class="tab"     onclick="go(this,'graf')"><span class="ti">📈</span> Gráficos</button>
     <button class="tab"     onclick="go(this,'gast')"><span class="ti">💸</span> Gastos</button>
-    <button class="tab"     onclick="go(this,'prod')"><span class="ti">🍫</span> Produtos</button>
     <button class="tab"     onclick="go(this,'econ')"><span class="ti">💡</span> Economia</button>
     <div style="flex:1"></div>
     <button class="tab" style="color:#A93226" onclick="logout()"><span class="ti">🚪</span> Sair</button>
@@ -424,24 +423,6 @@ tr:hover td{background:#FDFAF7}tr:last-child td{border-bottom:none}
         <div class="card cv"><span class="cic">📦</span><span class="clb">Total de unidades compradas</span><span class="cval" id="gr-caro" style="font-size:13px">—</span></div>
       </div>
 
-      <!-- RESUMO POR CATEGORIA -->
-      <div class="tbox" style="margin-bottom:22px" id="g-cat-resumo" style="display:none">
-        <div class="thdr"><h3>📋 Quanto gastei por categoria</h3><span class="ttot neg" id="gr-total2">Total: R$ 0,00</span></div>
-        <div id="g-cat-lista"></div>
-      </div>
-
-      <!-- GRÁFICO DE GASTOS -->
-      <div class="chgrid" style="margin-bottom:22px">
-        <div class="chbox">
-          <h3>Total gasto por categoria (R$)</h3>
-          <div id="d-gbar"><canvas id="ch-gbar"></canvas></div>
-        </div>
-        <div class="chbox">
-          <h3>Distribuição dos gastos (%)</h3>
-          <div id="d-gpie"><canvas id="ch-gpie"></canvas></div>
-        </div>
-      </div>
-
       <div class="tbox">
         <div class="thdr"><h3>Registrar Novo Gasto</h3></div>
         <div class="frow">
@@ -458,33 +439,6 @@ tr:hover td{background:#FDFAF7}tr:last-child td{border-bottom:none}
         <table><thead><tr>
           <th>Item comprado</th><th>Unid.</th><th>Qtd</th><th>Preço Unit.</th><th>Total</th><th></th>
         </tr></thead><tbody id="tb-g"></tbody></table>
-      </div>
-    </div>
-
-    <!-- ── PRODUTOS ── -->
-    <div id="s-prod" class="sec">
-      <div class="ptitle">🍫 Produtos & Preços</div>
-      <div class="tbox">
-        <div class="thdr"><h3>Cadastrar / Editar Produto</h3></div>
-        <div class="frow">
-          <div class="fg" style="flex:1;min-width:150px"><label>Nome</label>
-            <input type="text" id="p-nome" placeholder="Ex: Pirulitos"></div>
-          <div class="fg"><label>Emoji</label>
-            <input type="text" id="p-emoji" placeholder="🍫" maxlength="2" style="font-size:18px;text-align:center;width:60px"></div>
-          <div class="fg" style="flex:1"><label>Descrição</label>
-            <input type="text" id="p-desc" placeholder="Descreva o produto"></div>
-          <div class="fg"><label>Custo / Un. (R$)</label>
-            <input type="number" id="p-custo" placeholder="0,00" min="0" step="0.01"></div>
-          <div class="fg"><label>Preço Venda (R$)</label>
-            <input type="number" id="p-venda" placeholder="0,00" min="0" step="0.01"></div>
-          <button class="btn badd" onclick="addP()">+ Adicionar</button>
-        </div>
-      </div>
-      <div class="tbox">
-        <div class="thdr"><h3>Análise de Rentabilidade</h3></div>
-        <table><thead><tr>
-          <th>Produto</th><th>Custo/Un.</th><th>Preço Venda</th><th>Lucro/Un.</th><th>Margem %</th><th>Vale a pena?</th><th></th>
-        </tr></thead><tbody id="tb-p"></tbody></table>
       </div>
     </div>
 
@@ -1315,36 +1269,6 @@ function renderFbBanner(){
   }
 }
 
-// ── GRÁFICO DE GASTOS ──
-function buildGastosCharts(){
-  dc('gbar');dc('gpie');
-  if(!db.gastos.length){
-    document.getElementById('d-gbar').innerHTML='<div class="chempty"><span class="ce">💸</span><p>Adicione seus primeiros gastos abaixo para ver o gráfico</p></div>';
-    document.getElementById('d-gpie').innerHTML='<div class="chempty"><span class="ce">📊</span><p>Nenhum gasto registrado ainda</p></div>';
-    return;
-  }
-  // agrupar por item
-  const tot={};
-  db.gastos.forEach(g=>{tot[g.item]=(tot[g.item]||0)+(g.qtd*g.preco);});
-  const labels=Object.keys(tot).sort((a,b)=>tot[b]-tot[a]);
-  const vals=labels.map(k=>+tot[k].toFixed(2));
-  const COLS=['#F48FB1','#90CAF9','#A5D6A7','#FFCC80','#CE93D8','#80DEEA'];
-
-  setC('d-gbar','ch-gbar');
-  ch.gbar=new Chart(document.getElementById('ch-gbar'),{
-    type:'bar',
-    data:{labels,datasets:[{data:vals,backgroundColor:COLS.slice(0,labels.length),borderRadius:10,borderWidth:0}]},
-    options:{indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{ticks:{callback:v=>'R$'+v,font:{size:10}},grid:{color:'#f5f0eb'}},y:{ticks:{font:{size:10}}}}}
-  });
-
-  setC('d-gpie','ch-gpie');
-  ch.gpie=new Chart(document.getElementById('ch-gpie'),{
-    type:'doughnut',
-    data:{labels,datasets:[{data:vals,backgroundColor:COLS.slice(0,labels.length),borderWidth:2}]},
-    options:{plugins:{legend:{display:true,position:'bottom',labels:{font:{size:10},padding:10}}},cutout:'55%'}
-  });
-}
-
 // ── GASTOS ──
 async function addG(){
   const item=document.getElementById('g-item').value.trim();
@@ -1365,11 +1289,8 @@ async function delG(id){
   renderG();
 }
 function renderG(){
-  buildGastosCharts();
   const total=tg();
   document.getElementById('tot-g').textContent='Total: '+f(total);
-
-  // resumo cards
   document.getElementById('gr-total').textContent=f(total);
   document.getElementById('gr-itens').textContent=db.gastos.length+(db.gastos.length===1?' item':' itens');
   const topItem=db.gastos.slice().sort((a,b)=>(b.qtd*b.preco)-(a.qtd*a.preco))[0];
@@ -1377,35 +1298,6 @@ function renderG(){
   const totalQtd=db.gastos.reduce((s,g)=>s+Number(g.qtd||0),0);
   document.getElementById('gr-caro').textContent=totalQtd>0?totalQtd+' unid./kg comprados':'—';
 
-  // resumo por item
-  const catBox=document.getElementById('g-cat-resumo');
-  document.getElementById('gr-total2').textContent='Total: '+f(total);
-  if(db.gastos.length){
-    catBox.style.display='block';
-    const COLS=['#F48FB1','#90CAF9','#A5D6A7','#FFCC80','#CE93D8','#80DEEA'];
-    const sorted=db.gastos.slice().sort((a,b)=>(b.qtd*b.preco)-(a.qtd*a.preco));
-    document.getElementById('g-cat-lista').innerHTML=sorted.map((g,i)=>{
-      const val=g.qtd*g.preco;
-      const pct=total>0?Math.round(val/total*100):0;
-      return `<div style="display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--bd)">
-        <div style="flex:1">
-          <div style="font-size:13px;font-weight:700;color:var(--br)">${g.item}</div>
-          <div style="font-size:11px;color:var(--txt2);margin-top:2px">${g.qtd} ${g.un||'un'} × ${f(g.preco)}</div>
-          <div style="margin-top:6px;height:7px;background:#f0f0f0;border-radius:4px;overflow:hidden">
-            <div style="height:100%;width:${pct}%;background:${COLS[i%COLS.length]};border-radius:4px;transition:width .5s"></div>
-          </div>
-        </div>
-        <div style="text-align:right;min-width:80px">
-          <div style="font-size:15px;font-weight:800;color:var(--vm)">${f(val)}</div>
-          <div style="font-size:10px;color:var(--txt2)">${pct}% do total</div>
-        </div>
-      </div>`;
-    }).join('');
-  } else {
-    catBox.style.display='none';
-  }
-
-  // tabela
   const tb=document.getElementById('tb-g');
   if(!db.gastos.length){
     tb.innerHTML=`<tr><td colspan="6"><div class="estate"><p>Nenhum gasto registrado ainda.<br>Use o formulário abaixo para adicionar.</p></div></td></tr>`;
@@ -1416,66 +1308,6 @@ function renderG(){
     <td>${g.qtd}</td><td>${f(g.preco)}</td><td class="neg">${f(g.qtd*g.preco)}</td>
     <td><button class="btn bdel" onclick="delG(${g.id})">Excluir</button></td>
   </tr>`).join('');
-}
-
-// ── PRODUTOS ──
-function addP(){
-  const nome=document.getElementById('p-nome').value.trim();
-  const emoji=document.getElementById('p-emoji').value||'🍫';
-  const desc=document.getElementById('p-desc').value.trim();
-  const custo=parseFloat(document.getElementById('p-custo').value)||0;
-  const venda=parseFloat(document.getElementById('p-venda').value)||0;
-  if(!nome){alert('Escreva o nome do produto!');return;}
-  db.produtos.push({id:nid.p++,nome,emoji,custo,venda,desc});save();
-  ['p-nome','p-emoji','p-desc','p-custo','p-venda'].forEach(id=>document.getElementById(id).value='');
-  renderP();
-}
-function delP(id){if(!confirm('Apagar este produto?'))return;db.produtos=db.produtos.filter(p=>p.id!==id);save();renderP();}
-function renderP(){
-  const tb=document.getElementById('tb-p');
-  if(!db.produtos.length){tb.innerHTML=`<tr><td colspan="7"><div class="estate"><p>Nenhum produto cadastrado.</p></div></td></tr>`;return;}
-  tb.innerHTML=db.produtos.map(p=>{
-    const luc=p.venda-p.custo,m=p.venda>0?((luc/p.venda)*100):0;
-    const vale=luc>0?'<span style="color:var(--vd);font-weight:700">✅ Vale a pena!</span>'
-                    :'<span style="color:var(--vm);font-weight:700">❌ Prejuízo</span>';
-    return `<tr id="prow-${p.id}">
-      <td>${p.emoji} <strong>${p.nome}</strong></td>
-      <td>${f(p.custo)}</td><td>${f(p.venda)}</td>
-      <td class="${luc>0?'pos':'neg'}">${f(luc)}</td>
-      <td>${fp(m)}</td><td>${vale}</td>
-      <td style="display:flex;gap:6px">
-        <button class="btn bedit" onclick="editPRow(${p.id})">✏️ Editar</button>
-        <button class="btn bdel" onclick="delP(${p.id})">Excluir</button>
-      </td>
-    </tr>`;
-  }).join('');
-}
-
-function editPRow(id){
-  const p=db.produtos.find(x=>x.id===id);
-  const tr=document.getElementById('prow-'+id);
-  tr.innerHTML=`
-    <td>${p.emoji} <strong>${p.nome}</strong></td>
-    <td><input type="number" id="ep-c-${id}" value="${p.custo}" min="0" step="0.01"
-        style="width:80px;padding:7px 9px;border:2px solid var(--gold);border-radius:9px;font-size:13px;font-weight:700;outline:none"></td>
-    <td><input type="number" id="ep-v-${id}" value="${p.venda}" min="0" step="0.50"
-        style="width:80px;padding:7px 9px;border:2px solid var(--vd);border-radius:9px;font-size:15px;font-weight:800;color:var(--vd);outline:none"></td>
-    <td colspan="4" style="display:flex;gap:8px;align-items:center">
-      <button class="btn badd" onclick="savePRow(${id})">✅ Salvar</button>
-      <button class="btn bdel" onclick="renderP()">Cancelar</button>
-      <span style="font-size:11px;color:var(--txt2)">← altere custo e preço de venda</span>
-    </td>`;
-  document.getElementById('ep-v-'+id).focus();
-  document.getElementById('ep-v-'+id).select();
-}
-
-function savePRow(id){
-  const p=db.produtos.find(x=>x.id===id);
-  p.custo=Math.max(0,parseFloat(document.getElementById('ep-c-'+id).value)||0);
-  p.venda=Math.max(0,parseFloat(document.getElementById('ep-v-'+id).value)||0);
-  save();
-  renderP();
-  renderCat();
 }
 
 // ── ECONOMIA — dados reais coletados de Mercado Livre / Shopee / Amazon (2025) ──
