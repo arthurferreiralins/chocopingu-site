@@ -147,6 +147,65 @@ function handleGoogleCredential(response) {
 renderNavAuth();
 
 /* =========================================================
+   MODAL ÁREA RESTRITA — ACESSO AO PAINEL ADMIN
+   ========================================================= */
+const ADMIN_EMAIL_SITE  = 'arthurferreiralins2017@gmail.com';
+const ADMIN_HASH_SITE   = 'f649e03a9da2e85972381cb0dd788ef1df466c099a6c767988cb79a2a0af8f53';
+
+async function sha256Admin(text) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+}
+
+const modalAdmin  = document.getElementById('modalAdmin');
+const fecharAdmin = document.getElementById('fecharAdmin');
+
+function abrirModalAdmin() {
+  modalAdmin.classList.add('aberto');
+  document.body.style.overflow = 'hidden';
+  document.getElementById('adminInputEmail').value = '';
+  document.getElementById('adminInputSenha').value = '';
+  document.getElementById('adminLoginErro').textContent = '';
+  setTimeout(() => document.getElementById('adminInputEmail').focus(), 150);
+}
+function fecharModalAdmin() {
+  modalAdmin.classList.remove('aberto');
+  document.body.style.overflow = '';
+}
+
+fecharAdmin.addEventListener('click', fecharModalAdmin);
+modalAdmin.addEventListener('click', e => { if (e.target === modalAdmin) fecharModalAdmin(); });
+
+document.getElementById('adminInputSenha').addEventListener('keydown', e => {
+  if (e.key === 'Enter') document.getElementById('btnAdminEntrar').click();
+});
+
+document.getElementById('btnAdminEntrar').addEventListener('click', async () => {
+  const email = document.getElementById('adminInputEmail').value.trim();
+  const senha = document.getElementById('adminInputSenha').value;
+  const erroEl = document.getElementById('adminLoginErro');
+
+  if (!email || !senha) {
+    erroEl.textContent = 'Preencha e-mail e senha.';
+    erroEl.className = 'auth-msg erro';
+    return;
+  }
+
+  const hash = await sha256Admin(senha);
+
+  if (email === ADMIN_EMAIL_SITE && hash === ADMIN_HASH_SITE) {
+    sessionStorage.setItem('cp_admin', '1');
+    fecharModalAdmin();
+    window.location.href = 'admin/';
+  } else {
+    erroEl.textContent = 'E-mail ou senha incorretos.';
+    erroEl.className = 'auth-msg erro';
+    document.getElementById('adminInputSenha').value = '';
+    document.getElementById('adminInputSenha').focus();
+  }
+});
+
+/* =========================================================
    CARRINHO DE COMPRAS
    ========================================================= */
 let carrinho = [];

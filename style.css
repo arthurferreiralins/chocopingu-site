@@ -1139,6 +1139,39 @@ h2 span { color: var(--ouro-escuro); }
   border-color: var(--ouro);
   box-shadow: 0 4px 16px rgba(200,148,26,.35);
 }
+.catalogo-tab-admin {
+  margin-left: auto;
+  border-color: rgba(107,51,0,.3);
+  color: var(--choco-claro);
+  font-size: .8rem;
+  opacity: .6;
+  padding: .55rem 1.2rem;
+}
+.catalogo-tab-admin:hover {
+  opacity: 1;
+  background: var(--choco-mid) !important;
+  border-color: var(--choco-claro) !important;
+  color: var(--ouro-claro) !important;
+}
+
+/* ===== MODAL ADMIN LOGIN ===== */
+.modal-box-admin {
+  max-width: 380px;
+  padding: 2.5rem 2rem 2rem;
+}
+.admin-login-wrap { text-align: center; }
+.admin-login-logo { height: 64px; margin-bottom: 1rem; }
+.admin-login-titulo { font-size: 1.3rem; color: var(--texto); margin-bottom: .3rem; }
+.admin-login-sub { font-size: .83rem; color: var(--cinza); margin-bottom: 1.5rem; }
+.btn-admin-entrar {
+  width: 100%; padding: .85rem;
+  background: linear-gradient(135deg, var(--choco-mid), var(--choco-claro));
+  color: var(--ouro-claro); font-weight: 900; font-size: 1rem;
+  border: none; border-radius: 50px; cursor: pointer;
+  font-family: inherit; margin-top: .5rem;
+  transition: opacity .2s;
+}
+.btn-admin-entrar:hover { opacity: .88; }
 
 .hidden { display: none !important; }
 
