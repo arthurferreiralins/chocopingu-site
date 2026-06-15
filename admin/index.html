@@ -318,10 +318,13 @@ tr:hover td{background:#FDFAF7}tr:last-child td{border-bottom:none}
     <span class="le">🐧🍫</span>
     <h1>ChocoPingu</h1>
     <p class="lsub">"Chocolate que diverte!" — Área Restrita</p>
-    <input type="password" id="si" placeholder="••••" maxlength="10"
+    <input type="email"    id="si-email" placeholder="Seu e-mail" autocomplete="username"
+           style="font-size:15px;letter-spacing:0;text-align:left;margin-bottom:12px"
+           onkeydown="if(event.key==='Enter')document.getElementById('si').focus()">
+    <input type="password" id="si" placeholder="Senha"
            onkeydown="if(event.key==='Enter')login()">
     <button class="lbtn" onclick="login()">Acessar Painel →</button>
-    <p class="lerr" id="le2">Senha incorreta. Tente novamente.</p>
+    <p class="lerr" id="le2">E-mail ou senha incorretos.</p>
   </div>
 </div>
 
@@ -1053,10 +1056,17 @@ function tv(){return db.vendas.reduce((s,v)=>s+(v.qtd*v.preco),0);}
 function tg(){return db.gastos.reduce((s,g)=>s+(g.qtd*g.preco),0);}
 
 // ── AUTH ──
-function login(){
-  const v=document.getElementById('si').value;
+const ADMIN_EMAIL='arthurferreiralins2017@gmail.com';
+const ADMIN_HASH='f649e03a9da2e85972381cb0dd788ef1df466c099a6c767988cb79a2a0af8f53';
+async function sha256(t){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(t));return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('');}
+
+async function login(){
+  const email=document.getElementById('si-email').value.trim();
+  const senha=document.getElementById('si').value;
   const b=document.getElementById('lbox');
-  if(v==='1903'){
+  const hash=await sha256(senha);
+  if(email===ADMIN_EMAIL && hash===ADMIN_HASH){
+    sessionStorage.setItem('cp_admin','1');
     document.getElementById('ls').style.display='none';
     document.getElementById('ap').style.display='block';
     init();
@@ -1067,10 +1077,19 @@ function login(){
   }
 }
 function logout(){
+  sessionStorage.removeItem('cp_admin');
   document.getElementById('ls').style.display='flex';
   document.getElementById('ap').style.display='none';
+  document.getElementById('si-email').value='';
   document.getElementById('si').value='';
   document.getElementById('le2').classList.remove('on');
+}
+// Mantém sessão ativa ao recarregar a página
+if(sessionStorage.getItem('cp_admin')==='1'){
+  document.getElementById('ls').style.display='none';
+  document.getElementById('ap').style.display='block';
+  window.addEventListener('DOMContentLoaded',()=>init(),{once:true});
+  if(document.readyState!=='loading') init();
 }
 
 // ── NAV ──

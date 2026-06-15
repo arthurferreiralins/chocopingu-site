@@ -989,7 +989,14 @@ h2 span { color: var(--ouro-escuro); }
   text-align: center;
   font-size: .85rem;
   color: rgba(255,255,255,.4);
+  position: relative;
 }
+.footer-admin-link {
+  position: absolute; bottom: 1.2rem; right: 1.5rem;
+  font-size: .75rem; color: rgba(255,255,255,.12);
+  text-decoration: none; transition: color .2s;
+}
+.footer-admin-link:hover { color: rgba(255,255,255,.45); }
 
 /* ===== COPA DO MUNDO 2026 ===== */
 .copa-section {
