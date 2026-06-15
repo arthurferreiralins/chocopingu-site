@@ -286,6 +286,7 @@ h2 span { color: var(--ouro-escuro); }
 .preview-center:hover { transform: translateY(-12px); }
 
 .preview-novo { position: relative; }
+.preview-novo img { height: 210px !important; }
 .preview-badge-novo {
   position: absolute; top: -10px; left: 50%; transform: translateX(-50%);
   background: linear-gradient(135deg, #e74c3c, #c0392b);
@@ -516,7 +517,17 @@ h2 span { color: var(--ouro-escuro); }
   left: 16px; right: auto;
 }
 .produto-card-novo { border-color: #e74c3c !important; }
-.produto-card-novo .produto-img-wrap { background: #fff5f5; }
+.produto-card-novo .produto-img-wrap {
+  background: linear-gradient(135deg, #3d1500 0%, #6b2800 100%);
+  height: 340px;
+}
+.produto-card-novo .produto-img-wrap img {
+  height: 100%;
+  width: auto;
+  object-fit: contain;
+  transform: scale(1.08);
+}
+.produto-card-novo:hover .produto-img-wrap img { transform: scale(1.15); }
 .tag-novo { background: rgba(231,76,60,.12); color: #c0392b; border-color: rgba(231,76,60,.25); }
 
 .produto-img-wrap {
