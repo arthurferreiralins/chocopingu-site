@@ -141,6 +141,12 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 .pcard-price0{font-size:13px;color:#ccc;font-weight:600}
 .pcard-marg{font-size:11px;background:var(--vdl);color:var(--vd);padding:4px 10px;border-radius:10px;font-weight:700}
 .pcard-marg0{background:#F5F5F5;color:#ccc}
+.pcard-price-edit{cursor:none;border-bottom:2px dashed var(--gold);padding-bottom:1px;transition:color .15s}
+.pcard-price-edit:hover{color:var(--gold)}
+.pcard-edit-hint{font-size:10px;color:var(--gold);margin-top:4px;opacity:.7}
+.inline-price-input{width:90px;font-size:18px;font-weight:800;color:var(--vd);border:2px solid var(--gold);border-radius:10px;padding:5px 10px;outline:none;background:#fff;cursor:text}
+.bedit{background:var(--az);color:#fff;box-shadow:0 2px 8px rgba(26,79,138,.2)}
+.bedit:hover{background:#0d3a6b;transform:translateY(-1px)}
 
 /* TABLES */
 .tbox{background:var(--card);border-radius:18px;padding:24px;box-shadow:var(--sh);margin-bottom:22px;overflow-x:auto}
@@ -969,15 +975,15 @@ const DEF={
   ],
   vendas:[],
   produtos:[
-    {id:1,nome:'Pirulitos',      emoji:'🍭',custo:0.55,venda:4.50, desc:'Chocolate ao leite e branco em espiral. Irresistível a cada giro!'},
-    {id:2,nome:'Boneguinhos',    emoji:'🐧',custo:1.48,venda:12.00,desc:'Bonequinhos fofos de chocolate ao leite e branco. Mais vendido!'},
-    {id:3,nome:'Barra Crocante', emoji:'🍫',custo:2.48,venda:10.00,desc:'Tablete com recheio crocante que estoura na boca. Puro prazer!'},
+    {id:1,nome:'Pirulitos',      emoji:'🍭',custo:0.55,venda:2.50,desc:'Chocolate ao leite e branco em espiral. Irresistível a cada giro!'},
+    {id:2,nome:'Boneguinhos',    emoji:'🐧',custo:1.48,venda:5.00,desc:'Bonequinhos fofos de chocolate ao leite e branco. Mais vendido!'},
+    {id:3,nome:'Barra Crocante', emoji:'🍫',custo:2.48,venda:6.00,desc:'Tablete com recheio crocante que estoura na boca. Puro prazer!'},
   ]
 };
-let db=JSON.parse(localStorage.getItem('cpdb_v8')||'null')||JSON.parse(JSON.stringify(DEF));
+let db=JSON.parse(localStorage.getItem('cpdb_v9')||'null')||JSON.parse(JSON.stringify(DEF));
 let nid={g:100,v:200,p:20};
 let ch={};
-function save(){localStorage.setItem('cpdb_v8',JSON.stringify(db));}
+function save(){localStorage.setItem('cpdb_v9',JSON.stringify(db));}
 function f(v){return 'R$ '+Number(v||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});}
 function fp(v){return Number(v||0).toLocaleString('pt-BR',{minimumFractionDigits:1,maximumFractionDigits:1})+'%';}
 function fd(s){return s?s.split('-').reverse().join('/'):'—';}
@@ -1043,12 +1049,42 @@ function renderCat(){
         <div class="pcard-name">${p.nome}</div>
         <div class="pcard-desc">${p.desc||'Produto ChocoPingu'}</div>
         <div class="pcard-bottom">
-          <span class="${p.venda>0?'pcard-price':'pcard-price0'}">${p.venda>0?f(p.venda):'Preço a definir'}</span>
-          <span class="${p.venda>0?'pcard-marg':'pcard-marg0'}">${p.venda>0?fp(m)+' margem':'—'}</span>
+          <div>
+            <span class="${p.venda>0?'pcard-price pcard-price-edit':'pcard-price0 pcard-price-edit'}"
+                  id="price-lbl-${p.id}"
+                  onclick="editPreco(${p.id})"
+                  title="Clique para editar o preço">
+              ${p.venda>0?f(p.venda):'Definir preço'}
+            </span>
+            <div class="pcard-edit-hint">✏️ clique para editar</div>
+          </div>
+          <span class="${p.venda>0?'pcard-marg':'pcard-marg0'}" id="marg-lbl-${p.id}">${p.venda>0?fp(m)+' margem':'—'}</span>
         </div>
       </div>
     </div>`;
   }).join('');
+}
+
+function editPreco(id){
+  const el=document.getElementById('price-lbl-'+id);
+  if(!el||el.tagName==='INPUT')return;
+  const p=db.produtos.find(x=>x.id===id);
+  const prev=p.venda;
+  el.outerHTML=`<input class="inline-price-input" id="price-inp-${id}"
+    type="number" value="${p.venda}" min="0" step="0.5"
+    onblur="savePreco(${id})" onkeydown="if(event.key==='Enter')this.blur();if(event.key==='Escape'){db.produtos.find(x=>x.id===${id}).venda=${prev};renderCat();}">`;
+  const inp=document.getElementById('price-inp-'+id);
+  if(inp){inp.focus();inp.select();}
+}
+
+function savePreco(id){
+  const inp=document.getElementById('price-inp-'+id);
+  if(!inp)return;
+  const p=db.produtos.find(x=>x.id===id);
+  p.venda=Math.max(0,parseFloat(inp.value)||0);
+  save();
+  renderCat();
+  if(document.getElementById('s-prod').classList.contains('on'))renderP();
 }
 
 // ── DASHBOARD ──
@@ -1214,18 +1250,46 @@ function renderP(){
   if(!db.produtos.length){tb.innerHTML=`<tr><td colspan="7"><div class="estate"><p>Nenhum produto cadastrado.</p></div></td></tr>`;return;}
   tb.innerHTML=db.produtos.map(p=>{
     const luc=p.venda-p.custo,m=p.venda>0?((luc/p.venda)*100):0;
-    const sem=p.custo===0&&p.venda===0;
-    const vale=sem?'<span style="color:#ccc;font-size:12px">Preencha os preços</span>'
-      :luc>0?'<span style="color:var(--vd);font-weight:700">✅ Vale a pena!</span>'
-             :'<span style="color:var(--vm);font-weight:700">❌ Prejuízo</span>';
-    return `<tr>
+    const vale=luc>0?'<span style="color:var(--vd);font-weight:700">✅ Vale a pena!</span>'
+                    :'<span style="color:var(--vm);font-weight:700">❌ Prejuízo</span>';
+    return `<tr id="prow-${p.id}">
       <td>${p.emoji} <strong>${p.nome}</strong></td>
       <td>${f(p.custo)}</td><td>${f(p.venda)}</td>
       <td class="${luc>0?'pos':'neg'}">${f(luc)}</td>
       <td>${fp(m)}</td><td>${vale}</td>
-      <td><button class="btn bdel" onclick="delP(${p.id})">Excluir</button></td>
+      <td style="display:flex;gap:6px">
+        <button class="btn bedit" onclick="editPRow(${p.id})">✏️ Editar</button>
+        <button class="btn bdel" onclick="delP(${p.id})">Excluir</button>
+      </td>
     </tr>`;
   }).join('');
+}
+
+function editPRow(id){
+  const p=db.produtos.find(x=>x.id===id);
+  const tr=document.getElementById('prow-'+id);
+  tr.innerHTML=`
+    <td>${p.emoji} <strong>${p.nome}</strong></td>
+    <td><input type="number" id="ep-c-${id}" value="${p.custo}" min="0" step="0.01"
+        style="width:80px;padding:7px 9px;border:2px solid var(--gold);border-radius:9px;font-size:13px;font-weight:700;outline:none"></td>
+    <td><input type="number" id="ep-v-${id}" value="${p.venda}" min="0" step="0.50"
+        style="width:80px;padding:7px 9px;border:2px solid var(--vd);border-radius:9px;font-size:15px;font-weight:800;color:var(--vd);outline:none"></td>
+    <td colspan="4" style="display:flex;gap:8px;align-items:center">
+      <button class="btn badd" onclick="savePRow(${id})">✅ Salvar</button>
+      <button class="btn bdel" onclick="renderP()">Cancelar</button>
+      <span style="font-size:11px;color:var(--txt2)">← altere custo e preço de venda</span>
+    </td>`;
+  document.getElementById('ep-v-'+id).focus();
+  document.getElementById('ep-v-'+id).select();
+}
+
+function savePRow(id){
+  const p=db.produtos.find(x=>x.id===id);
+  p.custo=Math.max(0,parseFloat(document.getElementById('ep-c-'+id).value)||0);
+  p.venda=Math.max(0,parseFloat(document.getElementById('ep-v-'+id).value)||0);
+  save();
+  renderP();
+  renderCat();
 }
 
 // ── ECONOMIA — dados reais coletados de Mercado Livre / Shopee / Amazon (2025) ──
