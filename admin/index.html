@@ -449,13 +449,8 @@ tr:hover td{background:#FDFAF7}tr:last-child td{border-bottom:none}
       <div class="tbox">
         <div class="thdr"><h3>Registrar Novo Gasto</h3></div>
         <div class="frow">
-          <div class="fg"><label>Categoria</label>
-            <select id="g-cat">
-              <option>🍫 Chocolate Base</option>
-              <option>🎉 Recheios</option>
-              <option>📦 Embalagem</option>
-              <option>💡 Outros</option>
-            </select></div>
+          <div class="fg"><label>Produto</label>
+            <select id="g-cat"></select></div>
           <div class="fg" style="flex:1;min-width:150px"><label>Item</label>
             <input type="text" id="g-item" placeholder="Ex: Chocolate ao Leite"></div>
           <div class="fg"><label>Unidade</label><input type="text" id="g-un" placeholder="kg, cx..."></div>
@@ -467,7 +462,7 @@ tr:hover td{background:#FDFAF7}tr:last-child td{border-bottom:none}
       <div class="tbox">
         <div class="thdr"><h3>Todos os Gastos</h3><span class="ttot neg" id="tot-g">Total: R$ 0,00</span></div>
         <table><thead><tr>
-          <th>Categoria</th><th>Item</th><th>Unid.</th><th>Qtd</th><th>Preço Unit.</th><th>Total</th><th></th>
+          <th>Produto</th><th>Item comprado</th><th>Unid.</th><th>Qtd</th><th>Preço Unit.</th><th>Total</th><th></th>
         </tr></thead><tbody id="tb-g"></tbody></table>
       </div>
     </div>
@@ -1350,7 +1345,7 @@ function buildGastosCharts(){
     document.getElementById('d-gpie').innerHTML='<div class="chempty"><span class="ce">📊</span><p>Nenhum gasto registrado ainda</p></div>';
     return;
   }
-  // agrupar por categoria
+  // agrupar por produto
   const tot={},cnt={};
   db.gastos.forEach(g=>{
     const k=g.cat;
@@ -1396,6 +1391,13 @@ async function delG(id){
   renderG();
 }
 function renderG(){
+  // preencher select de produtos dinamicamente
+  const sel=document.getElementById('g-cat');
+  if(sel){
+    sel.innerHTML=db.produtos.map(p=>`<option value="${p.emoji} ${p.nome}">${p.emoji} ${p.nome}</option>`).join('')
+      +'<option value="📦 Geral">📦 Geral / Todos os produtos</option>';
+  }
+
   buildGastosCharts();
   const total=tg();
   document.getElementById('tot-g').textContent='Total: '+f(total);
@@ -1404,43 +1406,56 @@ function renderG(){
   document.getElementById('gr-total').textContent=f(total);
   document.getElementById('gr-itens').textContent=db.gastos.length+(db.gastos.length===1?' item':' itens');
 
-  // categoria que mais gastou
-  const catTot={},catQtd={};
+  // produto que mais gastou
+  const prodTot={},prodQtd={};
   db.gastos.forEach(g=>{
-    catTot[g.cat]=(catTot[g.cat]||0)+(g.qtd*g.preco);
-    catQtd[g.cat]=(catQtd[g.cat]||0)+1;
+    prodTot[g.cat]=(prodTot[g.cat]||0)+(g.qtd*g.preco);
+    prodQtd[g.cat]=(prodQtd[g.cat]||0)+1;
   });
-  const topCat=Object.entries(catTot).sort((a,b)=>b[1]-a[1])[0];
-  document.getElementById('gr-top').textContent=topCat?topCat[0]+' — '+f(topCat[1]):'—';
+  const topProd=Object.entries(prodTot).sort((a,b)=>b[1]-a[1])[0];
+  document.getElementById('gr-top').textContent=topProd?topProd[0]+' — '+f(topProd[1]):'—';
 
-  // item mais caro (por total)
+  // item mais caro
   const topItem=db.gastos.slice().sort((a,b)=>(b.qtd*b.preco)-(a.qtd*a.preco))[0];
-  document.getElementById('gr-caro').textContent=topItem?topItem.item+' — '+f(topItem.qtd*topItem.preco):'—';
+  document.getElementById('gr-caro').textContent=topItem?topItem.item+' ('+f(topItem.qtd*topItem.preco)+')':'—';
 
-  // ── resumo por categoria ──
+  // ── resumo por produto ──
   const catBox=document.getElementById('g-cat-resumo');
   document.getElementById('gr-total2').textContent='Total: '+f(total);
-  if(Object.keys(catTot).length){
+  if(Object.keys(prodTot).length){
     catBox.style.display='block';
-    document.getElementById('g-cat-lista').innerHTML=
-      Object.entries(catTot).sort((a,b)=>b[1]-a[1]).map(([cat,val])=>{
-        const pct=total>0?(val/total*100).toFixed(0):0;
-        const qtd=catQtd[cat];
-        return `<div style="padding:12px 0;border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:14px">
-          <div style="font-size:16px;width:32px">${cat.split(' ')[0]}</div>
+    // cores por produto (mesma ordem que catálogo)
+    const PCOLS=['#F48FB1','#90CAF9','#A5D6A7','#FFCC80','#CE93D8'];
+    const prodOrder=[...db.produtos.map(p=>`${p.emoji} ${p.nome}`),'📦 Geral'];
+    const sorted=Object.entries(prodTot).sort((a,b)=>{
+      const ia=prodOrder.indexOf(a[0]),ib=prodOrder.indexOf(b[0]);
+      return (ia<0?99:ia)-(ib<0?99:ib);
+    });
+    document.getElementById('g-cat-lista').innerHTML=sorted.map(([prod,val],i)=>{
+      const pct=total>0?Math.round(val/total*100):0;
+      const qtd=prodQtd[prod];
+      const gastosProd=db.gastos.filter(g=>g.cat===prod);
+      const totalQtdUn=gastosProd.reduce((s,g)=>s+Number(g.qtd||0),0);
+      return `<div style="padding:14px 0;border-bottom:1px solid var(--bd)">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px">
+          <span style="font-size:22px">${prod.split(' ')[0]}</span>
           <div style="flex:1">
-            <div style="font-size:13px;font-weight:700;color:var(--br)">${cat.split(' ').slice(1).join(' ')||cat}</div>
-            <div style="font-size:11px;color:var(--txt2);margin-top:3px">${qtd} ${qtd===1?'compra':'compras'} registrada${qtd===1?'':'s'}</div>
-            <div style="margin-top:6px;height:8px;background:#f0f0f0;border-radius:4px;overflow:hidden">
-              <div style="height:100%;width:${pct}%;background:var(--vm);border-radius:4px;transition:width .5s"></div>
-            </div>
+            <div style="font-size:14px;font-weight:800;color:var(--br)">${prod.split(' ').slice(1).join(' ')||prod}</div>
+            <div style="font-size:11px;color:var(--txt2)">${qtd} ${qtd===1?'compra':'compras'} · ${totalQtdUn} unid./kg no total</div>
           </div>
           <div style="text-align:right">
-            <div style="font-size:16px;font-weight:800;color:var(--vm)">${f(val)}</div>
+            <div style="font-size:18px;font-weight:800;color:var(--vm)">${f(val)}</div>
             <div style="font-size:11px;color:var(--txt2)">${pct}% do total</div>
           </div>
-        </div>`;
-      }).join('');
+        </div>
+        <div style="height:10px;background:#f0f0f0;border-radius:5px;overflow:hidden">
+          <div style="height:100%;width:${pct}%;background:${PCOLS[i%PCOLS.length]};border-radius:5px;transition:width .6s ease"></div>
+        </div>
+        <div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:6px">
+          ${gastosProd.map(g=>`<span style="background:#F5F0EB;color:var(--br);padding:3px 10px;border-radius:10px;font-size:11px;font-weight:600">${g.item}: ${f(g.qtd*g.preco)}</span>`).join('')}
+        </div>
+      </div>`;
+    }).join('');
   } else {
     catBox.style.display='none';
   }
@@ -1448,7 +1463,7 @@ function renderG(){
   // ── tabela ──
   const tb=document.getElementById('tb-g');
   if(!db.gastos.length){
-    tb.innerHTML=`<tr><td colspan="7"><div class="estate"><p>Nenhum gasto registrado ainda.<br>Use o formulário abaixo para adicionar.</p></div></td></tr>`;
+    tb.innerHTML=`<tr><td colspan="7"><div class="estate"><p>Nenhum gasto registrado ainda.<br>Escolha o produto e registre o que comprou.</p></div></td></tr>`;
     return;
   }
   tb.innerHTML=db.gastos.map(g=>`<tr>
