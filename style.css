@@ -1141,32 +1141,30 @@ h2 span { color: var(--ouro-escuro); }
   border-color: var(--ouro);
   box-shadow: 0 4px 16px rgba(200,148,26,.35);
 }
-.catalogo-admin-bar {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 2rem;
-}
-.btn-area-restrita {
+.btn-area-restrita-nav {
   display: inline-flex;
   align-items: center;
-  gap: .5rem;
-  padding: .7rem 2rem;
-  background: var(--choco-mid);
+  gap: .45rem;
+  padding: .5rem 1.1rem;
+  background: rgba(42,16,0,.7);
   color: var(--ouro-claro);
-  border: 2px solid var(--choco-claro);
+  border: 1.5px solid var(--choco-claro);
   border-radius: 50px;
   font-family: 'Nunito', sans-serif;
   font-weight: 800;
-  font-size: .95rem;
+  font-size: .82rem;
   cursor: pointer;
-  letter-spacing: .3px;
+  letter-spacing: .2px;
   transition: all .2s;
+  white-space: nowrap;
 }
-.btn-area-restrita:hover {
+.btn-area-restrita-nav:hover {
   background: var(--choco);
   border-color: var(--ouro);
-  color: var(--ouro-claro);
-  box-shadow: 0 4px 16px rgba(13,4,0,.3);
+  box-shadow: 0 4px 14px rgba(13,4,0,.35);
+}
+.navbar.scrolled .btn-area-restrita-nav {
+  background: rgba(42,16,0,.9);
 }
 
 /* ===== MODAL ADMIN LOGIN ===== */
