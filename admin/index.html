@@ -33,8 +33,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 .lcard .le{font-size:76px;display:block;margin-bottom:8px}
 .lcard h1{font-size:32px;font-weight:800;color:var(--br);letter-spacing:-.5px}
 .lcard .lsub{color:#bbb;font-size:13px;margin:4px 0 32px;font-style:italic}
-.lcard input{width:100%;padding:14px 18px;border:2px solid var(--bd);border-radius:14px;font-size:15px;text-align:left;letter-spacing:0;outline:none;transition:all .2s;color:var(--br);margin-bottom:12px;font-family:inherit}
-#si{margin-bottom:0}
+.lcard input{width:100%;padding:16px 20px;border:2px solid var(--bd);border-radius:14px;font-size:30px;text-align:center;letter-spacing:16px;outline:none;transition:all .2s;color:var(--br)}
 .lcard input:focus{border-color:var(--gold);box-shadow:0 0 0 4px rgba(196,131,26,.12)}
 .lcard .lbtn{width:100%;padding:16px;margin-top:14px;background:linear-gradient(135deg,var(--br),var(--gold));color:#fff;border:none;border-radius:14px;font-size:16px;font-weight:700;cursor:none;transition:all .2s;letter-spacing:.3px}
 .lcard .lbtn:hover{opacity:.9;transform:translateY(-1px)}
@@ -319,13 +318,10 @@ tr:hover td{background:#FDFAF7}tr:last-child td{border-bottom:none}
     <span class="le">🐧🍫</span>
     <h1>ChocoPingu</h1>
     <p class="lsub">"Chocolate que diverte!" — Área Restrita</p>
-    <input type="email"    id="si-email" placeholder="Seu e-mail" autocomplete="username"
-           style="font-size:15px;letter-spacing:0;text-align:left;margin-bottom:12px"
-           onkeydown="if(event.key==='Enter')document.getElementById('si').focus()">
-    <input type="password" id="si" placeholder="Senha"
+    <input type="password" id="si" placeholder="••••" maxlength="10"
            onkeydown="if(event.key==='Enter')login()">
     <button class="lbtn" onclick="login()">Acessar Painel →</button>
-    <p class="lerr" id="le2">E-mail ou senha incorretos.</p>
+    <p class="lerr" id="le2">Senha incorreta. Tente novamente.</p>
   </div>
 </div>
 
@@ -424,8 +420,8 @@ tr:hover td{background:#FDFAF7}tr:last-child td{border-bottom:none}
       <div class="crow" style="margin-bottom:22px" id="g-resumo-cards">
         <div class="card cr"><span class="cic">💸</span><span class="clb">Total já gastei</span><span class="cval neg" id="gr-total">R$ 0,00</span></div>
         <div class="card ca"><span class="cic">📦</span><span class="clb">Itens registrados</span><span class="cval" id="gr-itens">0 itens</span></div>
-        <div class="card cg"><span class="cic">🏆</span><span class="clb">Categoria que mais gastei</span><span class="cval" id="gr-top" style="font-size:13px">—</span></div>
-        <div class="card cv"><span class="cic">💡</span><span class="clb">Item mais caro</span><span class="cval" id="gr-caro" style="font-size:13px">—</span></div>
+        <div class="card cg"><span class="cic">🏆</span><span class="clb">Item que mais gastei</span><span class="cval" id="gr-top" style="font-size:13px">—</span></div>
+        <div class="card cv"><span class="cic">📦</span><span class="clb">Total de unidades compradas</span><span class="cval" id="gr-caro" style="font-size:13px">—</span></div>
       </div>
 
       <!-- RESUMO POR CATEGORIA -->
@@ -449,8 +445,6 @@ tr:hover td{background:#FDFAF7}tr:last-child td{border-bottom:none}
       <div class="tbox">
         <div class="thdr"><h3>Registrar Novo Gasto</h3></div>
         <div class="frow">
-          <div class="fg"><label>Produto</label>
-            <select id="g-cat"></select></div>
           <div class="fg" style="flex:1;min-width:150px"><label>Item</label>
             <input type="text" id="g-item" placeholder="Ex: Chocolate ao Leite"></div>
           <div class="fg"><label>Unidade</label><input type="text" id="g-un" placeholder="kg, cx..."></div>
@@ -462,7 +456,7 @@ tr:hover td{background:#FDFAF7}tr:last-child td{border-bottom:none}
       <div class="tbox">
         <div class="thdr"><h3>Todos os Gastos</h3><span class="ttot neg" id="tot-g">Total: R$ 0,00</span></div>
         <table><thead><tr>
-          <th>Produto</th><th>Item comprado</th><th>Unid.</th><th>Qtd</th><th>Preço Unit.</th><th>Total</th><th></th>
+          <th>Item comprado</th><th>Unid.</th><th>Qtd</th><th>Preço Unit.</th><th>Total</th><th></th>
         </tr></thead><tbody id="tb-g"></tbody></table>
       </div>
     </div>
@@ -1052,17 +1046,10 @@ function tv(){return db.vendas.reduce((s,v)=>s+(v.qtd*v.preco),0);}
 function tg(){return db.gastos.reduce((s,g)=>s+(g.qtd*g.preco),0);}
 
 // ── AUTH ──
-const ADMIN_EMAIL='arthurferreiralins2017@gmail.com';
-const ADMIN_HASH='f649e03a9da2e85972381cb0dd788ef1df466c099a6c767988cb79a2a0af8f53';
-async function sha256(t){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(t));return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('');}
-
-async function login(){
-  const email=document.getElementById('si-email').value.trim();
-  const senha=document.getElementById('si').value;
+function login(){
+  const v=document.getElementById('si').value;
   const b=document.getElementById('lbox');
-  const hash=await sha256(senha);
-  if(email===ADMIN_EMAIL && hash===ADMIN_HASH){
-    sessionStorage.setItem('cp_admin','1');
+  if(v==='1903'){
     document.getElementById('ls').style.display='none';
     document.getElementById('ap').style.display='block';
     init();
@@ -1073,19 +1060,10 @@ async function login(){
   }
 }
 function logout(){
-  sessionStorage.removeItem('cp_admin');
   document.getElementById('ls').style.display='flex';
   document.getElementById('ap').style.display='none';
-  document.getElementById('si-email').value='';
   document.getElementById('si').value='';
   document.getElementById('le2').classList.remove('on');
-}
-// Mantém sessão ativa ao recarregar a página
-if(sessionStorage.getItem('cp_admin')==='1'){
-  document.getElementById('ls').style.display='none';
-  document.getElementById('ap').style.display='block';
-  window.addEventListener('DOMContentLoaded',()=>init(),{once:true});
-  if(document.readyState!=='loading') init();
 }
 
 // ── NAV ──
@@ -1345,13 +1323,9 @@ function buildGastosCharts(){
     document.getElementById('d-gpie').innerHTML='<div class="chempty"><span class="ce">📊</span><p>Nenhum gasto registrado ainda</p></div>';
     return;
   }
-  // agrupar por produto
-  const tot={},cnt={};
-  db.gastos.forEach(g=>{
-    const k=g.cat;
-    tot[k]=(tot[k]||0)+(g.qtd*g.preco);
-    cnt[k]=(cnt[k]||0)+1;
-  });
+  // agrupar por item
+  const tot={};
+  db.gastos.forEach(g=>{tot[g.item]=(tot[g.item]||0)+(g.qtd*g.preco);});
   const labels=Object.keys(tot).sort((a,b)=>tot[b]-tot[a]);
   const vals=labels.map(k=>+tot[k].toFixed(2));
   const COLS=['#F48FB1','#90CAF9','#A5D6A7','#FFCC80','#CE93D8','#80DEEA'];
@@ -1373,12 +1347,12 @@ function buildGastosCharts(){
 
 // ── GASTOS ──
 async function addG(){
-  const cat=document.getElementById('g-cat').value,item=document.getElementById('g-item').value.trim();
+  const item=document.getElementById('g-item').value.trim();
   const un=document.getElementById('g-un').value.trim();
   const qtd=parseFloat(document.getElementById('g-qtd').value)||0;
   const preco=parseFloat(document.getElementById('g-preco').value)||0;
   if(!item){alert('Escreva o nome do item!');return;}
-  const g={id:nid.g++,cat,item,un,qtd,preco};
+  const g={id:nid.g++,item,un,qtd,preco};
   db.gastos.push(g);save();
   await fbPutGasto(g);
   ['g-item','g-un','g-qtd','g-preco'].forEach(id=>document.getElementById(id).value='');
@@ -1391,68 +1365,39 @@ async function delG(id){
   renderG();
 }
 function renderG(){
-  // preencher select de produtos dinamicamente
-  const sel=document.getElementById('g-cat');
-  if(sel){
-    sel.innerHTML=db.produtos.map(p=>`<option value="${p.emoji} ${p.nome}">${p.emoji} ${p.nome}</option>`).join('')
-      +'<option value="📦 Geral">📦 Geral / Todos os produtos</option>';
-  }
-
   buildGastosCharts();
   const total=tg();
   document.getElementById('tot-g').textContent='Total: '+f(total);
 
-  // ── resumo cards ──
+  // resumo cards
   document.getElementById('gr-total').textContent=f(total);
   document.getElementById('gr-itens').textContent=db.gastos.length+(db.gastos.length===1?' item':' itens');
-
-  // produto que mais gastou
-  const prodTot={},prodQtd={};
-  db.gastos.forEach(g=>{
-    prodTot[g.cat]=(prodTot[g.cat]||0)+(g.qtd*g.preco);
-    prodQtd[g.cat]=(prodQtd[g.cat]||0)+1;
-  });
-  const topProd=Object.entries(prodTot).sort((a,b)=>b[1]-a[1])[0];
-  document.getElementById('gr-top').textContent=topProd?topProd[0]+' — '+f(topProd[1]):'—';
-
-  // item mais caro
   const topItem=db.gastos.slice().sort((a,b)=>(b.qtd*b.preco)-(a.qtd*a.preco))[0];
-  document.getElementById('gr-caro').textContent=topItem?topItem.item+' ('+f(topItem.qtd*topItem.preco)+')':'—';
+  document.getElementById('gr-top').textContent=topItem?topItem.item+' — '+f(topItem.qtd*topItem.preco):'—';
+  const totalQtd=db.gastos.reduce((s,g)=>s+Number(g.qtd||0),0);
+  document.getElementById('gr-caro').textContent=totalQtd>0?totalQtd+' unid./kg comprados':'—';
 
-  // ── resumo por produto ──
+  // resumo por item
   const catBox=document.getElementById('g-cat-resumo');
   document.getElementById('gr-total2').textContent='Total: '+f(total);
-  if(Object.keys(prodTot).length){
+  if(db.gastos.length){
     catBox.style.display='block';
-    // cores por produto (mesma ordem que catálogo)
-    const PCOLS=['#F48FB1','#90CAF9','#A5D6A7','#FFCC80','#CE93D8'];
-    const prodOrder=[...db.produtos.map(p=>`${p.emoji} ${p.nome}`),'📦 Geral'];
-    const sorted=Object.entries(prodTot).sort((a,b)=>{
-      const ia=prodOrder.indexOf(a[0]),ib=prodOrder.indexOf(b[0]);
-      return (ia<0?99:ia)-(ib<0?99:ib);
-    });
-    document.getElementById('g-cat-lista').innerHTML=sorted.map(([prod,val],i)=>{
+    const COLS=['#F48FB1','#90CAF9','#A5D6A7','#FFCC80','#CE93D8','#80DEEA'];
+    const sorted=db.gastos.slice().sort((a,b)=>(b.qtd*b.preco)-(a.qtd*a.preco));
+    document.getElementById('g-cat-lista').innerHTML=sorted.map((g,i)=>{
+      const val=g.qtd*g.preco;
       const pct=total>0?Math.round(val/total*100):0;
-      const qtd=prodQtd[prod];
-      const gastosProd=db.gastos.filter(g=>g.cat===prod);
-      const totalQtdUn=gastosProd.reduce((s,g)=>s+Number(g.qtd||0),0);
-      return `<div style="padding:14px 0;border-bottom:1px solid var(--bd)">
-        <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px">
-          <span style="font-size:22px">${prod.split(' ')[0]}</span>
-          <div style="flex:1">
-            <div style="font-size:14px;font-weight:800;color:var(--br)">${prod.split(' ').slice(1).join(' ')||prod}</div>
-            <div style="font-size:11px;color:var(--txt2)">${qtd} ${qtd===1?'compra':'compras'} · ${totalQtdUn} unid./kg no total</div>
-          </div>
-          <div style="text-align:right">
-            <div style="font-size:18px;font-weight:800;color:var(--vm)">${f(val)}</div>
-            <div style="font-size:11px;color:var(--txt2)">${pct}% do total</div>
+      return `<div style="display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--bd)">
+        <div style="flex:1">
+          <div style="font-size:13px;font-weight:700;color:var(--br)">${g.item}</div>
+          <div style="font-size:11px;color:var(--txt2);margin-top:2px">${g.qtd} ${g.un||'un'} × ${f(g.preco)}</div>
+          <div style="margin-top:6px;height:7px;background:#f0f0f0;border-radius:4px;overflow:hidden">
+            <div style="height:100%;width:${pct}%;background:${COLS[i%COLS.length]};border-radius:4px;transition:width .5s"></div>
           </div>
         </div>
-        <div style="height:10px;background:#f0f0f0;border-radius:5px;overflow:hidden">
-          <div style="height:100%;width:${pct}%;background:${PCOLS[i%PCOLS.length]};border-radius:5px;transition:width .6s ease"></div>
-        </div>
-        <div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:6px">
-          ${gastosProd.map(g=>`<span style="background:#F5F0EB;color:var(--br);padding:3px 10px;border-radius:10px;font-size:11px;font-weight:600">${g.item}: ${f(g.qtd*g.preco)}</span>`).join('')}
+        <div style="text-align:right;min-width:80px">
+          <div style="font-size:15px;font-weight:800;color:var(--vm)">${f(val)}</div>
+          <div style="font-size:10px;color:var(--txt2)">${pct}% do total</div>
         </div>
       </div>`;
     }).join('');
@@ -1460,14 +1405,14 @@ function renderG(){
     catBox.style.display='none';
   }
 
-  // ── tabela ──
+  // tabela
   const tb=document.getElementById('tb-g');
   if(!db.gastos.length){
-    tb.innerHTML=`<tr><td colspan="7"><div class="estate"><p>Nenhum gasto registrado ainda.<br>Escolha o produto e registre o que comprou.</p></div></td></tr>`;
+    tb.innerHTML=`<tr><td colspan="6"><div class="estate"><p>Nenhum gasto registrado ainda.<br>Use o formulário abaixo para adicionar.</p></div></td></tr>`;
     return;
   }
   tb.innerHTML=db.gastos.map(g=>`<tr>
-    <td>${g.cat}</td><td><strong>${g.item}</strong></td><td>${g.un||'—'}</td>
+    <td><strong>${g.item}</strong></td><td>${g.un||'—'}</td>
     <td>${g.qtd}</td><td>${f(g.preco)}</td><td class="neg">${f(g.qtd*g.preco)}</td>
     <td><button class="btn bdel" onclick="delG(${g.id})">Excluir</button></td>
   </tr>`).join('');
