@@ -198,6 +198,18 @@ tr:hover td{background:#FDFAF7}tr:last-child td{border-bottom:none}
 .dic-card strong{font-size:13px;color:var(--br);display:block;margin-bottom:4px}
 .dic-card p{font-size:12px;color:var(--txt2);line-height:1.6}
 
+/* FIREBASE SETUP BANNER */
+.fb-banner{display:flex;align-items:center;gap:12px;padding:14px 20px;border-radius:14px;margin-bottom:18px;font-size:13px}
+.fb-off{background:#FFF8E1;border:1.5px solid #FFD54F}
+.fb-on{background:#E8F5E9;border:1.5px solid #A5D6A7}
+.fb-banner .fbi{font-size:20px}
+.fb-banner .fbt{font-weight:700;color:var(--br)}
+.fb-banner .fbs{font-size:11px;color:var(--txt2);margin-top:2px}
+.fb-input{flex:1;padding:9px 13px;border:1.5px solid var(--gold);border-radius:10px;font-size:12px;outline:none;background:#fff;cursor:text;min-width:0}
+.fb-input:focus{border-color:var(--br);box-shadow:0 0 0 3px rgba(196,131,26,.1)}
+.fb-btn{padding:9px 16px;background:var(--gold);color:#fff;border:none;border-radius:10px;font-size:12px;font-weight:700;cursor:none;white-space:nowrap}
+.fb-btn:hover{opacity:.9}
+
 /* LOJAS */
 .lojas-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:4px}
 .loja-card{background:var(--lc,#F9F9F9);border-radius:18px;padding:20px;border-top:4px solid var(--lb,#ccc);transition:transform .2s,box-shadow .2s}
@@ -401,6 +413,21 @@ tr:hover td{background:#FDFAF7}tr:last-child td{border-bottom:none}
     <!-- ── GASTOS ── -->
     <div id="s-gast" class="sec">
       <div class="ptitle">💸 Controle de Gastos</div>
+      <!-- FIREBASE SETUP -->
+      <div id="fb-banner-area"></div>
+
+      <!-- GRÁFICO DE GASTOS -->
+      <div class="chgrid" style="margin-bottom:22px">
+        <div class="chbox">
+          <h3>Total gasto por categoria (R$)</h3>
+          <div id="d-gbar"><canvas id="ch-gbar"></canvas></div>
+        </div>
+        <div class="chbox">
+          <h3>Distribuição dos gastos (%)</h3>
+          <div id="d-gpie"><canvas id="ch-gpie"></canvas></div>
+        </div>
+      </div>
+
       <div class="tbox">
         <div class="thdr"><h3>Registrar Novo Gasto</h3></div>
         <div class="frow">
@@ -966,13 +993,7 @@ document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;c1.style.lef
 
 // ── DADOS ──
 const DEF={
-  gastos:[
-    {id:101,cat:'🍫 Chocolate Base',item:'Chocolate ao Leite (1kg)',  un:'kg', qtd:1,   preco:81},
-    {id:102,cat:'🎉 Recheios',      item:'Recheio Crocante (500g)',   un:'g',  qtd:500, preco:0.04},
-    {id:103,cat:'📦 Embalagem',     item:'Embalagens Pirulito (kit 100)',un:'kit',qtd:1, preco:10},
-    {id:104,cat:'📦 Embalagem',     item:'Embalagens Bonequinho (kit 10)',un:'kit',qtd:1,preco:10},
-    {id:105,cat:'📦 Embalagem',     item:'Embalagens Barra (kit 10)', un:'kit',qtd:1,   preco:3.50},
-  ],
+  gastos:[],
   vendas:[],
   produtos:[
     {id:1,nome:'Pirulitos',      emoji:'🍭',custo:0.55,venda:2.50,desc:'Chocolate ao leite e branco em espiral. Irresistível a cada giro!'},
@@ -1047,7 +1068,7 @@ function go(btn,name){
   if(name==='cat')  renderCat();
   if(name==='dash') dashUpdate();
   if(name==='graf') renderGraf();
-  if(name==='gast') renderG();
+  if(name==='gast'){renderFbBanner();fbSync().then(()=>renderG());}
   if(name==='prod') renderP();
   if(name==='econ'){renderEcon();calcCompra();}
 }
@@ -1236,22 +1257,118 @@ function buildGastoCat(){
   });
 }
 
+// ── FIREBASE SYNC ──
+function fbUrl(){return(localStorage.getItem('chocopingu_firebase')||'').replace(/\/+$/,'');}
+function fbSave(url){localStorage.setItem('chocopingu_firebase',url.trim().replace(/\/+$/,''));renderFbBanner();}
+function fbClear(){localStorage.removeItem('chocopingu_firebase');renderFbBanner();}
+
+async function fbPutGasto(g){
+  const u=fbUrl();if(!u)return;
+  try{await fetch(`${u}/gastos/${g.id}.json`,{method:'PUT',body:JSON.stringify(g),headers:{'Content-Type':'application/json'}});}
+  catch(e){console.warn('Firebase write error',e);}
+}
+async function fbDelGasto(id){
+  const u=fbUrl();if(!u)return;
+  try{await fetch(`${u}/gastos/${id}.json`,{method:'DELETE'});}catch(e){}
+}
+async function fbSync(){
+  const u=fbUrl();if(!u)return;
+  try{
+    const r=await fetch(`${u}/gastos.json`);
+    const data=await r.json();
+    if(data&&typeof data==='object'){
+      db.gastos=Object.values(data).filter(Boolean).sort((a,b)=>a.id-b.id);
+      save();
+    }
+  }catch(e){console.warn('Firebase sync error',e);}
+}
+
+function renderFbBanner(){
+  const el=document.getElementById('fb-banner-area');if(!el)return;
+  const u=fbUrl();
+  if(u){
+    el.innerHTML=`<div class="fb-banner fb-on">
+      <span class="fbi">🔥</span>
+      <div><div class="fbt">✅ Firebase conectado — gastos sincronizados para todos!</div>
+      <div class="fbs">${u}</div></div>
+      <button class="fb-btn" style="background:var(--vm)" onclick="fbClear()">Desconectar</button>
+    </div>`;
+  } else {
+    el.innerHTML=`<div class="fb-banner fb-off">
+      <span class="fbi">🔥</span>
+      <div style="flex:1">
+        <div class="fbt">Sincronize os gastos entre todos os dispositivos com Firebase</div>
+        <div class="fbs">Crie um projeto grátis em <strong>console.firebase.google.com</strong> → Realtime Database → copie a URL</div>
+        <div style="display:flex;gap:8px;margin-top:10px">
+          <input class="fb-input" id="fb-url-in" type="text" placeholder="https://seu-projeto.firebaseio.com">
+          <button class="fb-btn" onclick="fbSave(document.getElementById('fb-url-in').value)">Salvar</button>
+        </div>
+      </div>
+    </div>`;
+  }
+}
+
+// ── GRÁFICO DE GASTOS ──
+function buildGastosCharts(){
+  dc('gbar');dc('gpie');
+  if(!db.gastos.length){
+    document.getElementById('d-gbar').innerHTML='<div class="chempty"><span class="ce">💸</span><p>Adicione seus primeiros gastos abaixo para ver o gráfico</p></div>';
+    document.getElementById('d-gpie').innerHTML='<div class="chempty"><span class="ce">📊</span><p>Nenhum gasto registrado ainda</p></div>';
+    return;
+  }
+  // agrupar por categoria
+  const tot={},cnt={};
+  db.gastos.forEach(g=>{
+    const k=g.cat;
+    tot[k]=(tot[k]||0)+(g.qtd*g.preco);
+    cnt[k]=(cnt[k]||0)+1;
+  });
+  const labels=Object.keys(tot).sort((a,b)=>tot[b]-tot[a]);
+  const vals=labels.map(k=>+tot[k].toFixed(2));
+  const COLS=['#F48FB1','#90CAF9','#A5D6A7','#FFCC80','#CE93D8','#80DEEA'];
+
+  setC('d-gbar','ch-gbar');
+  ch.gbar=new Chart(document.getElementById('ch-gbar'),{
+    type:'bar',
+    data:{labels,datasets:[{data:vals,backgroundColor:COLS.slice(0,labels.length),borderRadius:10,borderWidth:0}]},
+    options:{indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{ticks:{callback:v=>'R$'+v,font:{size:10}},grid:{color:'#f5f0eb'}},y:{ticks:{font:{size:10}}}}}
+  });
+
+  setC('d-gpie','ch-gpie');
+  ch.gpie=new Chart(document.getElementById('ch-gpie'),{
+    type:'doughnut',
+    data:{labels,datasets:[{data:vals,backgroundColor:COLS.slice(0,labels.length),borderWidth:2}]},
+    options:{plugins:{legend:{display:true,position:'bottom',labels:{font:{size:10},padding:10}}},cutout:'55%'}
+  });
+}
+
 // ── GASTOS ──
-function addG(){
+async function addG(){
   const cat=document.getElementById('g-cat').value,item=document.getElementById('g-item').value.trim();
   const un=document.getElementById('g-un').value.trim();
   const qtd=parseFloat(document.getElementById('g-qtd').value)||0;
   const preco=parseFloat(document.getElementById('g-preco').value)||0;
   if(!item){alert('Escreva o nome do item!');return;}
-  db.gastos.push({id:nid.g++,cat,item,un,qtd,preco});save();
+  const g={id:nid.g++,cat,item,un,qtd,preco};
+  db.gastos.push(g);save();
+  await fbPutGasto(g);
   ['g-item','g-un','g-qtd','g-preco'].forEach(id=>document.getElementById(id).value='');
   renderG();
 }
-function delG(id){if(!confirm('Apagar este gasto?'))return;db.gastos=db.gastos.filter(g=>g.id!==id);save();renderG();}
+async function delG(id){
+  if(!confirm('Apagar este gasto?'))return;
+  db.gastos=db.gastos.filter(g=>g.id!==id);save();
+  await fbDelGasto(id);
+  renderG();
+}
 function renderG(){
+  buildGastosCharts();
   document.getElementById('tot-g').textContent='Total: '+f(tg());
   const tb=document.getElementById('tb-g');
-  if(!db.gastos.length){tb.innerHTML=`<tr><td colspan="7"><div class="estate"><p>Nenhum gasto registrado ainda.<br>Use o formulário acima para adicionar.</p></div></td></tr>`;return;}
+  if(!db.gastos.length){
+    tb.innerHTML=`<tr><td colspan="7"><div class="estate"><p>Nenhum gasto registrado ainda.<br>Use o formulário abaixo para adicionar.</p></div></td></tr>`;
+    return;
+  }
   tb.innerHTML=db.gastos.map(g=>`<tr>
     <td>${g.cat}</td><td><strong>${g.item}</strong></td><td>${g.un||'—'}</td>
     <td>${g.qtd}</td><td>${f(g.preco)}</td><td class="neg">${f(g.qtd*g.preco)}</td>
