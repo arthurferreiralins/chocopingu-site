@@ -1,0 +1,1516 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🐧 ChocoPingu — Painel</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+:root{
+  --br:#1A0A00;--br2:#3E1C00;--br3:#6B3A2A;
+  --gold:#C4831A;--goldl:#F0A830;
+  --bg:#F4EFE9;--card:#FFFFFF;
+  --vd:#1B6B35;--vdl:#E6F4EC;
+  --vm:#A93226;--vml:#FDECEA;
+  --az:#1A4F8A;--azl:#E8F0FB;
+  --bd:#E2D9CF;--txt:#1A1A1A;--txt2:#7A7068;
+  --sh:0 2px 18px rgba(26,10,0,.09);
+  --sh2:0 8px 32px rgba(26,10,0,.14);
+  --hh:64px;--nh:52px
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--txt);cursor:none;overflow-x:hidden}
+
+/* CURSOR */
+#cb1,#cb2{position:fixed;border-radius:50%;pointer-events:none;z-index:99999;transform:translate(-50%,-50%);transition:width .15s,height .15s}
+#cb1{width:10px;height:10px;background:var(--gold)}
+#cb2{width:30px;height:30px;border:2px solid var(--gold);opacity:.35}
+
+/* LOGIN */
+#ls{position:fixed;inset:0;background:linear-gradient(145deg,#1A0A00 0%,#3E1C00 50%,#7B3F10 100%);display:flex;align-items:center;justify-content:center;z-index:999}
+.lcard{background:#fff;border-radius:28px;padding:56px 48px;text-align:center;box-shadow:0 40px 90px rgba(0,0,0,.5);max-width:400px;width:90%;animation:pop .5s cubic-bezier(.34,1.56,.64,1)}
+@keyframes pop{from{opacity:0;transform:scale(.85)}to{opacity:1;transform:scale(1)}}
+.lcard .le{font-size:76px;display:block;margin-bottom:8px}
+.lcard h1{font-size:32px;font-weight:800;color:var(--br);letter-spacing:-.5px}
+.lcard .lsub{color:#bbb;font-size:13px;margin:4px 0 32px;font-style:italic}
+.lcard input{width:100%;padding:16px 20px;border:2px solid var(--bd);border-radius:14px;font-size:30px;text-align:center;letter-spacing:16px;outline:none;transition:all .2s;color:var(--br)}
+.lcard input:focus{border-color:var(--gold);box-shadow:0 0 0 4px rgba(196,131,26,.12)}
+.lcard .lbtn{width:100%;padding:16px;margin-top:14px;background:linear-gradient(135deg,var(--br),var(--gold));color:#fff;border:none;border-radius:14px;font-size:16px;font-weight:700;cursor:none;transition:all .2s;letter-spacing:.3px}
+.lcard .lbtn:hover{opacity:.9;transform:translateY(-1px)}
+.lerr{color:#e53935;font-size:13px;margin-top:12px;display:none}
+.lerr.on{display:block}
+@keyframes sk{0%,100%{transform:translateX(0)}25%{transform:translateX(-9px)}75%{transform:translateX(9px)}}
+.sk{animation:sk .35s ease}
+
+/* ADMIN */
+#ap{display:none}
+
+/* HEADER */
+.hdr{
+  position:fixed;top:0;left:0;right:0;height:var(--hh);
+  background:var(--br);z-index:100;
+  display:flex;align-items:center;justify-content:space-between;padding:0 32px;
+  box-shadow:0 2px 20px rgba(0,0,0,.3)
+}
+.hdr-left{display:flex;align-items:center;gap:14px}
+.hdr-logo{font-size:34px;line-height:1}
+.hdr-info .hn{font-size:17px;font-weight:800;color:#fff;letter-spacing:-.3px}
+.hdr-info .hs{font-size:11px;color:rgba(255,255,255,.4);font-style:italic}
+.hdr-right{display:flex;align-items:center;gap:10px}
+.cbadge{display:flex;align-items:center;gap:6px;padding:6px 13px;border-radius:20px;font-size:12px;font-weight:600;cursor:none}
+.cwa{background:rgba(76,175,80,.15);color:#81C784;border:1px solid rgba(76,175,80,.2)}
+.cig{background:rgba(233,30,99,.12);color:#F48FB1;border:1px solid rgba(233,30,99,.2)}
+
+/* TOP NAV TABS */
+.tnav{
+  position:fixed;top:var(--hh);left:0;right:0;height:var(--nh);
+  background:#fff;z-index:99;
+  display:flex;align-items:stretch;
+  border-bottom:1px solid var(--bd);
+  box-shadow:0 2px 12px rgba(26,10,0,.06);
+  padding:0 24px
+}
+.tab{
+  display:flex;align-items:center;gap:8px;
+  padding:0 20px;background:none;border:none;
+  color:var(--txt2);font-size:13.5px;font-weight:600;
+  cursor:none;position:relative;transition:color .2s;white-space:nowrap
+}
+.tab .ti{font-size:16px}
+.tab::after{content:'';position:absolute;bottom:0;left:16px;right:16px;height:3px;background:var(--gold);border-radius:3px 3px 0 0;transform:scaleX(0);transition:transform .25s cubic-bezier(.34,1.56,.64,1)}
+.tab:hover{color:var(--br)}
+.tab.on{color:var(--br)}
+.tab.on::after{transform:scaleX(1)}
+
+/* CONTENT */
+.content{margin-top:calc(var(--hh) + var(--nh));padding:32px}
+.sec{display:none;animation:fadeIn .25s ease}
+.sec.on{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.ptitle{font-size:22px;font-weight:800;color:var(--br);margin-bottom:22px;letter-spacing:-.3px;display:flex;align-items:center;gap:8px}
+
+/* CARDS ROW */
+.crow{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px}
+.card{background:var(--card);border-radius:18px;padding:22px 20px;box-shadow:var(--sh);display:flex;flex-direction:column;gap:5px;border-top:4px solid;transition:all .2s}
+.card:hover{transform:translateY(-3px);box-shadow:var(--sh2)}
+.cv{border-top-color:var(--vd)}.cr{border-top-color:var(--vm)}.ca{border-top-color:var(--az)}.cg{border-top-color:var(--gold)}
+.cic{font-size:26px}.clb{font-size:10px;color:var(--txt2);font-weight:700;text-transform:uppercase;letter-spacing:.6px}.cval{font-size:21px;font-weight:800;letter-spacing:-.3px}
+
+/* INSIGHT STRIP */
+.istrip{background:var(--br);border-radius:16px;display:flex;margin-bottom:24px;overflow:hidden}
+.iitem{flex:1;padding:16px 20px;text-align:center;border-right:1px solid rgba(255,255,255,.08)}
+.iitem:last-child{border-right:none}
+.iil{font-size:10px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.5px}
+.iiv{font-size:15px;font-weight:800;color:#fff;margin-top:3px}
+
+/* CHART BOXES */
+.chgrid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:18px}
+.chgrid.one{grid-template-columns:1fr}
+.chgrid.three{grid-template-columns:1fr 1fr 1fr}
+.chbox{background:var(--card);border-radius:18px;padding:24px;box-shadow:var(--sh)}
+.chbox h3{font-size:11px;font-weight:700;color:var(--txt2);text-transform:uppercase;letter-spacing:.7px;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--bd)}
+.chbox canvas{max-height:230px}
+.chempty{display:flex;flex-direction:column;align-items:center;justify-content:center;height:160px;color:#ccc;gap:8px;text-align:center}
+.chempty .ce{font-size:36px;opacity:.5}
+.chempty p{font-size:12px;max-width:180px;line-height:1.5;color:#bbb}
+
+/* CATALOG */
+.cat-banner{
+  background:linear-gradient(135deg,var(--br) 0%,var(--br3) 60%,#A0522D 100%);
+  border-radius:22px;padding:36px 40px;margin-bottom:28px;
+  display:flex;align-items:center;justify-content:space-between;overflow:hidden;position:relative
+}
+.cat-banner::before{content:'🍫🍭🐧';position:absolute;right:160px;top:50%;transform:translateY(-50%);font-size:60px;opacity:.12;letter-spacing:8px}
+.cat-banner h2{font-size:26px;font-weight:800;color:#fff;letter-spacing:-.4px}
+.cat-banner p{color:rgba(255,255,255,.55);font-size:14px;margin-top:4px}
+.cat-banner .cb-tag{background:var(--gold);color:#fff;padding:6px 16px;border-radius:20px;font-size:12px;font-weight:700;display:inline-block;margin-top:14px}
+
+.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:22px}
+.pcard{
+  background:var(--card);border-radius:22px;overflow:hidden;
+  box-shadow:var(--sh);transition:all .3s cubic-bezier(.34,1.2,.64,1);position:relative
+}
+.pcard:hover{transform:translateY(-6px);box-shadow:0 16px 40px rgba(26,10,0,.16)}
+.pcard-img{height:160px;display:flex;align-items:center;justify-content:center;font-size:84px;position:relative}
+.pcard-img .sold-badge{position:absolute;top:12px;right:12px;background:var(--gold);color:#fff;font-size:10px;font-weight:800;padding:4px 10px;border-radius:20px;text-transform:uppercase;letter-spacing:.5px}
+.pcard-body{padding:20px}
+.pcard-name{font-size:17px;font-weight:800;color:var(--br);margin-bottom:6px;letter-spacing:-.2px}
+.pcard-desc{font-size:12px;color:var(--txt2);line-height:1.6;margin-bottom:14px}
+.pcard-bottom{display:flex;align-items:center;justify-content:space-between}
+.pcard-price{font-size:20px;font-weight:800;color:var(--vd)}
+.pcard-price0{font-size:13px;color:#ccc;font-weight:600}
+.pcard-marg{font-size:11px;background:var(--vdl);color:var(--vd);padding:4px 10px;border-radius:10px;font-weight:700}
+.pcard-marg0{background:#F5F5F5;color:#ccc}
+
+/* TABLES */
+.tbox{background:var(--card);border-radius:18px;padding:24px;box-shadow:var(--sh);margin-bottom:22px;overflow-x:auto}
+.thdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid var(--bd)}
+.thdr h3{font-size:15px;font-weight:700;color:var(--br)}
+.ttot{font-weight:700;font-size:14px}
+table{width:100%;border-collapse:collapse}
+th{background:var(--br);color:rgba(255,255,255,.85);padding:11px 14px;text-align:left;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+th:first-child{border-radius:10px 0 0 0}th:last-child{border-radius:0 10px 0 0}
+td{padding:11px 14px;border-bottom:1px solid #F5F0EB;font-size:13px}
+tr:hover td{background:#FDFAF7}tr:last-child td{border-bottom:none}
+.pos{font-weight:700;color:var(--vd)}.neg{font-weight:700;color:var(--vm)}
+
+/* FORM */
+.frow{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;padding:18px;background:#FDFAF7;border-radius:14px;border:1px solid var(--bd)}
+.fg{display:flex;flex-direction:column;gap:5px;min-width:100px}
+.fg label{font-size:10px;color:var(--txt2);font-weight:700;text-transform:uppercase;letter-spacing:.4px}
+.fg input,.fg select{padding:9px 12px;border:1.5px solid var(--bd);border-radius:10px;font-size:13px;outline:none;transition:all .2s;background:#fff;color:var(--txt)}
+.fg input:focus,.fg select:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(196,131,26,.1)}
+
+/* BUTTONS */
+.btn{padding:10px 17px;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:none;transition:all .2s;display:inline-flex;align-items:center;gap:6px}
+.badd{background:var(--vd);color:#fff;box-shadow:0 2px 8px rgba(27,107,53,.2)}
+.badd:hover{background:#145228;transform:translateY(-1px)}
+.bdel{background:transparent;color:var(--vm);border:1.5px solid var(--vm);padding:5px 10px;font-size:11px;border-radius:8px}
+.bdel:hover{background:var(--vm);color:#fff}
+
+/* BADGES */
+.badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700}
+.bpix{background:#E3F2FD;color:#1565C0}.bdin{background:#E8F5E9;color:#2E7D32}
+.bcar{background:#F3E5F5;color:#7B1FA2}.bfia{background:#FFF8E1;color:#F57F17}
+
+/* ESTATE */
+.estate{text-align:center;padding:44px;color:#ccc}
+.estate p{font-size:13px;line-height:1.6}
+
+/* ECONOMIA */
+.eco-banner{background:linear-gradient(135deg,var(--br) 0%,#5C2E0A 50%,var(--gold) 100%);border-radius:22px;padding:28px 36px;margin-bottom:22px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px}
+.eb-title{font-size:22px;font-weight:800;color:#fff;letter-spacing:-.3px}
+.eb-sub{font-size:12px;color:rgba(255,255,255,.5);margin-top:4px}
+.eb-pills{display:flex;flex-wrap:wrap;gap:8px}
+.epill{background:rgba(255,255,255,.12);color:#fff;padding:7px 15px;border-radius:20px;font-size:12px;font-weight:600;border:1px solid rgba(255,255,255,.15)}
+.eco-save{font-size:11px;color:var(--vd);font-weight:700;background:var(--vdl);padding:3px 9px;border-radius:10px;display:inline-block}
+.dicas-box{background:var(--card);border-radius:22px;padding:28px;box-shadow:var(--sh)}
+.dic-title{font-size:16px;font-weight:800;color:var(--br);margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid var(--bd)}
+.dic-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.dic-card{background:#FDFAF7;border-radius:14px;padding:16px;border-left:4px solid var(--gold)}
+.dic-card .dic-ic{font-size:22px;display:block;margin-bottom:6px}
+.dic-card strong{font-size:13px;color:var(--br);display:block;margin-bottom:4px}
+.dic-card p{font-size:12px;color:var(--txt2);line-height:1.6}
+
+/* LOJAS */
+.lojas-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:4px}
+.loja-card{background:var(--lc,#F9F9F9);border-radius:18px;padding:20px;border-top:4px solid var(--lb,#ccc);transition:transform .2s,box-shadow .2s}
+.loja-card:hover{transform:translateY(-3px);box-shadow:var(--sh2)}
+.loja-top{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.loja-icon{font-size:30px;line-height:1}
+.loja-nome{font-size:14px;font-weight:800;color:var(--br)}
+.loja-stars{font-size:11px;margin-top:2px}
+.loja-badge{margin-left:auto;padding:4px 12px;border-radius:20px;font-size:10px;font-weight:800;white-space:nowrap}
+.loja-tags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px}
+.loja-tags span{background:rgba(0,0,0,.06);color:var(--br);padding:3px 9px;border-radius:10px;font-size:10px;font-weight:600}
+.loja-desc{font-size:12px;color:var(--txt2);line-height:1.6;margin-bottom:10px}
+.loja-dica{font-size:11px;color:var(--br);background:rgba(255,255,255,.6);border-radius:10px;padding:8px 12px;line-height:1.5}
+
+/* CALCULADORA */
+.calc-section{background:var(--card);border-radius:22px;padding:28px;box-shadow:var(--sh);margin-bottom:22px}
+.calc-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;padding-bottom:14px;border-bottom:1px solid var(--bd)}
+.calc-hdr h3{font-size:15px;font-weight:800;color:var(--br)}
+.calc-hdr p{font-size:11px;color:var(--txt2);margin-top:2px}
+.calc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:22px}
+.ci-card{background:#FDFAF7;border-radius:14px;padding:16px;border:1.5px solid var(--bd);transition:border-color .2s,box-shadow .2s}
+.ci-card:focus-within{border-color:var(--gold);box-shadow:0 0 0 3px rgba(196,131,26,.08)}
+.ci-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.ci-name{font-size:12px;font-weight:700;color:var(--br)}
+.ci-unit{font-size:10px;color:var(--txt2);background:#F0EAE2;padding:2px 8px;border-radius:8px;font-weight:600}
+.ci-in{width:100%;padding:10px 12px;border:1.5px solid var(--bd);border-radius:10px;font-size:20px;font-weight:800;color:var(--br);text-align:right;outline:none;transition:border-color .2s;background:#fff;cursor:none}
+.ci-in:focus{border-color:var(--gold)}
+.ci-prices{display:flex;gap:6px;margin-top:8px}
+.ci-pa{font-size:10px;background:var(--vdl);color:var(--vd);padding:2px 9px;border-radius:8px;font-weight:700}
+.ci-pv{font-size:10px;background:var(--vml);color:var(--vm);padding:2px 9px;border-radius:8px;font-weight:700}
+.calc-res{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:22px}
+.res-costs{background:var(--br);border-radius:18px;padding:22px}
+.res-costs .rc-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.07)}
+.res-costs .rc-row:last-child{border-bottom:none}
+.rc-lbl{font-size:11px;color:rgba(255,255,255,.45);font-weight:600;letter-spacing:.3px}
+.rc-val{font-size:18px;font-weight:800;color:#fff}
+.rc-val.gold{color:var(--goldl)}
+.res-yield{background:#F0FFF4;border-radius:18px;padding:22px;border:1.5px solid #A5D6A7}
+.ry-title{font-size:11px;font-weight:800;color:#1B5E20;text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px}
+.ry-row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid rgba(165,214,167,.4)}
+.ry-row:last-child{border-bottom:none;padding-top:14px;margin-top:4px}
+.ry-lbl{font-size:13px;font-weight:600;color:#2E7D32}
+.ry-val{font-size:17px;font-weight:800;color:#1B6B35}
+.ry-sub{font-size:11px;color:#81C784;font-weight:600}
+.res-precos{background:#fff;border-radius:18px;padding:22px;border:1.5px solid var(--bd);margin-bottom:22px}
+.rp-title{font-size:11px;font-weight:800;color:var(--txt2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:14px}
+.rp-row{display:flex;align-items:center;gap:0;padding:10px 0;border-bottom:1px solid var(--bd)}
+.rp-row:last-child{border-bottom:none}
+.rp-emoji{font-size:22px;width:36px}
+.rp-nome{font-size:13px;font-weight:700;color:var(--br);flex:1}
+.rp-chip{flex:1;text-align:center}
+.rp-chip span{display:inline-block;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:700}
+.rp-custo span{background:#FEE;color:var(--vm)}
+.rp-sug span{background:#E8F5E9;color:var(--vd)}
+.rp-luc span{background:#E3F2FD;color:var(--az)}
+.rp-header{font-size:10px;font-weight:700;color:var(--txt2);text-transform:uppercase;letter-spacing:.5px;padding:0 0 8px;border-bottom:1px solid var(--bd);margin-bottom:2px;display:flex;align-items:center;gap:0}
+.inv-chart-box{margin-top:4px}
+
+/* MELHOR PREÇO */
+.mp-section{margin-bottom:24px}
+.mp-banner{background:linear-gradient(135deg,#1A0A00,#4A2000,#C4831A);border-radius:22px;padding:28px 36px;margin-bottom:22px;display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
+.mp-banner-t{font-size:22px;font-weight:800;color:#fff;letter-spacing:-.4px}
+.mp-banner-s{font-size:12px;color:rgba(255,255,255,.5);margin-top:4px}
+.mp-banner-chip{background:rgba(255,255,255,.12);color:#FFD54F;padding:8px 18px;border-radius:20px;font-size:12px;font-weight:700;border:1px solid rgba(255,255,255,.15)}
+.mp-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-bottom:20px}
+.mp-card{background:#fff;border-radius:22px;overflow:hidden;box-shadow:var(--sh);transition:transform .25s,box-shadow .25s}
+.mp-card:hover{transform:translateY(-5px);box-shadow:var(--sh2)}
+.mp-head{padding:20px 20px 16px;display:flex;align-items:center;gap:14px;border-bottom:1px solid var(--bd)}
+.mp-emoji-big{font-size:48px;line-height:1}
+.mp-info .mp-prod-nome{font-size:17px;font-weight:800;color:var(--br)}
+.mp-info .mp-peso{font-size:11px;color:var(--txt2);margin-top:2px}
+.mp-prec-badge{margin-left:auto;text-align:center;background:var(--br);border-radius:14px;padding:10px 14px}
+.mp-prec-badge .pbl{font-size:9px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.5px}
+.mp-prec-badge .pbv{font-size:20px;font-weight:900;color:#FFD54F}
+.mp-body{padding:18px 20px}
+.mp-custo-rows{margin-bottom:14px}
+.mp-crow{display:flex;justify-content:space-between;font-size:11px;padding:4px 0;color:var(--txt2);border-bottom:1px solid #FAF6F2}
+.mp-crow:last-child{border-bottom:none}
+.mp-crow strong{color:var(--br)}
+.mp-ctotal{display:flex;justify-content:space-between;padding:8px 10px;background:#FEE;border-radius:10px;font-size:12px;font-weight:700;color:var(--vm);margin-bottom:14px}
+.mp-mercado-box{background:#F8F5FF;border-radius:12px;padding:10px 14px;margin-bottom:14px}
+.mp-merc-t{font-size:10px;font-weight:700;color:#7B1FA2;text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px}
+.mp-merc-vals{font-size:13px;font-weight:800;color:#4A148C}
+.mp-merc-src{font-size:10px;color:#9C27B0;margin-top:2px}
+.mp-bar-wrap{margin-bottom:12px}
+.mp-bar-lbl{display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px}
+.mp-bar-lbl span:first-child{color:var(--txt2)}
+.mp-bar-lbl span:last-child{font-weight:700;color:var(--vd)}
+.mp-bar{height:10px;background:#f0f0f0;border-radius:5px;overflow:hidden}
+.mp-fill{height:100%;border-radius:5px;background:linear-gradient(90deg,var(--vd),#90EE90);transition:width .6s ease}
+.mp-verdict{display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:12px;font-size:12px;font-weight:700}
+.vd-best{background:#E8F5E9;color:#1B5E20}
+.vd-good{background:#E3F2FD;color:#0D47A1}
+.vd-ok{background:#FFF8E1;color:#E65100}
+.mp-nota{background:#FFFDE7;border-radius:14px;padding:14px 18px;border-left:4px solid #F9A825;font-size:12px;color:#5D4037;line-height:1.6}
+.mp-nota strong{color:#E65100}
+</style>
+</head>
+<body>
+
+<div id="cb1"></div><div id="cb2"></div>
+
+<!-- LOGIN -->
+<div id="ls">
+  <div class="lcard" id="lbox">
+    <span class="le">🐧🍫</span>
+    <h1>ChocoPingu</h1>
+    <p class="lsub">"Chocolate que diverte!" — Área Restrita</p>
+    <input type="password" id="si" placeholder="••••" maxlength="10"
+           onkeydown="if(event.key==='Enter')login()">
+    <button class="lbtn" onclick="login()">Acessar Painel →</button>
+    <p class="lerr" id="le2">Senha incorreta. Tente novamente.</p>
+  </div>
+</div>
+
+<!-- ADMIN -->
+<div id="ap">
+
+  <!-- HEADER -->
+  <div class="hdr">
+    <div class="hdr-left">
+      <span class="hdr-logo">🐧🍫</span>
+      <div class="hdr-info">
+        <div class="hn">ChocoPingu</div>
+        <div class="hs">"Chocolate que diverte!"</div>
+      </div>
+    </div>
+    <div class="hdr-right">
+      <span class="cbadge cwa">📱 (81) 98155-3632</span>
+      <span class="cbadge cig">📸 @lojadopingu</span>
+    </div>
+  </div>
+
+  <!-- TABS -->
+  <div class="tnav">
+    <button class="tab on"  onclick="go(this,'cat')"> <span class="ti">🏪</span> Catálogo</button>
+    <button class="tab"     onclick="go(this,'dash')"><span class="ti">📊</span> Dashboard</button>
+    <button class="tab"     onclick="go(this,'graf')"><span class="ti">📈</span> Gráficos</button>
+    <button class="tab"     onclick="go(this,'gast')"><span class="ti">💸</span> Gastos</button>
+    <button class="tab"     onclick="go(this,'prod')"><span class="ti">🍫</span> Produtos</button>
+    <button class="tab"     onclick="go(this,'econ')"><span class="ti">💡</span> Economia</button>
+    <div style="flex:1"></div>
+    <button class="tab" style="color:#A93226" onclick="logout()"><span class="ti">🚪</span> Sair</button>
+  </div>
+
+  <!-- CONTEÚDO -->
+  <div class="content">
+
+    <!-- ── CATÁLOGO ── -->
+    <div id="s-cat" class="sec on">
+      <div class="cat-banner">
+        <div>
+          <h2>Nossos Produtos</h2>
+          <p>Feito com amor e chocolate de qualidade</p>
+          <span class="cb-tag">🍫 Chocolates Artesanais</span>
+        </div>
+      </div>
+      <div class="pgrid" id="pgrid-cat"></div>
+    </div>
+
+    <!-- ── DASHBOARD ── -->
+    <div id="s-dash" class="sec">
+      <div class="ptitle">📊 Dashboard</div>
+      <div class="crow">
+        <div class="card cv"><span class="cic">💰</span><span class="clb">Total Vendido</span><span class="cval" id="c-v">R$ 0,00</span></div>
+        <div class="card cr"><span class="cic">💸</span><span class="clb">Total de Gastos</span><span class="cval" id="c-g">R$ 0,00</span></div>
+        <div class="card ca"><span class="cic">📈</span><span class="clb">Lucro Líquido</span><span class="cval" id="c-l">R$ 0,00</span></div>
+        <div class="card cg"><span class="cic">🎫</span><span class="clb">Ticket Médio</span><span class="cval" id="c-t">R$ 0,00</span></div>
+      </div>
+      <div class="istrip">
+        <div class="iitem"><div class="iil">Produto campeão</div><div class="iiv" id="i-p">—</div></div>
+        <div class="iitem"><div class="iil">Margem média dos produtos</div><div class="iiv" id="i-m">—</div></div>
+        <div class="iitem"><div class="iil">Produto mais lucrativo</div><div class="iiv" id="i-l">—</div></div>
+      </div>
+      <div class="chgrid">
+        <div class="chbox"><h3>Preço de Venda vs Custo por Produto</h3><div id="d-pvc"><canvas id="ch-pvc"></canvas></div></div>
+        <div class="chbox"><h3>Margem de Lucro por Produto (%)</h3><div id="d-mlp"><canvas id="ch-mlp"></canvas></div></div>
+      </div>
+      <div class="chgrid one">
+        <div class="chbox"><h3>Lucro médio por unidade de cada produto (R$)</h3><div id="d-lmu"><canvas id="ch-lmu"></canvas></div></div>
+      </div>
+    </div>
+
+    <!-- ── GRÁFICOS ── -->
+    <div id="s-graf" class="sec">
+      <div class="ptitle">📈 Gráficos — Médias dos Produtos</div>
+      <div class="chgrid three">
+        <div class="chbox"><h3>Preço médio de venda (R$)</h3><div id="d-pmv"><canvas id="ch-pmv"></canvas></div></div>
+        <div class="chbox"><h3>Custo médio por unidade (R$)</h3><div id="d-cmu"><canvas id="ch-cmu"></canvas></div></div>
+        <div class="chbox"><h3>Lucro médio por unidade (R$)</h3><div id="d-lm2"><canvas id="ch-lm2"></canvas></div></div>
+      </div>
+      <div class="chgrid">
+        <div class="chbox"><h3>Comparativo: Custo vs Venda por Produto</h3><div id="d-cvp"><canvas id="ch-cvp"></canvas></div></div>
+        <div class="chbox"><h3>Margem média de lucro (%) por produto</h3><div id="d-mml"><canvas id="ch-mml"></canvas></div></div>
+      </div>
+      <div class="chgrid one">
+        <div class="chbox"><h3>Gastos por categoria — média por item registrado</h3><div id="d-gcat"><canvas id="ch-gcat"></canvas></div></div>
+      </div>
+    </div>
+
+    <!-- ── GASTOS ── -->
+    <div id="s-gast" class="sec">
+      <div class="ptitle">💸 Controle de Gastos</div>
+      <div class="tbox">
+        <div class="thdr"><h3>Registrar Novo Gasto</h3></div>
+        <div class="frow">
+          <div class="fg"><label>Categoria</label>
+            <select id="g-cat">
+              <option>🍫 Chocolate Base</option>
+              <option>🎉 Recheios</option>
+              <option>📦 Embalagem</option>
+              <option>💡 Outros</option>
+            </select></div>
+          <div class="fg" style="flex:1;min-width:150px"><label>Item</label>
+            <input type="text" id="g-item" placeholder="Ex: Chocolate ao Leite"></div>
+          <div class="fg"><label>Unidade</label><input type="text" id="g-un" placeholder="kg, cx..."></div>
+          <div class="fg"><label>Quantidade</label><input type="number" id="g-qtd" placeholder="0" min="0" step="0.1"></div>
+          <div class="fg"><label>Preço Unit. (R$)</label><input type="number" id="g-preco" placeholder="0,00" min="0" step="0.01"></div>
+          <button class="btn badd" onclick="addG()">+ Adicionar</button>
+        </div>
+      </div>
+      <div class="tbox">
+        <div class="thdr"><h3>Todos os Gastos</h3><span class="ttot neg" id="tot-g">Total: R$ 0,00</span></div>
+        <table><thead><tr>
+          <th>Categoria</th><th>Item</th><th>Unid.</th><th>Qtd</th><th>Preço Unit.</th><th>Total</th><th></th>
+        </tr></thead><tbody id="tb-g"></tbody></table>
+      </div>
+    </div>
+
+    <!-- ── PRODUTOS ── -->
+    <div id="s-prod" class="sec">
+      <div class="ptitle">🍫 Produtos & Preços</div>
+      <div class="tbox">
+        <div class="thdr"><h3>Cadastrar / Editar Produto</h3></div>
+        <div class="frow">
+          <div class="fg" style="flex:1;min-width:150px"><label>Nome</label>
+            <input type="text" id="p-nome" placeholder="Ex: Pirulitos"></div>
+          <div class="fg"><label>Emoji</label>
+            <input type="text" id="p-emoji" placeholder="🍫" maxlength="2" style="font-size:18px;text-align:center;width:60px"></div>
+          <div class="fg" style="flex:1"><label>Descrição</label>
+            <input type="text" id="p-desc" placeholder="Descreva o produto"></div>
+          <div class="fg"><label>Custo / Un. (R$)</label>
+            <input type="number" id="p-custo" placeholder="0,00" min="0" step="0.01"></div>
+          <div class="fg"><label>Preço Venda (R$)</label>
+            <input type="number" id="p-venda" placeholder="0,00" min="0" step="0.01"></div>
+          <button class="btn badd" onclick="addP()">+ Adicionar</button>
+        </div>
+      </div>
+      <div class="tbox">
+        <div class="thdr"><h3>Análise de Rentabilidade</h3></div>
+        <table><thead><tr>
+          <th>Produto</th><th>Custo/Un.</th><th>Preço Venda</th><th>Lucro/Un.</th><th>Margem %</th><th>Vale a pena?</th><th></th>
+        </tr></thead><tbody id="tb-p"></tbody></table>
+      </div>
+    </div>
+
+    <!-- ── ECONOMIA ── -->
+    <div id="s-econ" class="sec">
+      <div class="ptitle">💡 Soluções para Economizar</div>
+
+      <div class="eco-banner">
+        <div>
+          <div class="eb-title">Como gastar menos e lucrar mais</div>
+          <div class="eb-sub">Preços reais de mercado coletados em 2025 — Mercado Livre, Shopee e Amazon</div>
+        </div>
+        <div class="eb-pills">
+          <span class="epill">🛒 Atacado economiza até 35%</span>
+          <span class="epill">📦 Kit de 100 embalagens = menor preço</span>
+          <span class="epill">🍫 Maior custo: chocolate base</span>
+        </div>
+      </div>
+
+      <div class="istrip" style="margin-bottom:24px">
+        <div class="iitem"><div class="iil">Custo médio/un. atacado</div><div class="iiv" id="ie-atac">—</div></div>
+        <div class="iitem"><div class="iil">Custo médio/un. varejo</div><div class="iiv" id="ie-var">—</div></div>
+        <div class="iitem"><div class="iil">Economia comprando atacado</div><div class="iiv" id="ie-eco" style="color:#81C784">—</div></div>
+        <div class="iitem"><div class="iil">Margem recomendada</div><div class="iiv" style="color:#FFD54F">60% — 65%</div></div>
+      </div>
+
+      <!-- MELHOR PREÇO POR PRODUTO -->
+      <div class="mp-section">
+        <div class="mp-banner">
+          <div>
+            <div class="mp-banner-t">🏆 Melhor Preço para Cada Produto</div>
+            <div class="mp-banner-s">Custo real com Harald Fracionado + pesquisa de preços de mercado 2025</div>
+          </div>
+          <span class="mp-banner-chip">📊 Dados verificados no Mercado Livre e lojas especializadas</span>
+        </div>
+
+        <div class="mp-grid">
+
+          <!-- PIRULITO -->
+          <div class="mp-card">
+            <div class="mp-head">
+              <span class="mp-emoji-big">🍭</span>
+              <div class="mp-info">
+                <div class="mp-prod-nome">Pirulito</div>
+                <div class="mp-peso">~18g por unidade</div>
+              </div>
+              <div class="mp-prec-badge">
+                <div class="pbl">Preço Ideal</div>
+                <div class="pbv">R$ 4,50</div>
+              </div>
+            </div>
+            <div class="mp-body">
+              <div class="mp-custo-rows">
+                <div class="mp-crow"><span>🍫 Mavalério ao leite (18g × R$26,99/kg)</span><strong>R$ 0,49</strong></div>
+                <div class="mp-crow"><span>🍭 Saquinho transparente 8x12cm</span><strong>R$ 0,034</strong></div>
+                <div class="mp-crow"><span>🗒️ Papel manteiga (rateado)</span><strong>R$ 0,03</strong></div>
+              </div>
+              <div class="mp-ctotal"><span>💸 Custo total por unidade</span><span>R$ 0,55</span></div>
+              <div class="mp-mercado-box">
+                <div class="mp-merc-t">🔎 O mercado vende por:</div>
+                <div class="mp-merc-vals">R$ 3,60 — R$ 7,20 / unidade</div>
+                <div class="mp-merc-src">Chocolates &amp; Cia · Fábrica de Alegrias · Serrano (2025)</div>
+              </div>
+              <div class="mp-bar-wrap">
+                <div class="mp-bar-lbl"><span>Margem de lucro</span><span>88%</span></div>
+                <div class="mp-bar"><div class="mp-fill" style="width:88%"></div></div>
+              </div>
+              <div class="mp-verdict vd-best">🏆 Melhor margem — R$ 3,95 de lucro por un.!</div>
+            </div>
+          </div>
+
+          <!-- BONEGUINHO -->
+          <div class="mp-card">
+            <div class="mp-head">
+              <span class="mp-emoji-big">🐧</span>
+              <div class="mp-info">
+                <div class="mp-prod-nome">Boneguinho</div>
+                <div class="mp-peso">~50g por unidade</div>
+              </div>
+              <div class="mp-prec-badge">
+                <div class="pbl">Preço Ideal</div>
+                <div class="pbv">R$ 12,00</div>
+              </div>
+            </div>
+            <div class="mp-body">
+              <div class="mp-custo-rows">
+                <div class="mp-crow"><span>🍫 Mavalério ao leite (45g × R$26,99/kg)</span><strong>R$ 1,21</strong></div>
+                <div class="mp-crow"><span>⬜ Harald branco (5g × R$33,99/kg)</span><strong>R$ 0,17</strong></div>
+                <div class="mp-crow"><span>🐧 Saquinho Cromus 10x14cm</span><strong>R$ 0,049</strong></div>
+                <div class="mp-crow"><span>🗒️ Papel manteiga (rateado)</span><strong>R$ 0,05</strong></div>
+              </div>
+              <div class="mp-ctotal"><span>💸 Custo total por unidade</span><span>R$ 1,48</span></div>
+              <div class="mp-mercado-box">
+                <div class="mp-merc-t">🔎 O mercado vende por:</div>
+                <div class="mp-merc-vals">R$ 8,00 — R$ 35,00 / unidade</div>
+                <div class="mp-merc-src">Elo7 · Prawer Chocolates · lojas especializadas (2025)</div>
+              </div>
+              <div class="mp-bar-wrap">
+                <div class="mp-bar-lbl"><span>Margem de lucro</span><span>88%</span></div>
+                <div class="mp-bar"><div class="mp-fill" style="width:88%"></div></div>
+              </div>
+              <div class="mp-verdict vd-good">⭐ Incrível — R$ 10,52 de lucro por un.!</div>
+            </div>
+          </div>
+
+          <!-- BARRA CROCANTE -->
+          <div class="mp-card">
+            <div class="mp-head">
+              <span class="mp-emoji-big">🍫</span>
+              <div class="mp-info">
+                <div class="mp-prod-nome">Barra Crocante</div>
+                <div class="mp-peso">~80g por unidade</div>
+              </div>
+              <div class="mp-prec-badge">
+                <div class="pbl">Preço Ideal</div>
+                <div class="pbv">R$ 10,00</div>
+              </div>
+            </div>
+            <div class="mp-body">
+              <div class="mp-custo-rows">
+                <div class="mp-crow"><span>🍫 Mavalério ao leite (65g × R$26,99/kg)</span><strong>R$ 1,75</strong></div>
+                <div class="mp-crow"><span>🌾 Flocos de arroz Rice Boll (15g × R$21,70/kg)</span><strong>R$ 0,33</strong></div>
+                <div class="mp-crow"><span>📦 Embalagem barra flip</span><strong>R$ 0,35</strong></div>
+                <div class="mp-crow"><span>🗒️ Papel manteiga (rateado)</span><strong>R$ 0,05</strong></div>
+              </div>
+              <div class="mp-ctotal"><span>💸 Custo total por unidade</span><span>R$ 2,48</span></div>
+              <div class="mp-mercado-box">
+                <div class="mp-merc-t">🔎 O mercado vende por:</div>
+                <div class="mp-merc-vals">R$ 5,50 — R$ 25,00 / unidade</div>
+                <div class="mp-merc-src">Serrano Chocolates · Garoto · Artesano Cozinha (2025)</div>
+              </div>
+              <div class="mp-bar-wrap">
+                <div class="mp-bar-lbl"><span>Margem de lucro</span><span>75%</span></div>
+                <div class="mp-bar"><div class="mp-fill" style="width:75%"></div></div>
+              </div>
+              <div class="mp-verdict vd-ok">✅ Ótima — R$ 7,52 de lucro por un.!</div>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="mp-nota">
+          <strong>🔍 Por que o ingrediente é mais barato?</strong> O chocolate ideal para chocolates artesanais é a <strong>Cobertura Fracionada</strong> (Mavalério ou Harald) — é o que confeiteiros profissionais usam. A Mavalério sai por <strong>R$26,99/kg</strong> na Vivian Festas, contra R$80–120/kg de chocolate em barra de supermercado. Busque por <em>"cobertura fracionada Mavalério ao leite 1kg"</em>.
+        </div>
+      </div>
+
+      <!-- PREÇOS MAIS BARATOS VERIFICADOS -->
+      <div class="tbox" style="margin-bottom:22px">
+        <div class="thdr">
+          <h3>🛒 Preços Mais Baratos — Verificados em Junho 2025</h3>
+          <span style="font-size:11px;color:var(--txt2)">Lojas especializadas em confeitaria</span>
+        </div>
+        <table>
+          <thead><tr>
+            <th>Ingrediente</th><th>Preço mais barato</th><th>Produto / Loja</th>
+            <th>O que buscar</th><th>Preço normal</th><th>Economia</th>
+          </tr></thead>
+          <tbody>
+            <tr>
+              <td>🍫 Chocolate ao Leite</td>
+              <td><strong style="color:var(--vd);font-size:16px">R$ 26,99/kg</strong></td>
+              <td><strong>Mavalério 1,01kg</strong><br><span style="font-size:10px;color:var(--txt2)">Vivian Festas</span></td>
+              <td><code style="font-size:10px;background:#f5f5f5;padding:2px 6px;border-radius:4px">"cobertura fracionada mavalério ao leite"</code></td>
+              <td style="color:var(--vm)">R$ 50,00/kg</td>
+              <td><span class="eco-save">-46%</span></td>
+            </tr>
+            <tr>
+              <td>⬜ Chocolate Branco</td>
+              <td><strong style="color:var(--vd);font-size:16px">R$ 33,99/kg</strong></td>
+              <td><strong>Harald Confeiteiro 1,01kg</strong><br><span style="font-size:10px;color:var(--txt2)">Vivian Festas</span></td>
+              <td><code style="font-size:10px;background:#f5f5f5;padding:2px 6px;border-radius:4px">"cobertura fracionada Harald branco"</code></td>
+              <td style="color:var(--vm)">R$ 55,00/kg</td>
+              <td><span class="eco-save">-38%</span></td>
+            </tr>
+            <tr>
+              <td>🌾 Recheio Crocante</td>
+              <td><strong style="color:var(--vd);font-size:16px">R$ 21,70/kg</strong></td>
+              <td><strong>Flocos de Arroz (Rice Boll) 1kg</strong><br><span style="font-size:10px;color:var(--txt2)">Tempero da Terra</span></td>
+              <td><code style="font-size:10px;background:#f5f5f5;padding:2px 6px;border-radius:4px">"flocos arroz confeitaria 1kg"</code></td>
+              <td style="color:var(--vm)">R$ 40,00/kg</td>
+              <td><span class="eco-save">-46%</span></td>
+            </tr>
+            <tr>
+              <td>🍭 Embalagem Pirulito</td>
+              <td><strong style="color:var(--vd);font-size:16px">R$ 3,35/100un</strong><br><span style="font-size:10px;color:#888">= R$ 0,034/un</span></td>
+              <td><strong>Saquinho transparente 8x12cm 100un</strong><br><span style="font-size:10px;color:var(--txt2)">Mercadoce</span></td>
+              <td><code style="font-size:10px;background:#f5f5f5;padding:2px 6px;border-radius:4px">"saco plástico transparente pirulito 100un"</code></td>
+              <td style="color:var(--vm)">R$ 10,00/100un</td>
+              <td><span class="eco-save">-67%</span></td>
+            </tr>
+            <tr>
+              <td>🐧 Embalagem Bonequinho</td>
+              <td><strong style="color:var(--vd);font-size:16px">R$ 4,90/100un</strong><br><span style="font-size:10px;color:#888">= R$ 0,049/un</span></td>
+              <td><strong>Saquinho transparente 10x14cm 100un</strong><br><span style="font-size:10px;color:var(--txt2)">Rizzo Confeitaria — Cromus</span></td>
+              <td><code style="font-size:10px;background:#f5f5f5;padding:2px 6px;border-radius:4px">"saco transparente 10x14 100 unidades"</code></td>
+              <td style="color:var(--vm)">R$ 15,00/100un</td>
+              <td><span class="eco-save">-67%</span></td>
+            </tr>
+            <tr>
+              <td>📦 Embalagem Barra</td>
+              <td><strong style="color:var(--vd);font-size:16px">R$ 0,35/un</strong></td>
+              <td><strong>Caixinha barra chocolate</strong><br><span style="font-size:10px;color:var(--txt2)">Amazon / Mercado Livre</span></td>
+              <td><code style="font-size:10px;background:#f5f5f5;padding:2px 6px;border-radius:4px">"embalagem barra chocolate flip"</code></td>
+              <td style="color:var(--vm)">R$ 0,80/un</td>
+              <td><span class="eco-save">-56%</span></td>
+            </tr>
+          </tbody>
+        </table>
+        <div style="padding:14px 0 0;font-size:11px;color:var(--txt2);line-height:1.7">
+          ⚠️ <strong>Atenção:</strong> Confirme o frete antes de comprar online. Para compras pequenas, compare se não compensa ir numa loja de confeitaria local (busque no Google Maps "loja de confeitaria" na sua cidade). Preços podem variar conforme estoque e data.
+        </div>
+      </div>
+
+      <!-- CALCULADORA DE COMPRAS -->
+      <div class="calc-section">
+        <div class="calc-hdr">
+          <div>
+            <h3>🧮 Calculadora de Compras</h3>
+            <p>Digite a quantidade de cada insumo e veja o custo total, quantos produtos você consegue fazer e o preço sugerido</p>
+          </div>
+        </div>
+
+        <div class="calc-grid">
+          <div class="ci-card">
+            <div class="ci-top"><span class="ci-name">🍫 Chocolate ao Leite</span><span class="ci-unit">kg</span></div>
+            <input type="number" class="ci-in" id="ci-cla" value="1" min="0" step="0.5" oninput="calcCompra()">
+            <div class="ci-prices"><span class="ci-pa">Atacado: R$81/kg</span><span class="ci-pv">Varejo: R$120/kg</span></div>
+          </div>
+          <div class="ci-card">
+            <div class="ci-top"><span class="ci-name">⬜ Chocolate Branco</span><span class="ci-unit">kg</span></div>
+            <input type="number" class="ci-in" id="ci-clb" value="0" min="0" step="0.5" oninput="calcCompra()">
+            <div class="ci-prices"><span class="ci-pa">Atacado: R$100/kg</span><span class="ci-pv">Varejo: R$130/kg</span></div>
+          </div>
+          <div class="ci-card">
+            <div class="ci-top"><span class="ci-name">🌾 Recheio Crocante</span><span class="ci-unit">kg</span></div>
+            <input type="number" class="ci-in" id="ci-rec" value="0" min="0" step="0.5" oninput="calcCompra()">
+            <div class="ci-prices"><span class="ci-pa">Atacado: R$40/kg</span><span class="ci-pv">Varejo: R$50/kg</span></div>
+          </div>
+          <div class="ci-card">
+            <div class="ci-top"><span class="ci-name">🍭 Embalagens Pirulito</span><span class="ci-unit">unidades</span></div>
+            <input type="number" class="ci-in" id="ci-ep" value="0" min="0" step="10" oninput="calcCompra()">
+            <div class="ci-prices"><span class="ci-pa">Atacado: R$0,10/un</span><span class="ci-pv">Varejo: R$0,15/un</span></div>
+          </div>
+          <div class="ci-card">
+            <div class="ci-top"><span class="ci-name">🐧 Embalagens Bonequinho</span><span class="ci-unit">unidades</span></div>
+            <input type="number" class="ci-in" id="ci-eb" value="0" min="0" step="10" oninput="calcCompra()">
+            <div class="ci-prices"><span class="ci-pa">Atacado: R$1,00/un</span><span class="ci-pv">Varejo: R$1,50/un</span></div>
+          </div>
+          <div class="ci-card">
+            <div class="ci-top"><span class="ci-name">📦 Embalagens Barra</span><span class="ci-unit">unidades</span></div>
+            <input type="number" class="ci-in" id="ci-ebr" value="0" min="0" step="10" oninput="calcCompra()">
+            <div class="ci-prices"><span class="ci-pa">Atacado: R$0,35/un</span><span class="ci-pv">Varejo: R$0,50/un</span></div>
+          </div>
+        </div>
+
+        <!-- Resultados: custo + rendimento -->
+        <div class="calc-res">
+          <div class="res-costs">
+            <div class="rc-row"><span class="rc-lbl">TOTAL NO ATACADO</span><span class="rc-val" id="cr-ta">R$ 0,00</span></div>
+            <div class="rc-row"><span class="rc-lbl">TOTAL NO VAREJO</span><span class="rc-val" id="cr-tv">R$ 0,00</span></div>
+            <div class="rc-row"><span class="rc-lbl">VOCÊ ECONOMIZA COMPRANDO ATACADO</span><span class="rc-val gold" id="cr-eco">R$ 0,00</span></div>
+          </div>
+          <div class="res-yield">
+            <div class="ry-title">🏭 Com esses insumos você faz:</div>
+            <div class="ry-row"><span class="ry-lbl">🍭 Pirulitos</span><div><span class="ry-val" id="cr-pir">0</span> <span class="ry-sub">unidades</span></div></div>
+            <div class="ry-row"><span class="ry-lbl">🐧 Boneguinhos</span><div><span class="ry-val" id="cr-bon">0</span> <span class="ry-sub">unidades</span></div></div>
+            <div class="ry-row"><span class="ry-lbl">🍫 Barras Crocantes</span><div><span class="ry-val" id="cr-bar">0</span> <span class="ry-sub">unidades</span></div></div>
+            <div class="ry-row" style="border-top:1.5px dashed #A5D6A7;margin-top:4px">
+              <div>
+                <div class="ry-lbl">💰 Se vender tudo</div>
+                <div class="ry-sub">Receita: <strong id="cr-rec">R$ 0,00</strong></div>
+              </div>
+              <div style="text-align:right">
+                <div class="ry-val" id="cr-luc" style="font-size:20px">R$ 0,00</div>
+                <div class="ry-sub">lucro estimado</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tabela preço sugerido por produto -->
+        <div class="res-precos">
+          <div class="rp-title">💡 Preço sugerido baseado nessa compra</div>
+          <div style="display:grid;grid-template-columns:36px 1fr 1fr 1fr 1fr;padding:0 0 8px;border-bottom:1px solid var(--bd);margin-bottom:4px">
+            <span></span>
+            <span style="font-size:10px;font-weight:700;color:var(--txt2);text-transform:uppercase">Produto</span>
+            <span style="font-size:10px;font-weight:700;color:var(--vm);text-transform:uppercase;text-align:center">Custo/un</span>
+            <span style="font-size:10px;font-weight:700;color:var(--vd);text-transform:uppercase;text-align:center">Vender por</span>
+            <span style="font-size:10px;font-weight:700;color:var(--az);text-transform:uppercase;text-align:center">Lucro/un</span>
+          </div>
+          <div id="tb-rp"></div>
+        </div>
+
+        <!-- Gráfico distribuição do investimento -->
+        <div class="chbox inv-chart-box">
+          <h3>Distribuição do investimento por insumo (atacado)</h3>
+          <div id="d-inv"><canvas id="ch-inv"></canvas></div>
+        </div>
+      </div>
+
+      <!-- Simulador de Margem -->
+      <div class="tbox" style="margin-bottom:22px">
+        <div class="thdr">
+          <h3>🎯 Simulador de Preço de Venda</h3>
+          <div style="display:flex;align-items:center;gap:10px">
+            <span style="font-size:12px;color:var(--txt2)">Margem desejada:</span>
+            <input type="range" id="sl-marg" min="30" max="80" value="60" oninput="updateMarg()"
+              style="width:120px;accent-color:var(--gold)">
+            <span id="sl-val" style="font-weight:800;color:var(--gold);min-width:36px">60%</span>
+          </div>
+        </div>
+        <table><thead><tr>
+          <th>Produto</th>
+          <th>Custo atacado</th>
+          <th>Custo varejo</th>
+          <th>Preço sugerido (atacado)</th>
+          <th>Lucro/un.</th>
+          <th>Vale a pena?</th>
+        </tr></thead>
+        <tbody id="tb-sim"></tbody></table>
+        <div style="padding:12px 0 0;font-size:11px;color:var(--txt2)">
+          * Custo atacado = comprando em quantidade (ex: 2kg de chocolate). Custo varejo = comprando em supermercado.
+        </div>
+      </div>
+
+      <!-- 2 colunas: tabela insumos + gráfico comparativo -->
+      <div class="chgrid" style="margin-bottom:22px">
+        <div class="tbox" style="margin-bottom:0">
+          <div class="thdr"><h3>📋 Tabela de Preços Reais de Insumos</h3></div>
+          <table><thead><tr>
+            <th>Insumo</th><th>Varejo</th><th>Atacado</th><th>Unid.</th><th>Economia</th>
+          </tr></thead>
+          <tbody id="tb-ins"></tbody></table>
+        </div>
+        <div class="chbox" style="margin-bottom:0">
+          <h3>Custo por Produto: Atacado vs Varejo (R$)</h3>
+          <div id="d-eco1"><canvas id="ch-eco1"></canvas></div>
+        </div>
+      </div>
+
+      <!-- Gráfico preço sugerido -->
+      <div class="chgrid" style="margin-bottom:22px">
+        <div class="chbox">
+          <h3>Preço sugerido de venda vs Custo (R$)</h3>
+          <div id="d-eco2"><canvas id="ch-eco2"></canvas></div>
+        </div>
+        <div class="chbox">
+          <h3>Economia mensal estimada comprando atacado</h3>
+          <div id="d-eco3"><canvas id="ch-eco3"></canvas></div>
+        </div>
+      </div>
+
+      <!-- Distribuição de custo por produto -->
+      <div style="margin-bottom:10px;font-size:13px;font-weight:700;color:var(--br)">Composição do custo por produto (atacado)</div>
+      <div class="chgrid three" style="margin-bottom:22px">
+        <div class="chbox"><h3>🍭 Pirulito — Custo: ~R$ 1,56</h3><div id="d-pie1"><canvas id="ch-pie1"></canvas></div></div>
+        <div class="chbox"><h3>🐧 Boneguinho — Custo: ~R$ 5,15</h3><div id="d-pie2"><canvas id="ch-pie2"></canvas></div></div>
+        <div class="chbox"><h3>🍫 Barra Crocante — Custo: ~R$ 6,22</h3><div id="d-pie3"><canvas id="ch-pie3"></canvas></div></div>
+      </div>
+
+      <!-- MELHORES LUGARES PARA COMPRAR -->
+      <div class="tbox" style="margin-bottom:22px">
+        <div class="thdr"><h3>🏪 Melhores Lugares para Comprar</h3><span style="font-size:11px;color:var(--txt2)">Pesquisa de preços 2025</span></div>
+
+        <div class="lojas-grid">
+
+          <div class="loja-card" style="--lc:#FFF9C4;--lb:#F9A825">
+            <div class="loja-top">
+              <span class="loja-icon">🛒</span>
+              <div>
+                <div class="loja-nome">Mercado Livre</div>
+                <div class="loja-stars">⭐⭐⭐⭐⭐</div>
+              </div>
+              <span class="loja-badge" style="background:#FFF9C4;color:#F57F17">Melhor geral</span>
+            </div>
+            <div class="loja-tags">
+              <span>🍫 Chocolate</span><span>📦 Embalagens</span><span>🌾 Recheio</span>
+            </div>
+            <p class="loja-desc">Maior variedade, preços competitivos e entrega rápida. Ideal para comprar chocolate Harald, Garoto e Mavalério em barras de 1kg ou mais.</p>
+            <div class="loja-dica">💡 Busque "chocolate fracionado 1kg" ou "cobertura chocolate" para os melhores preços. Compre em kits para economizar mais.</div>
+          </div>
+
+          <div class="loja-card" style="--lc:#FFF3E0;--lb:#E64A19">
+            <div class="loja-top">
+              <span class="loja-icon">🧡</span>
+              <div>
+                <div class="loja-nome">Shopee</div>
+                <div class="loja-stars">⭐⭐⭐⭐½</div>
+              </div>
+              <span class="loja-badge" style="background:#FFF3E0;color:#E64A19">Mais barato</span>
+            </div>
+            <div class="loja-tags">
+              <span>🌾 Recheio Crocante</span><span>📦 Embalagens</span>
+            </div>
+            <p class="loja-desc">Preços muito baixos, especialmente para recheios e embalagens a granel. Recheio crocante por R$30–40/kg. Frete muitas vezes grátis.</p>
+            <div class="loja-dica">💡 Busque "flocos de arroz granulado" e "embalagem pirulito kit 100". Sempre veja a avaliação do vendedor antes de comprar.</div>
+          </div>
+
+          <div class="loja-card" style="--lc:#E3F2FD;--lb:#1565C0">
+            <div class="loja-top">
+              <span class="loja-icon">📦</span>
+              <div>
+                <div class="loja-nome">Amazon Brasil</div>
+                <div class="loja-stars">⭐⭐⭐⭐</div>
+              </div>
+              <span class="loja-badge" style="background:#E3F2FD;color:#1565C0">Entrega rápida</span>
+            </div>
+            <div class="loja-tags">
+              <span>🗒️ Papel Manteiga</span><span>📦 Emb. Barra</span>
+            </div>
+            <p class="loja-desc">Melhor para papel manteiga e embalagens para barra. Entrega Prime em 1–2 dias. Rolo de papel manteiga por R$26–40.</p>
+            <div class="loja-dica">💡 Busque "papel manteiga rolo culinário" e "embalagem barra de chocolate transparente". Amazon Prime vale a pena se comprar bastante.</div>
+          </div>
+
+          <div class="loja-card" style="--lc:#FFEBEE;--lb:#B71C1C">
+            <div class="loja-top">
+              <span class="loja-icon">🏬</span>
+              <div>
+                <div class="loja-nome">Atacadão / Makro</div>
+                <div class="loja-stars">⭐⭐⭐⭐⭐</div>
+              </div>
+              <span class="loja-badge" style="background:#FFEBEE;color:#B71C1C">Kg mais barato</span>
+            </div>
+            <div class="loja-tags">
+              <span>🍫 Chocolate a granel</span><span>🌾 Recheio</span>
+            </div>
+            <p class="loja-desc">Para quem compra em quantidade. Chocolate ao leite pode chegar a R$70–75/kg comprando 5kg+. O melhor custo por kg do mercado.</p>
+            <div class="loja-dica">💡 Precisa de cartão de membro (gratuito). Compre junto com familiar para dividir quantidades grandes. Leve isopor para conservar o chocolate.</div>
+          </div>
+
+          <div class="loja-card" style="--lc:#FCE4EC;--lb:#880E4F">
+            <div class="loja-top">
+              <span class="loja-icon">🎂</span>
+              <div>
+                <div class="loja-nome">Casa de Confeitaria</div>
+                <div class="loja-stars">⭐⭐⭐⭐</div>
+              </div>
+              <span class="loja-badge" style="background:#FCE4EC;color:#880E4F">Tudo num lugar</span>
+            </div>
+            <div class="loja-tags">
+              <span>🍫 Chocolate</span><span>📦 Embalagens</span><span>🌾 Recheio</span><span>🎨 Corante</span>
+            </div>
+            <p class="loja-desc">Lojas como Casa do Bolo, Rizzo Confeitaria ou lojas locais de confeitaria têm tudo em um só lugar. Ótimo para ver o produto antes de comprar.</p>
+            <div class="loja-dica">💡 Procure "loja de confeitaria" perto de você no Google Maps. Geralmente vendem chocolate Harald e têm variedade de moldes e embalagens.</div>
+          </div>
+
+          <div class="loja-card" style="--lc:#E8F5E9;--lb:#1B5E20">
+            <div class="loja-top">
+              <span class="loja-icon">🏪</span>
+              <div>
+                <div class="loja-nome">Supermercado</div>
+                <div class="loja-stars">⭐⭐⭐</div>
+              </div>
+              <span class="loja-badge" style="background:#E8F5E9;color:#1B5E20">Emergência</span>
+            </div>
+            <div class="loja-tags">
+              <span>🍫 Chocolate (urgência)</span><span>🗒️ Papel Manteiga</span>
+            </div>
+            <p class="loja-desc">Use apenas em emergência — preços são 30–50% mais caros que atacado. Chocolate ao leite pode custar R$120+/kg. Para papel manteiga é razoável.</p>
+            <div class="loja-dica">💡 Só compre aqui se acabou o estoque na véspera de uma encomenda. Prefira sempre atacado ou online para planejar com antecedência.</div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Tabela comparativa por ingrediente -->
+      <div class="tbox" style="margin-bottom:22px">
+        <div class="thdr"><h3>📊 Onde comprar cada ingrediente</h3></div>
+        <table>
+          <thead><tr>
+            <th>Ingrediente</th>
+            <th>🥇 1º Melhor</th>
+            <th>🥈 2º Opção</th>
+            <th>🥉 3º Opção</th>
+            <th>Preço médio atacado</th>
+          </tr></thead>
+          <tbody>
+            <tr><td>🍫 Chocolate ao Leite</td><td><span class="badge bpix">Atacadão/Makro</span></td><td><span class="badge bdin">Mercado Livre</span></td><td><span class="badge bcar">Shopee</span></td><td class="pos">R$ 70–81/kg</td></tr>
+            <tr><td>⬜ Chocolate Branco</td><td><span class="badge bpix">Mercado Livre</span></td><td><span class="badge bdin">Shopee</span></td><td><span class="badge bcar">Casa Confeitaria</span></td><td class="pos">R$ 90–100/kg</td></tr>
+            <tr><td>🌾 Recheio Crocante</td><td><span class="badge bpix">Shopee</span></td><td><span class="badge bdin">Mercado Livre</span></td><td><span class="badge bcar">Casa Confeitaria</span></td><td class="pos">R$ 30–40/kg</td></tr>
+            <tr><td>🍭 Emb. Pirulito (kit 100)</td><td><span class="badge bpix">Mercado Livre</span></td><td><span class="badge bdin">Shopee</span></td><td><span class="badge bcar">Elo7</span></td><td class="pos">R$ 8–12/kit</td></tr>
+            <tr><td>🐧 Emb. Bonequinho</td><td><span class="badge bpix">Mercado Livre</span></td><td><span class="badge bdin">Shopee</span></td><td><span class="badge bcar">Casa Confeitaria</span></td><td class="pos">R$ 0,80–1,00/un</td></tr>
+            <tr><td>📦 Emb. Barra</td><td><span class="badge bpix">Amazon</span></td><td><span class="badge bdin">Mercado Livre</span></td><td><span class="badge bcar">Shopee</span></td><td class="pos">R$ 0,30–0,40/un</td></tr>
+            <tr><td>🗒️ Papel Manteiga</td><td><span class="badge bpix">Amazon</span></td><td><span class="badge bdin">Mercado Livre</span></td><td><span class="badge bcar">Supermercado</span></td><td class="pos">R$ 26–35/rolo</td></tr>
+            <tr><td>🎨 Corante p/ Chocolate</td><td><span class="badge bpix">Mercado Livre</span></td><td><span class="badge bdin">Casa Confeitaria</span></td><td><span class="badge bcar">Shopee</span></td><td class="pos">R$ 12–25/frasco</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Dicas -->
+      <div class="dicas-box">
+        <div class="dic-title">🏆 Dicas de Ouro para Economizar</div>
+        <div class="dic-grid">
+          <div class="dic-card"><span class="dic-ic">🛒</span><strong>Compre no atacado</strong><p>2kg de chocolate ao leite no Mercado Livre sai ~R$81/kg, contra ~R$120/kg no supermercado. Economia de 32%!</p></div>
+          <div class="dic-card"><span class="dic-ic">📦</span><strong>Kit de 100 embalagens</strong><p>Embalagem de pirulito em kit de 100 unidades = R$0,10/un. Comprar avulso pode custar até R$0,40/un. Compre sempre em kit!</p></div>
+          <div class="dic-card"><span class="dic-ic">🍫</span><strong>Chocolate Harald ou Garoto</strong><p>Marcas como Harald e Garoto têm boa qualidade e preço mais acessível que marcas importadas. Ideal para o ChocoPingu!</p></div>
+          <div class="dic-card"><span class="dic-ic">📊</span><strong>Margem mínima de 60%</strong><p>Se o Pirulito custa R$1,56 para fazer, venda no mínimo por R$3,90. Nunca venda abaixo do custo!</p></div>
+          <div class="dic-card"><span class="dic-ic">🔄</span><strong>Reutilize moldes e papel</strong><p>O papel manteiga pode ser usado várias vezes. Um rolo de R$26 dura muitas produções. Mantenha limpo!</p></div>
+          <div class="dic-card"><span class="dic-ic">💰</span><strong>Quanto guardar por mês</strong><p>Comece com um orçamento de R$60–R$100/mês em insumos. Isso dá para fazer ~30 pirulitos, ~10 boneguinhos e ~8 barras.</p></div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /ap -->
+
+<script>
+// ── CURSOR ──
+let mx=innerWidth/2,my=innerHeight/2,bx=mx,by=my;
+const c1=document.getElementById('cb1'),c2=document.getElementById('cb2');
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;c1.style.left=mx+'px';c1.style.top=my+'px';});
+(function L(){bx+=(mx-bx)*.11;by+=(my-by)*.11;c2.style.left=bx+'px';c2.style.top=by+'px';requestAnimationFrame(L);})();
+
+// ── DADOS ──
+const DEF={
+  gastos:[
+    {id:101,cat:'🍫 Chocolate Base',item:'Chocolate ao Leite (1kg)',  un:'kg', qtd:1,   preco:81},
+    {id:102,cat:'🎉 Recheios',      item:'Recheio Crocante (500g)',   un:'g',  qtd:500, preco:0.04},
+    {id:103,cat:'📦 Embalagem',     item:'Embalagens Pirulito (kit 100)',un:'kit',qtd:1, preco:10},
+    {id:104,cat:'📦 Embalagem',     item:'Embalagens Bonequinho (kit 10)',un:'kit',qtd:1,preco:10},
+    {id:105,cat:'📦 Embalagem',     item:'Embalagens Barra (kit 10)', un:'kit',qtd:1,   preco:3.50},
+  ],
+  vendas:[],
+  produtos:[
+    {id:1,nome:'Pirulitos',      emoji:'🍭',custo:0.55,venda:4.50, desc:'Chocolate ao leite e branco em espiral. Irresistível a cada giro!'},
+    {id:2,nome:'Boneguinhos',    emoji:'🐧',custo:1.48,venda:12.00,desc:'Bonequinhos fofos de chocolate ao leite e branco. Mais vendido!'},
+    {id:3,nome:'Barra Crocante', emoji:'🍫',custo:2.48,venda:10.00,desc:'Tablete com recheio crocante que estoura na boca. Puro prazer!'},
+  ]
+};
+let db=JSON.parse(localStorage.getItem('cpdb_v8')||'null')||JSON.parse(JSON.stringify(DEF));
+let nid={g:100,v:200,p:20};
+let ch={};
+function save(){localStorage.setItem('cpdb_v8',JSON.stringify(db));}
+function f(v){return 'R$ '+Number(v||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});}
+function fp(v){return Number(v||0).toLocaleString('pt-BR',{minimumFractionDigits:1,maximumFractionDigits:1})+'%';}
+function fd(s){return s?s.split('-').reverse().join('/'):'—';}
+function tv(){return db.vendas.reduce((s,v)=>s+(v.qtd*v.preco),0);}
+function tg(){return db.gastos.reduce((s,g)=>s+(g.qtd*g.preco),0);}
+
+// ── AUTH ──
+function login(){
+  const v=document.getElementById('si').value;
+  const b=document.getElementById('lbox');
+  if(v==='1903'){
+    document.getElementById('ls').style.display='none';
+    document.getElementById('ap').style.display='block';
+    init();
+  } else {
+    document.getElementById('le2').classList.add('on');
+    b.classList.remove('sk');void b.offsetWidth;b.classList.add('sk');
+    document.getElementById('si').value='';document.getElementById('si').focus();
+  }
+}
+function logout(){
+  document.getElementById('ls').style.display='flex';
+  document.getElementById('ap').style.display='none';
+  document.getElementById('si').value='';
+  document.getElementById('le2').classList.remove('on');
+}
+
+// ── NAV ──
+function go(btn,name){
+  document.querySelectorAll('.sec').forEach(s=>s.classList.remove('on'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
+  document.getElementById('s-'+name).classList.add('on');
+  btn.classList.add('on');
+  if(name==='cat')  renderCat();
+  if(name==='dash') dashUpdate();
+  if(name==='graf') renderGraf();
+  if(name==='gast') renderG();
+  if(name==='prod') renderP();
+  if(name==='econ'){renderEcon();calcCompra();}
+}
+
+// ── CHART HELPERS ──
+function dc(k){if(ch[k]){ch[k].destroy();delete ch[k];}}
+function setC(did,cid){document.getElementById(did).innerHTML=`<canvas id="${cid}"></canvas>`;}
+function empty(did,msg){document.getElementById(did).innerHTML=`<div class="chempty"><span class="ce">📊</span><p>${msg}</p></div>`;}
+const COLORS=['#3E1C00','#C4831A','#6B3A2A'];
+const BAR_OPT=(cb,extra)=>({
+  plugins:{legend:{display:false},...extra},
+  scales:{y:{ticks:{callback:cb,font:{size:11}},grid:{color:'#f5f0eb'}},x:{ticks:{font:{size:11}}}}
+});
+
+// ── CATALOG ──
+const CAT_BG=['linear-gradient(135deg,#FFF0F5,#FFE4EF)','linear-gradient(135deg,#FFF8E1,#FFEFC3)','linear-gradient(135deg,#F0FFF4,#D8F5E1)'];
+function renderCat(){
+  document.getElementById('pgrid-cat').innerHTML=db.produtos.map((p,i)=>{
+    const luc=p.venda-p.custo,m=p.venda>0?((luc/p.venda)*100):0;
+    return `<div class="pcard">
+      <div class="pcard-img" style="background:${CAT_BG[i%CAT_BG.length]}">
+        ${p.emoji||'🍫'}
+        ${p.nome==='Boneguinhos'?'<span class="sold-badge">⭐ Mais vendido</span>':''}
+      </div>
+      <div class="pcard-body">
+        <div class="pcard-name">${p.nome}</div>
+        <div class="pcard-desc">${p.desc||'Produto ChocoPingu'}</div>
+        <div class="pcard-bottom">
+          <span class="${p.venda>0?'pcard-price':'pcard-price0'}">${p.venda>0?f(p.venda):'Preço a definir'}</span>
+          <span class="${p.venda>0?'pcard-marg':'pcard-marg0'}">${p.venda>0?fp(m)+' margem':'—'}</span>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── DASHBOARD ──
+function dashUpdate(){
+  const tve=tv(),tge=tg(),luc=tve-tge,tick=db.vendas.length?tve/db.vendas.length:0;
+  document.getElementById('c-v').textContent=f(tve);
+  document.getElementById('c-g').textContent=f(tge);
+  const cl=document.getElementById('c-l');
+  cl.textContent=f(luc);cl.style.color=luc>=0?'var(--vd)':'var(--vm)';
+  document.getElementById('c-t').textContent=f(tick);
+
+  const prods={};db.vendas.forEach(v=>{prods[v.produto]=(prods[v.produto]||0)+(v.qtd*v.preco);});
+  const topV=Object.entries(prods).sort((a,b)=>b[1]-a[1])[0];
+  document.getElementById('i-p').textContent=topV?topV[0]:'Nenhuma venda ainda';
+
+  const comPreco=db.produtos.filter(p=>p.venda>0);
+  const avgMarg=comPreco.length?comPreco.reduce((s,p)=>s+(p.venda-p.custo)/p.venda*100,0)/comPreco.length:null;
+  document.getElementById('i-m').textContent=avgMarg!==null?fp(avgMarg):'Adicione preços';
+
+  const topL=comPreco.sort((a,b)=>(b.venda-b.custo)-(a.venda-a.custo))[0];
+  document.getElementById('i-l').textContent=topL?topL.nome:'—';
+
+  buildPVC(); buildMLP(); buildLMU();
+}
+
+function buildPVC(){
+  dc('pvc');
+  const p=db.produtos.filter(x=>x.venda>0||x.custo>0);
+  if(!p.length){empty('d-pvc','Adicione o custo e preço de venda dos produtos para ver o comparativo');return;}
+  setC('d-pvc','ch-pvc');
+  ch.pvc=new Chart(document.getElementById('ch-pvc'),{
+    type:'bar',
+    data:{
+      labels:p.map(x=>x.nome),
+      datasets:[
+        {label:'Custo',data:p.map(x=>x.custo),backgroundColor:'#F48FB1',borderRadius:6,borderWidth:0},
+        {label:'Preço Venda',data:p.map(x=>x.venda),backgroundColor:'#A5D6A7',borderRadius:6,borderWidth:0}
+      ]
+    },
+    options:{plugins:{legend:{display:true,labels:{font:{size:11}}}},scales:{y:{ticks:{callback:v=>'R$'+v,font:{size:11}},grid:{color:'#f5f0eb'}},x:{ticks:{font:{size:11}}}}}
+  });
+}
+
+function buildMLP(){
+  dc('mlp');
+  const p=db.produtos.filter(x=>x.venda>0);
+  if(!p.length){empty('d-mlp','Adicione os preços dos produtos para ver as margens');return;}
+  setC('d-mlp','ch-mlp');
+  const margins=p.map(x=>+((x.venda-x.custo)/x.venda*100).toFixed(1));
+  ch.mlp=new Chart(document.getElementById('ch-mlp'),{
+    type:'bar',
+    data:{labels:p.map(x=>x.nome),datasets:[{data:margins,backgroundColor:margins.map(m=>m>40?'#A5D6A7':m>20?'#FFE082':'#F48FB1'),borderRadius:10,borderWidth:0}]},
+    options:BAR_OPT(v=>v+'%')
+  });
+}
+
+function buildLMU(){
+  dc('lmu');
+  const p=db.produtos.filter(x=>x.venda>0);
+  if(!p.length){empty('d-lmu','Adicione os preços para ver o lucro médio por unidade');return;}
+  setC('d-lmu','ch-lmu');
+  const lucros=p.map(x=>+(x.venda-x.custo).toFixed(2));
+  ch.lmu=new Chart(document.getElementById('ch-lmu'),{
+    type:'bar',
+    data:{labels:p.map(x=>x.nome),datasets:[{data:lucros,backgroundColor:lucros.map(l=>l>0?'#90CAF9':'#F48FB1'),borderRadius:10,borderWidth:0}]},
+    options:BAR_OPT(v=>'R$'+v)
+  });
+}
+
+// ── GRÁFICOS ──
+function renderGraf(){
+  buildGrafBar('d-pmv','ch-pmv',db.produtos,'venda','Preço de Venda (R$)','R$');
+  buildGrafBar('d-cmu','ch-cmu',db.produtos,'custo','Custo por Unidade (R$)','R$');
+  buildGrafBar('d-lm2','ch-lm2',db.produtos.map(p=>({...p,lucro:p.venda-p.custo})),'lucro','Lucro por Unidade (R$)','R$');
+  buildCVP();
+  buildGrafBar('d-mml','ch-mml',db.produtos.filter(p=>p.venda>0).map(p=>({...p,marg:+((p.venda-p.custo)/p.venda*100).toFixed(1)})),'marg','Margem %','%');
+  buildGastoCat();
+}
+
+function buildGrafBar(did,cid,data,field,label,prefix){
+  dc(cid);
+  const valid=data.filter(p=>(p[field]||0)!==0);
+  if(!valid.length){empty(did,'Adicione os preços dos produtos para ver este gráfico');return;}
+  setC(did,cid);
+  ch[cid]=new Chart(document.getElementById(cid),{
+    type:'bar',
+    data:{labels:valid.map(p=>p.nome),datasets:[{label,data:valid.map(p=>p[field]),backgroundColor:COLORS,borderRadius:10,borderWidth:0}]},
+    options:BAR_OPT(v=>prefix==='R$'?'R$'+v:v+prefix)
+  });
+}
+
+function buildCVP(){
+  dc('cvp');
+  const p=db.produtos.filter(x=>x.venda>0||x.custo>0);
+  if(!p.length){empty('d-cvp','Adicione os preços dos produtos');return;}
+  setC('d-cvp','ch-cvp');
+  ch.cvp=new Chart(document.getElementById('ch-cvp'),{
+    type:'bar',
+    data:{
+      labels:p.map(x=>x.nome),
+      datasets:[
+        {label:'Custo',data:p.map(x=>x.custo),backgroundColor:'#F48FB1',borderRadius:6,borderWidth:0},
+        {label:'Venda',data:p.map(x=>x.venda),backgroundColor:'#A5D6A7',borderRadius:6,borderWidth:0}
+      ]
+    },
+    options:{plugins:{legend:{display:true,labels:{font:{size:11}}}},scales:{y:{ticks:{callback:v=>'R$'+v,font:{size:11}},grid:{color:'#f5f0eb'}},x:{ticks:{font:{size:11}}}}}
+  });
+}
+
+function buildGastoCat(){
+  dc('gcat');
+  const tot={},cnt={};
+  db.gastos.forEach(g=>{const k=g.cat.split(' ').slice(1).join(' ')||g.cat;tot[k]=(tot[k]||0)+(g.qtd*g.preco);cnt[k]=(cnt[k]||0)+1;});
+  const labels=Object.keys(tot);
+  if(!labels.length){empty('d-gcat','Registre seus gastos para ver a média por categoria');return;}
+  setC('d-gcat','ch-gcat');
+  const avgs=labels.map(k=>+(tot[k]/cnt[k]).toFixed(2));
+  ch.gcat=new Chart(document.getElementById('ch-gcat'),{
+    type:'bar',
+    data:{labels,datasets:[{data:avgs,backgroundColor:['#F48FB1','#A5D6A7','#90CAF9','#FFCC80'],borderRadius:10,borderWidth:0}]},
+    options:BAR_OPT(v=>'R$'+v)
+  });
+}
+
+// ── GASTOS ──
+function addG(){
+  const cat=document.getElementById('g-cat').value,item=document.getElementById('g-item').value.trim();
+  const un=document.getElementById('g-un').value.trim();
+  const qtd=parseFloat(document.getElementById('g-qtd').value)||0;
+  const preco=parseFloat(document.getElementById('g-preco').value)||0;
+  if(!item){alert('Escreva o nome do item!');return;}
+  db.gastos.push({id:nid.g++,cat,item,un,qtd,preco});save();
+  ['g-item','g-un','g-qtd','g-preco'].forEach(id=>document.getElementById(id).value='');
+  renderG();
+}
+function delG(id){if(!confirm('Apagar este gasto?'))return;db.gastos=db.gastos.filter(g=>g.id!==id);save();renderG();}
+function renderG(){
+  document.getElementById('tot-g').textContent='Total: '+f(tg());
+  const tb=document.getElementById('tb-g');
+  if(!db.gastos.length){tb.innerHTML=`<tr><td colspan="7"><div class="estate"><p>Nenhum gasto registrado ainda.<br>Use o formulário acima para adicionar.</p></div></td></tr>`;return;}
+  tb.innerHTML=db.gastos.map(g=>`<tr>
+    <td>${g.cat}</td><td><strong>${g.item}</strong></td><td>${g.un||'—'}</td>
+    <td>${g.qtd}</td><td>${f(g.preco)}</td><td class="neg">${f(g.qtd*g.preco)}</td>
+    <td><button class="btn bdel" onclick="delG(${g.id})">Excluir</button></td>
+  </tr>`).join('');
+}
+
+// ── PRODUTOS ──
+function addP(){
+  const nome=document.getElementById('p-nome').value.trim();
+  const emoji=document.getElementById('p-emoji').value||'🍫';
+  const desc=document.getElementById('p-desc').value.trim();
+  const custo=parseFloat(document.getElementById('p-custo').value)||0;
+  const venda=parseFloat(document.getElementById('p-venda').value)||0;
+  if(!nome){alert('Escreva o nome do produto!');return;}
+  db.produtos.push({id:nid.p++,nome,emoji,custo,venda,desc});save();
+  ['p-nome','p-emoji','p-desc','p-custo','p-venda'].forEach(id=>document.getElementById(id).value='');
+  renderP();
+}
+function delP(id){if(!confirm('Apagar este produto?'))return;db.produtos=db.produtos.filter(p=>p.id!==id);save();renderP();}
+function renderP(){
+  const tb=document.getElementById('tb-p');
+  if(!db.produtos.length){tb.innerHTML=`<tr><td colspan="7"><div class="estate"><p>Nenhum produto cadastrado.</p></div></td></tr>`;return;}
+  tb.innerHTML=db.produtos.map(p=>{
+    const luc=p.venda-p.custo,m=p.venda>0?((luc/p.venda)*100):0;
+    const sem=p.custo===0&&p.venda===0;
+    const vale=sem?'<span style="color:#ccc;font-size:12px">Preencha os preços</span>'
+      :luc>0?'<span style="color:var(--vd);font-weight:700">✅ Vale a pena!</span>'
+             :'<span style="color:var(--vm);font-weight:700">❌ Prejuízo</span>';
+    return `<tr>
+      <td>${p.emoji} <strong>${p.nome}</strong></td>
+      <td>${f(p.custo)}</td><td>${f(p.venda)}</td>
+      <td class="${luc>0?'pos':'neg'}">${f(luc)}</td>
+      <td>${fp(m)}</td><td>${vale}</td>
+      <td><button class="btn bdel" onclick="delP(${p.id})">Excluir</button></td>
+    </tr>`;
+  }).join('');
+}
+
+// ── ECONOMIA — dados reais coletados de Mercado Livre / Shopee / Amazon (2025) ──
+const ECO={
+  insumos:[
+    {nome:'Mavalério Ao Leite Frac. 1,01kg', unid:'kg',  var:50,   atac:26.99,fonte:'Vivian Festas'},
+    {nome:'Harald Branco Frac. 1,01kg',      unid:'kg',  var:55,   atac:33.99,fonte:'Vivian Festas'},
+    {nome:'Flocos Arroz Rice Boll 1kg',       unid:'kg',  var:40,   atac:21.70,fonte:'Tempero da Terra'},
+    {nome:'Emb. Pirulito (saq. 8x12 /100)',  unid:'kit', var:0.10, atac:0.034,fonte:'Mercadoce'},
+    {nome:'Emb. Bonequinho (saq.10x14 /100)',unid:'kit', var:0.15, atac:0.049,fonte:'Rizzo Confeitaria'},
+    {nome:'Emb. Barra Flip',                 unid:'un',  var:0.80, atac:0.35, fonte:'Amazon'},
+    {nome:'Papel Manteiga (rolo)',            unid:'rolo',var:40,   atac:26,   fonte:'Amazon'},
+  ],
+  produtos:[
+    {
+      nome:'Pirulito',emoji:'🍭',
+      itens:[
+        {desc:'Mavalério ao leite (18g × R$26,99/kg)',atac:0.49,var:0.90},
+        {desc:'Saquinho transparente 8x12',           atac:0.034,var:0.10},
+        {desc:'Papel manteiga (rateado)',             atac:0.03, var:0.04},
+      ],
+      custoAtac:0.55, custoVar:1.04, qtdMes:50
+    },
+    {
+      nome:'Boneguinho',emoji:'🐧',
+      itens:[
+        {desc:'Mavalério ao leite (45g × R$26,99/kg)',atac:1.21,var:2.25},
+        {desc:'Harald branco (5g × R$33,99/kg)',      atac:0.17,var:0.28},
+        {desc:'Saquinho Cromus 10x14',                atac:0.049,var:0.15},
+        {desc:'Papel manteiga (rateado)',             atac:0.05, var:0.06},
+      ],
+      custoAtac:1.48, custoVar:2.74, qtdMes:30
+    },
+    {
+      nome:'Barra Crocante',emoji:'🍫',
+      itens:[
+        {desc:'Mavalério ao leite (65g × R$26,99/kg)',atac:1.75,var:3.25},
+        {desc:'Flocos Rice Boll (15g × R$21,70/kg)', atac:0.33,var:0.60},
+        {desc:'Embalagem barra flip',                atac:0.35,var:0.80},
+        {desc:'Papel manteiga (rateado)',            atac:0.05,var:0.06},
+      ],
+      custoAtac:2.48, custoVar:4.71, qtdMes:20
+    }
+  ]
+};
+
+// Receitas por produto (g por unidade)
+const RECIPE={
+  pirulito:{cla:18,clb:0,rec:0},
+  bonequinho:{cla:45,clb:5,rec:0},
+  barra:{cla:65,clb:0,rec:15}
+};
+
+function calcCompra(){
+  const v={
+    cla:Math.max(0,parseFloat(document.getElementById('ci-cla').value)||0),
+    clb:Math.max(0,parseFloat(document.getElementById('ci-clb').value)||0),
+    rec:Math.max(0,parseFloat(document.getElementById('ci-rec').value)||0),
+    ep: Math.max(0,parseFloat(document.getElementById('ci-ep').value)||0),
+    eb: Math.max(0,parseFloat(document.getElementById('ci-eb').value)||0),
+    ebr:Math.max(0,parseFloat(document.getElementById('ci-ebr').value)||0),
+  };
+  const PA={cla:26.99,clb:33.99,rec:21.70,ep:0.034,eb:0.049,ebr:0.35};
+  const PV={cla:50,   clb:55,   rec:40,   ep:0.10, eb:0.15, ebr:0.80};
+
+  const ta=Object.keys(v).reduce((s,k)=>s+v[k]*PA[k],0);
+  const tv=Object.keys(v).reduce((s,k)=>s+v[k]*PV[k],0);
+
+  // Rendimento por produto (fator limitante)
+  function maxUnits(r,embKey){
+    const claLim=r.cla>0?(v.cla*1000/r.cla):Infinity;
+    const clbLim=r.clb>0?(v.clb>0?v.clb*1000/r.clb:0):Infinity;
+    const recLim=r.rec>0?(v.rec>0?v.rec*1000/r.rec:0):Infinity;
+    const embLim=v[embKey]>0?v[embKey]:Infinity;
+    const all=[claLim,clbLim,recLim,embLim].filter(x=>x!==Infinity);
+    if(r.cla>0&&v.cla===0)return 0;
+    if(r.rec>0&&v.rec===0)return 0;
+    return Math.floor(Math.min(...[claLim,clbLim,recLim,embLim].map(x=>isFinite(x)?x:99999)));
+  }
+  const pir=maxUnits(RECIPE.pirulito,'ep');
+  const bon=maxUnits(RECIPE.bonequinho,'eb');
+  const bar=maxUnits(RECIPE.barra,'ebr');
+
+  // Preço sugerido (60% margem)
+  const marg=0.60;
+  const custoUn={
+    pir:+(RECIPE.pirulito.cla/1000*PA.cla+RECIPE.pirulito.clb/1000*PA.clb+PA.ep).toFixed(2),
+    bon:+(RECIPE.bonequinho.cla/1000*PA.cla+RECIPE.bonequinho.clb/1000*PA.clb+PA.eb).toFixed(2),
+    bar:+(RECIPE.barra.cla/1000*PA.cla+RECIPE.barra.rec/1000*PA.rec+PA.ebr).toFixed(2),
+  };
+  const sugUn={
+    pir:Math.ceil(custoUn.pir/(1-marg)/0.5)*0.5,
+    bon:Math.ceil(custoUn.bon/(1-marg)/0.5)*0.5,
+    bar:Math.ceil(custoUn.bar/(1-marg)/0.5)*0.5,
+  };
+
+  const recEst=pir*sugUn.pir+bon*sugUn.bon+bar*sugUn.bar;
+  const lucEst=recEst-ta;
+
+  // Atualizar displays
+  document.getElementById('cr-ta').textContent=f(ta);
+  document.getElementById('cr-tv').textContent=f(tv);
+  document.getElementById('cr-eco').textContent=f(Math.max(0,tv-ta));
+  document.getElementById('cr-pir').textContent=pir;
+  document.getElementById('cr-bon').textContent=bon;
+  document.getElementById('cr-bar').textContent=bar;
+  document.getElementById('cr-rec').textContent=f(recEst);
+  const lEl=document.getElementById('cr-luc');
+  lEl.textContent=f(lucEst);
+  lEl.style.color=lucEst>=0?'var(--vd)':'var(--vm)';
+
+  // Tabela preço sugerido
+  const prods=[
+    {e:'🍭',n:'Pirulito',c:custoUn.pir,s:sugUn.pir},
+    {e:'🐧',n:'Boneguinho',c:custoUn.bon,s:sugUn.bon},
+    {e:'🍫',n:'Barra Crocante',c:custoUn.bar,s:sugUn.bar},
+  ];
+  document.getElementById('tb-rp').innerHTML=prods.map(p=>{
+    const luc=+(p.s-p.c).toFixed(2);
+    return `<div style="display:grid;grid-template-columns:36px 1fr 1fr 1fr 1fr;align-items:center;padding:10px 0;border-bottom:1px solid #F5F0EB">
+      <span style="font-size:22px">${p.e}</span>
+      <strong style="font-size:13px;color:var(--br)">${p.n}</strong>
+      <span style="text-align:center"><span style="background:#FEE;color:var(--vm);padding:4px 10px;border-radius:12px;font-size:12px;font-weight:700">${f(p.c)}</span></span>
+      <span style="text-align:center"><span style="background:#E8F5E9;color:var(--vd);padding:4px 10px;border-radius:12px;font-size:14px;font-weight:800">${f(p.s)}</span></span>
+      <span style="text-align:center"><span style="background:#E3F2FD;color:var(--az);padding:4px 10px;border-radius:12px;font-size:12px;font-weight:700">${f(luc)}</span></span>
+    </div>`;
+  }).join('');
+
+  // Gráfico distribuição
+  buildInvChart(v,PA);
+}
+
+function buildInvChart(v,PA){
+  dc('inv');
+  const labels=[];const data=[];
+  const map={cla:'🍫 Choc. Leite',clb:'⬜ Choc. Branco',rec:'🌾 Recheio',ep:'🍭 Emb. Pirulito',eb:'🐧 Emb. Bonequinho',ebr:'📦 Emb. Barra'};
+  Object.keys(v).forEach(k=>{
+    const val=+(v[k]*PA[k]).toFixed(2);
+    if(val>0){labels.push(map[k]);data.push(val);}
+  });
+  if(!data.length){
+    document.getElementById('d-inv').innerHTML='<div class="chempty"><span class="ce">📊</span><p>Digite as quantidades acima para ver a distribuição</p></div>';
+    return;
+  }
+  setC('d-inv','ch-inv');
+  const COLORS_INV=['#F48FB1','#90CAF9','#FFCC80','#A5D6A7','#CE93D8','#80DEEA'];
+  ch.inv=new Chart(document.getElementById('ch-inv'),{
+    type:'doughnut',
+    data:{labels,datasets:[{data,backgroundColor:COLORS_INV.slice(0,data.length),borderWidth:2}]},
+    options:{plugins:{legend:{display:true,position:'right',labels:{font:{size:11},padding:14}}},cutout:'55%',
+      maintainAspectRatio:true,aspectRatio:2.2}
+  });
+}
+
+function renderEcon(){
+  // Insights strip
+  const avg=arr=>arr.reduce((s,v)=>s+v,0)/arr.length;
+  const avgAtac=avg(ECO.produtos.map(p=>p.custoAtac));
+  const avgVar=avg(ECO.produtos.map(p=>p.custoVar));
+  const eco=((avgVar-avgAtac)/avgVar*100).toFixed(0);
+  document.getElementById('ie-atac').textContent=f(avgAtac);
+  document.getElementById('ie-var').textContent=f(avgVar);
+  document.getElementById('ie-eco').textContent=eco+'% a menos';
+
+  renderInsumosTable();
+  renderSim();
+  buildEco1();
+  buildEco2();
+  buildEco3();
+  buildPies();
+}
+
+function renderInsumosTable(){
+  document.getElementById('tb-ins').innerHTML=ECO.insumos.map(i=>{
+    const eco=((i.var-i.atac)/i.var*100).toFixed(0);
+    return `<tr>
+      <td><strong>${i.nome}</strong></td>
+      <td class="neg">${i.unid==='un'?'R$ '+i.var.toFixed(2):f(i.var)}</td>
+      <td class="pos">${i.unid==='un'?'R$ '+i.atac.toFixed(2):f(i.atac)}</td>
+      <td>${i.unid}</td>
+      <td><span class="eco-save">-${eco}%</span></td>
+    </tr>`;
+  }).join('');
+}
+
+function updateMarg(){
+  const v=document.getElementById('sl-marg').value;
+  document.getElementById('sl-val').textContent=v+'%';
+  renderSim();
+  buildEco2();
+}
+
+function renderSim(){
+  const marg=parseInt(document.getElementById('sl-marg').value)/100;
+  document.getElementById('tb-sim').innerHTML=ECO.produtos.map(p=>{
+    const preco=+(p.custoAtac/(1-marg)).toFixed(2);
+    const luc=+(preco-p.custoAtac).toFixed(2);
+    const pArredond=Math.ceil(preco/0.5)*0.5;
+    return `<tr>
+      <td>${p.emoji} <strong>${p.nome}</strong></td>
+      <td>${f(p.custoAtac)}</td>
+      <td>${f(p.custoVar)}</td>
+      <td><strong style="color:var(--gold);font-size:15px">${f(pArredond)}</strong></td>
+      <td class="pos">${f(luc)}</td>
+      <td>${luc>0?'<span style="color:var(--vd);font-weight:700">✅ Lucro garantido!</span>':'<span style="color:var(--vm)">❌</span>'}</td>
+    </tr>`;
+  }).join('');
+}
+
+function buildEco1(){
+  dc('eco1');setC('d-eco1','ch-eco1');
+  const labels=ECO.produtos.map(p=>p.nome);
+  ch.eco1=new Chart(document.getElementById('ch-eco1'),{
+    type:'bar',
+    data:{
+      labels,
+      datasets:[
+        {label:'Varejo',data:ECO.produtos.map(p=>p.custoVar),backgroundColor:'#F48FB1',borderRadius:6,borderWidth:0},
+        {label:'Atacado',data:ECO.produtos.map(p=>p.custoAtac),backgroundColor:'#A5D6A7',borderRadius:6,borderWidth:0}
+      ]
+    },
+    options:{plugins:{legend:{display:true,labels:{font:{size:11}}}},scales:{y:{ticks:{callback:v=>'R$'+v,font:{size:11}},grid:{color:'#f5f0eb'}},x:{ticks:{font:{size:10}}}}}
+  });
+}
+
+function buildEco2(){
+  dc('eco2');setC('d-eco2','ch-eco2');
+  const marg=parseInt(document.getElementById('sl-marg').value)/100;
+  const precos=ECO.produtos.map(p=>+((Math.ceil(p.custoAtac/(1-marg)/0.5)*0.5)).toFixed(2));
+  ch.eco2=new Chart(document.getElementById('ch-eco2'),{
+    type:'bar',
+    data:{
+      labels:ECO.produtos.map(p=>p.nome),
+      datasets:[
+        {label:'Custo (atacado)',data:ECO.produtos.map(p=>p.custoAtac),backgroundColor:'#F48FB1',borderRadius:6,borderWidth:0},
+        {label:'Preço sugerido',data:precos,backgroundColor:'#90CAF9',borderRadius:6,borderWidth:0}
+      ]
+    },
+    options:{plugins:{legend:{display:true,labels:{font:{size:11}}}},scales:{y:{ticks:{callback:v=>'R$'+v,font:{size:11}},grid:{color:'#f5f0eb'}},x:{ticks:{font:{size:10}}}}}
+  });
+}
+
+function buildEco3(){
+  dc('eco3');setC('d-eco3','ch-eco3');
+  const labels=ECO.produtos.map(p=>p.nome);
+  const econAtac=ECO.produtos.map(p=>+((p.custoVar-p.custoAtac)*p.qtdMes).toFixed(2));
+  ch.eco3=new Chart(document.getElementById('ch-eco3'),{
+    type:'bar',
+    data:{
+      labels,
+      datasets:[{
+        label:'Economia/mês comprando atacado',
+        data:econAtac,
+        backgroundColor:['#A5D6A7','#90CAF9','#FFCC80'],
+        borderRadius:10,borderWidth:0
+      }]
+    },
+    options:{
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`Economiza R$ ${ctx.raw.toFixed(2)}/mês`}}},
+      scales:{y:{ticks:{callback:v=>'R$'+v,font:{size:11}},grid:{color:'#f5f0eb'}},x:{ticks:{font:{size:10}}}}
+    }
+  });
+}
+
+function buildPies(){
+  const PIE_OPT={plugins:{legend:{display:true,position:'bottom',labels:{font:{size:10},padding:8}}}};
+  ['eco-p1','eco-p2','eco-p3'].forEach(k=>dc(k));
+  const pDef=['d-pie1','ch-pie1','d-pie2','ch-pie2','d-pie3','ch-pie3'];
+  ECO.produtos.forEach((p,i)=>{
+    const did=pDef[i*2],cid=pDef[i*2+1];
+    setC(did,cid);
+    ch[cid]=new Chart(document.getElementById(cid),{
+      type:'doughnut',
+      data:{
+        labels:p.itens.map(x=>x.desc),
+        datasets:[{data:p.itens.map(x=>x.atac),backgroundColor:['#F48FB1','#FFCC80','#A5D6A7'],borderWidth:2}]
+      },
+      options:{...PIE_OPT,cutout:'60%'}
+    });
+  });
+}
+
+// ── INIT ──
+function init(){ renderCat(); renderG(); renderP(); }
+document.getElementById('si').addEventListener('keydown',e=>{if(e.key==='Enter')login();});
+</script>
+</body>
+</html>
