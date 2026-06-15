@@ -13,9 +13,12 @@ function renderNavAuth() {
   const navAuth = document.getElementById('navAuth');
   const user = getUser();
   if (user) {
+    const avatarHtml = user.foto
+      ? `<img src="${user.foto}" alt="${user.nome}" class="nav-user-avatar-img" referrerpolicy="no-referrer" />`
+      : `<div class="nav-user-avatar">${primeiraLetra(user.nome)}</div>`;
     navAuth.innerHTML = `
       <div class="nav-user">
-        <div class="nav-user-avatar">${primeiraLetra(user.nome)}</div>
+        ${avatarHtml}
         <span class="nav-user-nome">${user.nome.split(' ')[0]}</span>
         <button class="btn-sair" id="btnSair">Sair da conta</button>
       </div>`;
@@ -96,12 +99,48 @@ document.getElementById('btnEntrar').addEventListener('click', () => {
   setTimeout(() => { fecharAuthModal(); renderNavAuth(); }, 1000);
 });
 
-/* Google (abre instrução) */
-['btnGoogleCriar','btnGoogleEntrar'].forEach(id => {
-  document.getElementById(id).addEventListener('click', () => {
-    msg(id === 'btnGoogleCriar' ? 'msgCriar' : 'msgEntrar',
-      'Login com Google disponível em breve!', 'ok');
+/* =========================================================
+   GOOGLE SIGN-IN
+   Substitua GOOGLE_CLIENT_ID pelo seu Client ID real do
+   Google Cloud Console → APIs & Serviços → Credenciais
+   ========================================================= */
+const GOOGLE_CLIENT_ID = 'COLE_SEU_CLIENT_ID_AQUI';
+
+function iniciarGoogleSignIn() {
+  if (typeof google === 'undefined' || !GOOGLE_CLIENT_ID || GOOGLE_CLIENT_ID === 'COLE_SEU_CLIENT_ID_AQUI') {
+    const abaMsgId = document.getElementById('formCriar').classList.contains('hidden') ? 'msgEntrar' : 'msgCriar';
+    msg(abaMsgId, 'Configure o Client ID do Google para ativar este login.', 'erro');
+    return;
+  }
+  google.accounts.id.initialize({
+    client_id: GOOGLE_CLIENT_ID,
+    callback: handleGoogleCredential,
+    auto_select: false,
+    cancel_on_tap_outside: true,
   });
+  google.accounts.id.prompt();
+}
+
+function handleGoogleCredential(response) {
+  try {
+    const payload = JSON.parse(atob(response.credential.split('.')[1]));
+    const user = {
+      nome:   payload.name,
+      email:  payload.email,
+      foto:   payload.picture,
+      google: true,
+    };
+    saveUser(user);
+    fecharAuthModal();
+    renderNavAuth();
+  } catch {
+    const abaMsgId = document.getElementById('formCriar').classList.contains('hidden') ? 'msgEntrar' : 'msgCriar';
+    msg(abaMsgId, 'Erro ao processar login com Google. Tente novamente.', 'erro');
+  }
+}
+
+['btnGoogleCriar', 'btnGoogleEntrar'].forEach(id => {
+  document.getElementById(id).addEventListener('click', iniciarGoogleSignIn);
 });
 
 /* Inicia navbar auth ao carregar */

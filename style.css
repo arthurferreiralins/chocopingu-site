@@ -581,6 +581,11 @@ h2 span { color: var(--ouro-escuro); }
   font-weight: 900; font-size: .95rem; color: var(--choco);
   flex-shrink: 0;
 }
+.nav-user-avatar-img {
+  width: 34px; height: 34px; border-radius: 50%;
+  object-fit: cover; flex-shrink: 0;
+  border: 2px solid var(--ouro);
+}
 .nav-user-nome {
   font-weight: 700; font-size: .9rem;
   color: rgba(255,255,255,.9);
