@@ -1111,8 +1111,10 @@ h2 span { color: var(--ouro-escuro); }
   display: flex;
   gap: .75rem;
   justify-content: center;
+  align-items: center;
   margin-bottom: 2.5rem;
   flex-wrap: wrap;
+  position: relative;
 }
 
 .catalogo-tab {
@@ -1140,17 +1142,15 @@ h2 span { color: var(--ouro-escuro); }
   box-shadow: 0 4px 16px rgba(200,148,26,.35);
 }
 .catalogo-tab-admin {
-  margin-left: auto;
-  border-color: rgba(107,51,0,.3);
-  color: var(--choco-claro);
-  font-size: .8rem;
-  opacity: .6;
-  padding: .55rem 1.2rem;
+  border-color: var(--choco-claro);
+  background: var(--choco-mid);
+  color: var(--ouro-claro);
+  font-size: .88rem;
+  padding: .65rem 1.4rem;
 }
 .catalogo-tab-admin:hover {
-  opacity: 1;
-  background: var(--choco-mid) !important;
-  border-color: var(--choco-claro) !important;
+  background: var(--choco) !important;
+  border-color: var(--ouro) !important;
   color: var(--ouro-claro) !important;
 }
 
