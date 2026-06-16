@@ -26,8 +26,7 @@ function renderNavAuth() {
       clearUser(); renderNavAuth();
     });
   } else {
-    navAuth.innerHTML = `<button class="btn-criar-conta" id="btnAbrirAuth">Entrar</button>`;
-    document.getElementById('btnAbrirAuth').addEventListener('click', () => abrirAuth('entrar'));
+    navAuth.innerHTML = '';
   }
 }
 
