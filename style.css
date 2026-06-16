@@ -264,8 +264,19 @@ h2 span { color: var(--ouro-escuro); }
 .hero-preview-row {
   display: flex; gap: 1.2rem; align-items: flex-end;
 }
-.hero-preview-row--4 .preview-wrap img { height: 150px !important; }
-.hero-preview-row--4 .preview-novo img { height: 180px !important; }
+.hero-preview-row--4 {
+  gap: 0.7rem;
+  flex-wrap: nowrap;
+  max-width: 94vw;
+}
+.hero-preview-row--4 .preview-wrap img {
+  height: min(130px, 9vw) !important;
+  width: auto !important;
+}
+.hero-preview-row--4 .preview-novo img {
+  height: min(160px, 12vw) !important;
+  width: auto !important;
+}
 
 .preview-wrap {
   display: flex; flex-direction: column; align-items: center; gap: .6rem;
