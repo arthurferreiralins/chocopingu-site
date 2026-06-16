@@ -149,8 +149,10 @@ renderNavAuth();
 /* =========================================================
    MODAL ÁREA RESTRITA — ACESSO AO PAINEL ADMIN
    ========================================================= */
-const ADMIN_EMAIL_SITE  = 'arthurferreiralins2017@gmail.com';
-const ADMIN_HASH_SITE   = 'f649e03a9da2e85972381cb0dd788ef1df466c099a6c767988cb79a2a0af8f53';
+const ADMIN_USUARIOS = {
+  'arthur':   '262b06d105e1c865b01c3e0a74291cdae511ef15f3d456e14fbe2dffd9efe3b9',
+  'michelle': 'fd8307642fb3c5873e843940c6e903448d3f4012e39eda0caff5d918878aff41',
+};
 
 async function sha256Admin(text) {
   const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
@@ -193,12 +195,13 @@ document.getElementById('btnAdminEntrar').addEventListener('click', async () => 
 
   const hash = await sha256Admin(senha);
 
-  if (email === ADMIN_EMAIL_SITE && hash === ADMIN_HASH_SITE) {
+  const nome = email.trim().toLowerCase();
+  if (ADMIN_USUARIOS[nome] && hash === ADMIN_USUARIOS[nome]) {
     sessionStorage.setItem('cp_admin', '1');
     fecharModalAdmin();
     window.location.href = 'admin/';
   } else {
-    erroEl.textContent = 'E-mail ou senha incorretos.';
+    erroEl.textContent = 'Nome ou senha incorretos.';
     erroEl.className = 'auth-msg erro';
     document.getElementById('adminInputSenha').value = '';
     document.getElementById('adminInputSenha').focus();

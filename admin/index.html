@@ -318,10 +318,12 @@ tr:hover td{background:#FDFAF7}tr:last-child td{border-bottom:none}
     <span class="le">🐧🍫</span>
     <h1>ChocoPingu</h1>
     <p class="lsub">"Chocolate que diverte!" — Área Restrita</p>
-    <input type="password" id="si" placeholder="••••" maxlength="10"
+    <input type="text" id="sn" placeholder="Seu nome" maxlength="30" style="font-size:16px;letter-spacing:0;margin-bottom:8px"
+           onkeydown="if(event.key==='Enter')document.getElementById('si').focus()">
+    <input type="password" id="si" placeholder="••••" maxlength="20"
            onkeydown="if(event.key==='Enter')login()">
     <button class="lbtn" onclick="login()">Acessar Painel →</button>
-    <p class="lerr" id="le2">Senha incorreta. Tente novamente.</p>
+    <p class="lerr" id="le2">Nome ou senha incorretos.</p>
   </div>
 </div>
 
@@ -1000,10 +1002,12 @@ function tv(){return db.vendas.reduce((s,v)=>s+(v.qtd*v.preco),0);}
 function tg(){return db.gastos.reduce((s,g)=>s+(g.qtd*g.preco),0);}
 
 // ── AUTH ──
+const USUARIOS={arthur:'1903',michelle:'19032017'};
 function login(){
-  const v=document.getElementById('si').value;
+  const nome=document.getElementById('sn').value.trim().toLowerCase();
+  const senha=document.getElementById('si').value;
   const b=document.getElementById('lbox');
-  if(v==='1903'){
+  if(USUARIOS[nome]&&USUARIOS[nome]===senha){
     document.getElementById('ls').style.display='none';
     document.getElementById('ap').style.display='block';
     init();
