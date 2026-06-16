@@ -26,8 +26,8 @@ function renderNavAuth() {
       clearUser(); renderNavAuth();
     });
   } else {
-    navAuth.innerHTML = `<button class="btn-criar-conta" id="btnAbrirAuth">Criar conta</button>`;
-    document.getElementById('btnAbrirAuth').addEventListener('click', () => abrirAuth('criar'));
+    navAuth.innerHTML = `<button class="btn-criar-conta" id="btnAbrirAuth">Entrar</button>`;
+    document.getElementById('btnAbrirAuth').addEventListener('click', () => abrirAuth('entrar'));
   }
 }
 
@@ -35,22 +35,14 @@ function renderNavAuth() {
 const modalAuth  = document.getElementById('modalAuth');
 const fecharAuth = document.getElementById('fecharAuth');
 
-function abrirAuth(aba = 'criar') {
+function abrirAuth() {
   modalAuth.classList.add('aberto');
   document.body.style.overflow = 'hidden';
-  ativarAba(aba);
 }
 function fecharAuthModal() {
   modalAuth.classList.remove('aberto');
   document.body.style.overflow = '';
   limparMensagens();
-}
-
-function ativarAba(aba) {
-  document.getElementById('formCriar').classList.toggle('hidden', aba !== 'criar');
-  document.getElementById('formEntrar').classList.toggle('hidden', aba !== 'entrar');
-  document.getElementById('tabCriar').classList.toggle('active', aba === 'criar');
-  document.getElementById('tabEntrar').classList.toggle('active', aba === 'entrar');
 }
 
 function msg(id, texto, tipo) {
@@ -61,31 +53,12 @@ function msg(id, texto, tipo) {
 }
 
 function limparMensagens() {
-  ['msgCriar','msgEntrar'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) { el.textContent = ''; el.className = 'auth-msg'; }
-  });
+  const el = document.getElementById('msgEntrar');
+  if (el) { el.textContent = ''; el.className = 'auth-msg'; }
 }
 
 fecharAuth.addEventListener('click', fecharAuthModal);
 modalAuth.addEventListener('click', e => { if (e.target === modalAuth) fecharAuthModal(); });
-document.getElementById('tabCriar').addEventListener('click', () => ativarAba('criar'));
-document.getElementById('tabEntrar').addEventListener('click', () => ativarAba('entrar'));
-document.getElementById('switchEntrar').addEventListener('click', e => { e.preventDefault(); ativarAba('entrar'); });
-document.getElementById('switchCriar').addEventListener('click', e => { e.preventDefault(); ativarAba('criar'); });
-
-/* Criar conta */
-document.getElementById('btnCriar').addEventListener('click', () => {
-  const nome  = document.getElementById('criarNome').value.trim();
-  const email = document.getElementById('criarEmail').value.trim();
-  const senha = document.getElementById('criarSenha').value;
-  if (!nome || !email || !senha) { msg('msgCriar','Preencha todos os campos.','erro'); return; }
-  if (!/\S+@\S+\.\S+/.test(email)) { msg('msgCriar','E-mail inválido.','erro'); return; }
-  if (senha.length < 6) { msg('msgCriar','Senha precisa ter ao menos 6 caracteres.','erro'); return; }
-  saveUser({ nome, email, senha });
-  msg('msgCriar', `Conta criada! Bem-vindo(a), ${nome.split(' ')[0]}!`, 'ok');
-  setTimeout(() => { fecharAuthModal(); renderNavAuth(); }, 1200);
-});
 
 /* Entrar */
 document.getElementById('btnEntrar').addEventListener('click', () => {
@@ -108,8 +81,7 @@ const GOOGLE_CLIENT_ID = 'COLE_SEU_CLIENT_ID_AQUI';
 
 function iniciarGoogleSignIn() {
   if (typeof google === 'undefined' || !GOOGLE_CLIENT_ID || GOOGLE_CLIENT_ID === 'COLE_SEU_CLIENT_ID_AQUI') {
-    const abaMsgId = document.getElementById('formCriar').classList.contains('hidden') ? 'msgEntrar' : 'msgCriar';
-    msg(abaMsgId, 'Configure o Client ID do Google para ativar este login.', 'erro');
+    msg('msgEntrar', 'Configure o Client ID do Google para ativar este login.', 'erro');
     return;
   }
   google.accounts.id.initialize({
@@ -134,14 +106,11 @@ function handleGoogleCredential(response) {
     fecharAuthModal();
     renderNavAuth();
   } catch {
-    const abaMsgId = document.getElementById('formCriar').classList.contains('hidden') ? 'msgEntrar' : 'msgCriar';
-    msg(abaMsgId, 'Erro ao processar login com Google. Tente novamente.', 'erro');
+    msg('msgEntrar', 'Erro ao processar login com Google. Tente novamente.', 'erro');
   }
 }
 
-['btnGoogleCriar', 'btnGoogleEntrar'].forEach(id => {
-  document.getElementById(id).addEventListener('click', iniciarGoogleSignIn);
-});
+document.getElementById('btnGoogleEntrar').addEventListener('click', iniciarGoogleSignIn);
 
 /* Inicia navbar auth ao carregar */
 renderNavAuth();
