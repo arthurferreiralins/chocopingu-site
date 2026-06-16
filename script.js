@@ -165,10 +165,10 @@ const fecharAdmin = document.getElementById('fecharAdmin');
 function abrirModalAdmin() {
   modalAdmin.classList.add('aberto');
   document.body.style.overflow = 'hidden';
-  document.getElementById('adminInputEmail').value = '';
+  document.getElementById('adminInputNome').value = '';
   document.getElementById('adminInputSenha').value = '';
   document.getElementById('adminLoginErro').textContent = '';
-  setTimeout(() => document.getElementById('adminInputEmail').focus(), 150);
+  setTimeout(() => document.getElementById('adminInputNome').focus(), 150);
 }
 function fecharModalAdmin() {
   modalAdmin.classList.remove('aberto');
@@ -183,19 +183,17 @@ document.getElementById('adminInputSenha').addEventListener('keydown', e => {
 });
 
 document.getElementById('btnAdminEntrar').addEventListener('click', async () => {
-  const email = document.getElementById('adminInputEmail').value.trim();
+  const nome = document.getElementById('adminInputNome').value.trim().toLowerCase();
   const senha = document.getElementById('adminInputSenha').value;
   const erroEl = document.getElementById('adminLoginErro');
 
-  if (!email || !senha) {
-    erroEl.textContent = 'Preencha e-mail e senha.';
+  if (!nome || !senha) {
+    erroEl.textContent = 'Preencha nome e senha.';
     erroEl.className = 'auth-msg erro';
     return;
   }
 
   const hash = await sha256Admin(senha);
-
-  const nome = email.trim().toLowerCase();
   if (ADMIN_USUARIOS[nome] && hash === ADMIN_USUARIOS[nome]) {
     sessionStorage.setItem('cp_admin', '1');
     fecharModalAdmin();
