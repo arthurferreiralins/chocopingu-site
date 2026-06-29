@@ -790,10 +790,22 @@ h2 span { color: var(--ouro-escuro); }
 .carrinho-badge.pulsa { animation: pulsa .3s ease; }
 @keyframes pulsa { 0%,100%{transform:scale(1)} 50%{transform:scale(1.5)} }
 
+/* ===== PREÇO — produto card ===== */
+.produto-preco-row {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: .75rem; margin-top: .85rem; flex-wrap: wrap;
+}
+.produto-preco {
+  font-size: 1.45rem; font-weight: 800;
+  color: var(--ouro);
+  letter-spacing: -.5px;
+  white-space: nowrap;
+}
+
 /* ===== BOTÃO ADICIONAR — produto card ===== */
 .btn-add-carrinho {
   display: flex; align-items: center; gap: .5rem; justify-content: center;
-  width: 100%; margin-top: 1rem;
+  flex: 1; margin-top: 0;
   padding: .7rem 1rem;
   background: var(--choco-mid);
   color: var(--ouro-claro);

@@ -452,6 +452,8 @@
       var html = PRODS_DEF.map(function(p) {
         var dbP = dbProds ? dbProds.find(function(x){return x.id===p.id;}) : null;
         var isPrev = dbP ? (dbP.preVenda !== false) : true;
+        var preco = (dbP && Number(dbP.venda) > 0) ? Number(dbP.venda) : p.preco;
+        var precoFmt = 'R$ ' + preco.toFixed(2).replace('.', ',');
         var badgeClass = isPrev ? 'badge badge-prevenda' : 'badge badge-disponivel';
         var badgeText  = isPrev ? '&#9203; Pré-venda' : '&#10003; Disponível';
         var cardClass  = isPrev ? 'produto-card destaque produto-card-novo' : 'produto-card destaque';
@@ -462,9 +464,12 @@
             '<h3>' + p.nome + '</h3>' +
             '<p>' + p.desc + '</p>' +
             '<span class="tag tag-novo">' + p.tag + '</span>' +
-            '<button class="btn-add-carrinho" onclick="adicionarAoCarrinho(\'' + p.nome + '\',\'' + p.img + '\',' + p.preco + ')">' +
-              svg + ' Adicionar ao carrinho' +
-            '</button>' +
+            '<div class="produto-preco-row">' +
+              '<span class="produto-preco">' + precoFmt + '</span>' +
+              '<button class="btn-add-carrinho" onclick="adicionarAoCarrinho(\'' + p.nome + '\',\'' + p.img + '\',' + preco + ')">' +
+                svg + ' Adicionar ao carrinho' +
+              '</button>' +
+            '</div>' +
           '</div>' +
         '</div>';
       }).join('');
