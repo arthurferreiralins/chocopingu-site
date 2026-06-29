@@ -201,12 +201,12 @@ document.getElementById('btnCarrinho').addEventListener('click', abrirCarrinho);
 document.getElementById('fecharCarrinho').addEventListener('click', fecharCarrinho);
 carrinhoOverlay.addEventListener('click', fecharCarrinho);
 
-function adicionarAoCarrinho(nome, img) {
+function adicionarAoCarrinho(nome, img, preco) {
   const idx = carrinho.findIndex(i => i.nome === nome);
   if (idx >= 0) {
     carrinho[idx].qtd++;
   } else {
-    carrinho.push({ nome, img, qtd: 1 });
+    carrinho.push({ nome, img, preco: Number(preco) || 0, qtd: 1 });
   }
   atualizarBadge();
   flashBotao(nome);
@@ -266,6 +266,7 @@ function renderCarrinho() {
       <img src="${item.img}" alt="${item.nome}" />
       <div class="item-info">
         <h4>${item.nome}</h4>
+        ${item.preco ? `<span class="item-preco">R$ ${(item.preco * item.qtd).toFixed(2).replace('.', ',')}</span>` : ''}
         <div class="item-qtd">
           <button onclick="mudarQtd(${i}, -1)">−</button>
           <span>${item.qtd}</span>
@@ -277,13 +278,22 @@ function renderCarrinho() {
   `).join('');
 
   const totalItens = carrinho.reduce((s, i) => s + i.qtd, 0);
+  const totalValor = carrinho.reduce((s, i) => s + (i.preco || 0) * i.qtd, 0);
   carrinhoRodapeEl.innerHTML = `
     <div class="carrinho-total">
-      <span>${totalItens} ${totalItens === 1 ? 'item' : 'itens'} no carrinho</span>
-      <strong>Frete a combinar</strong>
+      <span>${totalItens} ${totalItens === 1 ? 'item' : 'itens'}</span>
+      <strong>R$ ${totalValor.toFixed(2).replace('.', ',')}</strong>
     </div>
-    <button class="btn-finalizar">Finalizar pedido ›</button>
+    <button class="btn-finalizar" onclick="irParaCheckout()">Finalizar pedido ›</button>
   `;
+}
+
+function irParaCheckout() {
+  if (carrinho.length === 0) return;
+  localStorage.setItem('chocopingu_checkout_cart', JSON.stringify(
+    carrinho.map(i => ({ nome: i.nome, img: i.img, preco: i.preco || 0, qtd: i.qtd }))
+  ));
+  window.location.href = 'pedido.html';
 }
 
 /* =========================================================

@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Finalizar Pedido — Chocopingu</title>
+<link rel="icon" href="imagens/logo2.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ouro:#C8941A;--ouro-claro:#E5B84A;
+  --choco:#0d0400;--choco-mid:#2a1000;--choco-claro:#6b3300;
+  --creme:#FFF8F2;--bege:#F5EDE0;
+  --texto:#1a0800;--cinza:#777;--branco:#ffffff;
+  --radius:18px;--sombra:0 8px 32px rgba(13,4,0,.10);
+  --verde:#1a7a3a;--verde-bg:#e6f4ec;
+  --azul:#1a4f8a;--azul-bg:#e8f0fb;
+  --laranja:#b85c00;--laranja-bg:#fff3e0;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Nunito',sans-serif;background:var(--bege);color:var(--texto);min-height:100vh}
+
+/* HEADER */
+.checkout-nav{
+  background:var(--choco);padding:0 24px;
+  display:flex;align-items:center;justify-content:space-between;
+  height:60px;position:sticky;top:0;z-index:100;
+  box-shadow:0 2px 16px rgba(0,0,0,.4);
+}
+.checkout-nav a{display:flex;align-items:center;gap:10px;text-decoration:none}
+.checkout-nav img{height:36px}
+.checkout-nav .nav-title{font-family:'Playfair Display',serif;color:var(--ouro);font-size:1.1rem;font-weight:700}
+.checkout-nav .nav-voltar{
+  color:rgba(255,255,255,.7);font-size:.85rem;font-weight:700;
+  text-decoration:none;display:flex;align-items:center;gap:6px;
+  padding:8px 16px;border:1px solid rgba(255,255,255,.15);border-radius:50px;
+  transition:all .2s;
+}
+.checkout-nav .nav-voltar:hover{background:rgba(255,255,255,.08);color:#fff}
+
+/* LAYOUT */
+.checkout-wrap{max-width:900px;margin:0 auto;padding:32px 20px;display:grid;grid-template-columns:1fr 360px;gap:28px;align-items:start}
+@media(max-width:760px){.checkout-wrap{grid-template-columns:1fr}}
+
+/* CARDS */
+.ck-card{background:var(--branco);border-radius:var(--radius);box-shadow:var(--sombra);padding:28px;margin-bottom:20px}
+.ck-card h2{font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:700;color:var(--texto);margin-bottom:20px;padding-bottom:12px;border-bottom:2px solid var(--bege)}
+.ck-card h3{font-size:.85rem;font-weight:800;color:var(--cinza);text-transform:uppercase;letter-spacing:.5px;margin:20px 0 12px}
+
+/* RESUMO */
+.resumo-item{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--bege)}
+.resumo-item:last-child{border-bottom:none}
+.resumo-item img{width:52px;height:52px;object-fit:contain;border-radius:10px;background:var(--creme)}
+.resumo-info{flex:1}.resumo-info span{font-weight:700;font-size:.9rem;display:block}
+.resumo-info small{color:var(--cinza);font-size:.8rem}
+.resumo-item strong{font-weight:800;font-size:.95rem;white-space:nowrap}
+.resumo-total{display:flex;justify-content:space-between;align-items:center;margin-top:16px;padding-top:16px;border-top:2px solid var(--bege)}
+.resumo-total span{font-weight:700}
+.resumo-total strong{font-size:1.3rem;color:var(--verde);font-weight:900}
+
+/* FORM */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+@media(max-width:500px){.grid-2,.grid-3{grid-template-columns:1fr}}
+.fg{display:flex;flex-direction:column;gap:5px;margin-bottom:12px}
+.fg label{font-size:.75rem;font-weight:800;color:var(--cinza);text-transform:uppercase;letter-spacing:.4px}
+.fg input,.fg select{
+  padding:12px 14px;border:1.5px solid #ddd;border-radius:12px;
+  font-family:'Nunito',sans-serif;font-size:.95rem;color:var(--texto);
+  background:var(--creme);outline:none;transition:border-color .2s;
+}
+.fg input:focus,.fg select:focus{border-color:var(--ouro);box-shadow:0 0 0 3px rgba(200,148,26,.1)}
+.fg input::placeholder{color:#bbb}
+
+/* MÉTODOS */
+.metodos{display:flex;gap:10px;margin-bottom:20px}
+.metodo-btn{
+  flex:1;padding:14px 8px;border:2px solid #e0d8d0;border-radius:14px;
+  background:#fff;cursor:pointer;text-align:center;transition:all .2s;
+  font-family:'Nunito',sans-serif;font-weight:700;font-size:.85rem;color:var(--cinza);
+}
+.metodo-btn:hover{border-color:var(--ouro);color:var(--texto)}
+.metodo-btn.ativo{border-color:var(--ouro);background:linear-gradient(135deg,#fff8ec,#fffaf5);color:var(--choco-claro)}
+.metodo-btn .m-icon{font-size:1.5rem;display:block;margin-bottom:4px}
+.metodo-form{display:none}
+
+/* BTN PAGAR */
+.btn-pagar{
+  width:100%;padding:16px;background:linear-gradient(135deg,var(--choco-mid),var(--ouro));
+  color:#fff;border:none;border-radius:14px;font-family:'Nunito',sans-serif;
+  font-size:1.05rem;font-weight:900;cursor:pointer;transition:all .2s;margin-top:8px;
+  box-shadow:0 4px 20px rgba(13,4,0,.2);letter-spacing:.3px;
+}
+.btn-pagar:hover{opacity:.92;transform:translateY(-1px);box-shadow:0 8px 28px rgba(13,4,0,.25)}
+.btn-pagar:disabled{opacity:.5;cursor:not-allowed;transform:none}
+
+/* ERRO */
+.erro-msg{
+  background:#fff0f0;border:1.5px solid #e53935;border-radius:12px;
+  padding:12px 16px;color:#c62828;font-weight:700;font-size:.88rem;
+  margin-top:12px;display:none;
+}
+
+/* RESULTADO */
+#resultado{display:none}
+.resultado-box{
+  background:var(--branco);border-radius:var(--radius);box-shadow:var(--sombra);
+  padding:36px 28px;text-align:center;
+}
+.resultado-icone{
+  width:72px;height:72px;border-radius:50%;background:var(--verde-bg);
+  color:var(--verde);font-size:2rem;font-weight:900;
+  display:flex;align-items:center;justify-content:center;margin:0 auto 16px;
+}
+.resultado-box h2{font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:900;color:var(--texto);margin-bottom:8px}
+.resultado-box p{color:var(--cinza);margin-bottom:6px}
+.resultado-box strong{color:var(--texto)}
+.resultado-sub{font-size:.88rem!important}
+.resultado-info{
+  background:var(--creme);border-radius:12px;padding:14px 16px;
+  font-size:.85rem;color:var(--cinza);margin-top:16px;line-height:1.6;
+}
+.resultado-pendente .resultado-icone{background:var(--laranja-bg);color:var(--laranja)}
+
+/* PIX QR */
+.pix-qr{max-width:200px;border-radius:12px;margin:16px auto;display:block;border:3px solid var(--bege)}
+.codigo-wrap{display:flex;gap:8px;margin-top:12px}
+.codigo-wrap input{
+  flex:1;padding:10px 12px;border:1.5px solid #ddd;border-radius:10px;
+  font-family:monospace;font-size:.8rem;color:var(--cinza);background:var(--creme);
+  outline:none;
+}
+.btn-copiar{
+  padding:10px 16px;background:var(--ouro);color:#fff;border:none;
+  border-radius:10px;font-family:'Nunito',sans-serif;font-weight:700;font-size:.85rem;
+  cursor:pointer;white-space:nowrap;transition:opacity .2s;
+}
+.btn-copiar:hover{opacity:.85}
+.btn-boleto-pdf{
+  display:inline-block;margin-top:12px;padding:10px 20px;
+  background:var(--azul-bg);color:var(--azul);border-radius:10px;
+  text-decoration:none;font-weight:700;font-size:.88rem;transition:background .2s;
+}
+.btn-boleto-pdf:hover{background:#d4e5f9}
+
+/* STICKY CART (mobile) */
+@media(max-width:760px){.resumo-sticky{position:static!important;margin-bottom:20px}}
+</style>
+</head>
+<body>
+
+<nav class="checkout-nav">
+  <a href="index.html">
+    <img src="imagens/logo2.png" alt="Chocopingu">
+    <span class="nav-title">Chocopingu</span>
+  </a>
+  <a href="index.html" class="nav-voltar">← Voltar à loja</a>
+</nav>
+
+<div class="checkout-wrap">
+
+  <!-- COLUNA ESQUERDA: DADOS + PAGAMENTO -->
+  <div id="formCheckout">
+
+    <!-- DADOS DO CLIENTE -->
+    <div class="ck-card">
+      <h2>Seus dados</h2>
+      <div class="grid-2">
+        <div class="fg"><label>Nome completo *</label><input type="text" id="fNome" placeholder="Seu nome completo"></div>
+        <div class="fg"><label>WhatsApp *</label><input type="tel" id="fWhatsapp" placeholder="(81) 99999-9999"></div>
+      </div>
+      <div class="grid-2">
+        <div class="fg"><label>E-mail *</label><input type="email" id="fEmail" placeholder="seu@email.com"></div>
+        <div class="fg"><label>CPF *</label><input type="text" id="fCpf" placeholder="000.000.000-00" maxlength="14"></div>
+      </div>
+
+      <h3>Endereço de entrega</h3>
+      <div class="grid-2">
+        <div class="fg"><label>CEP *</label><input type="text" id="fCep" placeholder="00000-000" maxlength="9"></div>
+        <div class="fg"><label>Estado</label>
+          <select id="fEstado">
+            <option value="AC">AC</option><option value="AL">AL</option><option value="AP">AP</option>
+            <option value="AM">AM</option><option value="BA">BA</option><option value="CE">CE</option>
+            <option value="DF">DF</option><option value="ES">ES</option><option value="GO">GO</option>
+            <option value="MA">MA</option><option value="MT">MT</option><option value="MS">MS</option>
+            <option value="MG">MG</option><option value="PA">PA</option><option value="PB">PB</option>
+            <option value="PR">PR</option><option value="PE" selected>PE</option><option value="PI">PI</option>
+            <option value="RJ">RJ</option><option value="RN">RN</option><option value="RS">RS</option>
+            <option value="RO">RO</option><option value="RR">RR</option><option value="SC">SC</option>
+            <option value="SP">SP</option><option value="SE">SE</option><option value="TO">TO</option>
+          </select>
+        </div>
+      </div>
+      <div class="fg"><label>Rua / Avenida *</label><input type="text" id="fRua" placeholder="Nome da rua"></div>
+      <div class="grid-3">
+        <div class="fg"><label>Número *</label><input type="text" id="fNumero" placeholder="123"></div>
+        <div class="fg"><label>Complemento</label><input type="text" id="fComplemento" placeholder="Apto, bloco..."></div>
+        <div class="fg"><label>Bairro *</label><input type="text" id="fBairro" placeholder="Bairro"></div>
+      </div>
+      <div class="fg"><label>Cidade *</label><input type="text" id="fCidade" placeholder="Cidade"></div>
+    </div>
+
+    <!-- PAGAMENTO -->
+    <div class="ck-card">
+      <h2>Forma de pagamento</h2>
+
+      <div class="metodos">
+        <button class="metodo-btn" id="metodo-pix" onclick="selecionarMetodo('pix')">
+          <span class="m-icon">🔑</span>PIX
+        </button>
+        <button class="metodo-btn" id="metodo-boleto" onclick="selecionarMetodo('boleto')">
+          <span class="m-icon">📄</span>Boleto
+        </button>
+        <button class="metodo-btn" id="metodo-cartao" onclick="selecionarMetodo('cartao')">
+          <span class="m-icon">💳</span>Cartão
+        </button>
+      </div>
+
+      <!-- PIX: sem campos extras -->
+      <div class="metodo-form" id="form-pix">
+        <div style="background:var(--verde-bg);border-radius:14px;padding:16px 18px;color:var(--verde);font-size:.88rem;line-height:1.6">
+          <strong>PIX instantâneo:</strong> Após clicar em "Gerar PIX", você receberá um QR Code para pagar pelo seu app bancário. O pagamento é confirmado na hora.
+        </div>
+      </div>
+
+      <!-- BOLETO -->
+      <div class="metodo-form" id="form-boleto">
+        <div style="background:var(--laranja-bg);border-radius:14px;padding:16px 18px;color:var(--laranja);font-size:.88rem;line-height:1.6">
+          <strong>Boleto bancário:</strong> Vencimento em 3 dias úteis. Pague em qualquer banco, lotérica ou aplicativo. Prazo de compensação: até 3 dias.
+        </div>
+      </div>
+
+      <!-- CARTÃO DE CRÉDITO -->
+      <div class="metodo-form" id="form-cartao">
+        <div class="fg"><label>Número do cartão *</label><input type="text" id="fCardNum" placeholder="0000 0000 0000 0000" maxlength="19" autocomplete="cc-number"></div>
+        <div class="fg"><label>Nome impresso no cartão *</label><input type="text" id="fCardNome" placeholder="NOME SOBRENOME" style="text-transform:uppercase" autocomplete="cc-name"></div>
+        <div class="grid-3">
+          <div class="fg"><label>Validade *</label><input type="text" id="fCardVal" placeholder="MM/AAAA" maxlength="7" autocomplete="cc-exp"></div>
+          <div class="fg"><label>CVV *</label><input type="text" id="fCardCvv" placeholder="123" maxlength="4" autocomplete="cc-csc"></div>
+          <div class="fg"><label>Parcelas</label>
+            <select id="fParcelas">
+              <option value="1">1x sem juros</option>
+              <option value="2">2x sem juros</option>
+              <option value="3">3x sem juros</option>
+            </select>
+          </div>
+        </div>
+        <div style="background:var(--azul-bg);border-radius:12px;padding:12px 14px;font-size:.78rem;color:var(--azul);margin-top:4px">
+          🔒 Dados protegidos pela PagarMe. Nunca armazenamos os dados do seu cartão.
+        </div>
+      </div>
+
+      <div class="erro-msg" id="erroMsg"></div>
+      <button class="btn-pagar" id="btnPagar">Gerar PIX</button>
+    </div>
+
+  </div><!-- /formCheckout -->
+
+  <!-- RESULTADO (aparece após pagamento) -->
+  <div id="resultado" style="display:none"></div>
+
+  <!-- COLUNA DIREITA: RESUMO DO PEDIDO (sticky) -->
+  <div class="resumo-sticky" style="position:sticky;top:80px">
+    <div class="ck-card" style="margin-bottom:0">
+      <h2>Resumo do pedido</h2>
+      <div id="resumoItens"></div>
+      <div class="resumo-total">
+        <span>Total</span>
+        <strong id="resumoTotal">R$ 0,00</strong>
+      </div>
+      <div style="margin-top:14px;padding:12px 14px;background:var(--creme);border-radius:12px;font-size:.8rem;color:var(--cinza);line-height:1.5">
+        🚚 <strong>Frete a combinar</strong> — entraremos em contato após a confirmação do pagamento.
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script src="checkout.js"></script>
+</body>
+</html>

@@ -377,6 +377,7 @@ tr:hover td{background:#FDFAF7}tr:last-child td{border-bottom:none}
     <button class="tab"     onclick="go(this,'graf')"><span class="ti">📈</span> Gráficos</button>
     <button class="tab"     onclick="go(this,'gast')"><span class="ti">💸</span> Gastos</button>
     <button class="tab"     onclick="go(this,'econ')"><span class="ti">💡</span> Economia</button>
+    <button class="tab"     onclick="go(this,'ped');carregarPedidos()"><span class="ti">📋</span> Pedidos</button>
     <div style="flex:1"></div>
     <button class="tab" style="color:#A93226" onclick="logout()"><span class="ti">🚪</span> Sair</button>
   </div>
@@ -1009,6 +1010,40 @@ tr:hover td{background:#FDFAF7}tr:last-child td{border-bottom:none}
           <div class="dic-card"><span class="dic-ic">🔄</span><strong>Reutilize moldes e papel</strong><p>O papel manteiga pode ser usado várias vezes. Um rolo de R$26 dura muitas produções. Mantenha limpo!</p></div>
           <div class="dic-card"><span class="dic-ic">💰</span><strong>Quanto guardar por mês</strong><p>Comece com um orçamento de R$60–R$100/mês em insumos. Isso dá para fazer ~30 pirulitos, ~10 boneguinhos e ~8 barras.</p></div>
         </div>
+      </div>
+    </div>
+
+    <!-- ── PEDIDOS ── -->
+    <div id="s-ped" class="sec">
+      <div class="ptitle">📋 Pedidos Online</div>
+      <div class="crow">
+        <div class="card cv"><span class="cic">📦</span><span class="clb">Total de Pedidos</span><span class="cval" id="ped-total">—</span></div>
+        <div class="card ca"><span class="cic">✅</span><span class="clb">Pagos</span><span class="cval pos" id="ped-pagos">—</span></div>
+        <div class="card cr"><span class="cic">⏳</span><span class="clb">Pendentes</span><span class="cval" id="ped-pend">—</span></div>
+        <div class="card cg"><span class="cic">💰</span><span class="clb">Receita Total</span><span class="cval pos" id="ped-receita">—</span></div>
+      </div>
+      <div class="tbox">
+        <div class="thdr">
+          <h3>Pedidos Recentes</h3>
+          <button class="btn-sm" onclick="carregarPedidos()" style="background:var(--gold);color:#000;border:none;padding:6px 14px;border-radius:8px;cursor:pointer;font-weight:700">↺ Atualizar</button>
+        </div>
+        <div id="ped-loading" style="padding:24px;text-align:center;color:#888">Carregando pedidos...</div>
+        <div id="ped-erro" style="display:none;padding:16px;color:#c0392b;background:#fdf;border-radius:8px;margin:12px 0"></div>
+        <div id="ped-tabela" style="display:none">
+          <table>
+            <thead><tr>
+              <th>Data</th>
+              <th>Pedido</th>
+              <th>Cliente</th>
+              <th>Método</th>
+              <th>Status</th>
+              <th>Total</th>
+              <th>Itens</th>
+            </tr></thead>
+            <tbody id="ped-tbody"></tbody>
+          </table>
+        </div>
+        <div id="ped-vazio" style="display:none;padding:32px;text-align:center;color:#aaa">Nenhum pedido encontrado.</div>
       </div>
     </div>
 
@@ -1838,6 +1873,52 @@ function buildVDist(vendPorProd){
       animation:{duration:700,easing:'easeOutQuart'}
     }
   });
+}
+
+// ── PEDIDOS ONLINE ──
+async function carregarPedidos(){
+  const loading=document.getElementById('ped-loading');
+  const tabela=document.getElementById('ped-tabela');
+  const vazio=document.getElementById('ped-vazio');
+  const erro=document.getElementById('ped-erro');
+  const tbody=document.getElementById('ped-tbody');
+  loading.style.display='block';tabela.style.display='none';vazio.style.display='none';erro.style.display='none';
+  try{
+    const resp=await fetch('/api/admin-orders');
+    const data=await resp.json();
+    if(!resp.ok){throw new Error(data.error||'Erro ao buscar pedidos');}
+    loading.style.display='none';
+    if(!Array.isArray(data)||data.length===0){vazio.style.display='block';return;}
+    // stats
+    const total=data.length;
+    const pagos=data.filter(p=>p.status==='paid'||p.status==='processing').length;
+    const pend=total-pagos;
+    const receita=data.filter(p=>p.status==='paid'||p.status==='processing').reduce((s,p)=>s+(p.total_centavos||0),0);
+    document.getElementById('ped-total').textContent=total;
+    document.getElementById('ped-pagos').textContent=pagos;
+    document.getElementById('ped-pend').textContent=pend;
+    document.getElementById('ped-receita').textContent='R$ '+(receita/100).toFixed(2).replace('.',',');
+    // tabela
+    const metodoLabel={pix:'PIX',boleto:'Boleto',cartao:'Cartão'};
+    const statusLabel={paid:'✅ Pago',processing:'🔄 Processando',pending:'⏳ Pendente',failed:'❌ Falhou',canceled:'🚫 Cancelado'};
+    tbody.innerHTML=data.map(p=>{
+      const dt=p.created_at?new Date(p.created_at).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',year:'2-digit',hour:'2-digit',minute:'2-digit'}):'—';
+      const itens=Array.isArray(p.itens)?p.itens.map(i=>`${i.qtd||1}x ${i.nome||'?'}`).join(', '):'—';
+      const total=p.total_centavos?'R$ '+(p.total_centavos/100).toFixed(2).replace('.',','):'—';
+      return `<tr>
+        <td style="font-size:12px;white-space:nowrap">${dt}</td>
+        <td style="font-size:11px;color:#888">${(p.order_id||'').slice(-8)}</td>
+        <td>${p.nome_cliente||'—'}<br><span style="font-size:11px;color:#888">${p.email_cliente||''}</span></td>
+        <td>${metodoLabel[p.metodo]||p.metodo||'—'}</td>
+        <td>${statusLabel[p.status]||p.status||'—'}</td>
+        <td><strong>${total}</strong></td>
+        <td style="font-size:12px">${itens}</td>
+      </tr>`;
+    }).join('');
+    tabela.style.display='block';
+  }catch(e){
+    loading.style.display='none';erro.style.display='block';erro.textContent='Erro: '+e.message;
+  }
 }
 
 // ── INIT ──
