@@ -205,74 +205,7 @@
       </button>
     </div>
 
-    <div class="produtos-grid" id="gridTodos">
-
-      <div class="produto-card destaque produto-card-novo" data-prod-id="1">
-        <span class="badge badge-prevenda" id="badge-prod-1">&#9203; Pré-venda</span>
-        <div class="produto-img-wrap">
-          <img src="imagens/barra-coracao.png" alt="Barra Coração Chocopingu" />
-        </div>
-        <div class="produto-info">
-          <h3>Barra Coração</h3>
-          <p>Derrete, cria e encanta! Barra especial em formato de coração, feita com chocolate ao leite de verdade. 140g de puro amor.</p>
-          <span class="tag tag-novo">&#10084; Chocolate ao leite • 140g</span>
-          <button class="btn-add-carrinho" onclick="adicionarAoCarrinho('Barra Coração','imagens/barra-coracao.png')">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
-            Adicionar ao carrinho
-          </button>
-        </div>
-      </div>
-
-      <div class="produto-card destaque produto-card-novo" data-prod-id="2">
-        <span class="badge badge-prevenda" id="badge-prod-2">&#9203; Pré-venda</span>
-        <div class="produto-img-wrap">
-          <img src="imagens/barra-normal.png" alt="Barra Normal Chocopingu" />
-        </div>
-        <div class="produto-info">
-          <h3>Barra Normal</h3>
-          <p>Textura cremosa e feita com amor para você! Barra clássica de chocolate ao leite de verdade. 140g de puro prazer.</p>
-          <span class="tag tag-novo">&#127858; Chocolate ao leite • 140g</span>
-          <button class="btn-add-carrinho" onclick="adicionarAoCarrinho('Barra Normal','imagens/barra-normal.png')">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
-            Adicionar ao carrinho
-          </button>
-        </div>
-      </div>
-
-      <div class="produto-card destaque produto-card-novo" data-prod-id="3">
-        <span class="badge badge-prevenda" id="badge-prod-3">&#9203; Pré-venda</span>
-        <div class="produto-img-wrap">
-          <img src="imagens/pirulitos-novo.png" alt="Pirulitos Chocopingu" />
-        </div>
-        <div class="produto-info">
-          <h3>Pirulitos</h3>
-          <p>Pirulitos artesanais em formato de estrela, feitos com chocolate ao leite de verdade. 140g de diversão!</p>
-          <span class="tag tag-novo">&#11088; Chocolate ao leite • 140g</span>
-          <button class="btn-add-carrinho" onclick="adicionarAoCarrinho('Pirulitos','imagens/pirulitos-novo.png')">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
-            Adicionar ao carrinho
-          </button>
-        </div>
-      </div>
-
-      <div class="produto-card destaque produto-card-novo" data-prod-id="4">
-        <span class="badge badge-prevenda" id="badge-prod-4">&#9203; Pré-venda</span>
-        <div class="produto-img-wrap">
-          <img src="imagens/bonecos-animais.png" alt="Boneco Animais Chocopingu" />
-        </div>
-        <div class="produto-info">
-          <h3>Boneco Animais</h3>
-          <p>Chocolate ao leite com formato especial de animais fofos! Perfeito para presentear e se divertir. 140g de pura alegria.</p>
-          <span class="tag tag-novo">&#128054; Chocolate ao leite • 140g</span>
-          <button class="btn-add-carrinho" onclick="adicionarAoCarrinho('Boneco Animais','imagens/bonecos-animais.png')">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
-            Adicionar ao carrinho
-          </button>
-        </div>
-      </div>
-
-
-    </div>
+    <div class="produtos-grid" id="gridTodos"></div>
 
     <!-- ===== COPA DO MUNDO — VOTAÇÃO ===== -->
     <div class="hidden" id="gridCopa">
@@ -496,27 +429,50 @@
 
   <script src="script.js"></script>
   <script>
-    (function syncPrevenda(){
-      try{
-        const raw=localStorage.getItem('chocopingu_db_v2');
-        if(!raw)return;
-        const db=JSON.parse(raw);
-        if(!db||!Array.isArray(db.produtos))return;
-        db.produtos.forEach(function(p){
-          const badge=document.getElementById('badge-prod-'+p.id);
-          const card=document.querySelector('[data-prod-id="'+p.id+'"]');
-          if(!badge||!card)return;
-          if(p.preVenda===false){
-            badge.className='badge badge-disponivel';
-            badge.innerHTML='&#10003; Disponível';
-            card.classList.remove('produto-card-novo');
-          } else {
-            badge.className='badge badge-prevenda';
-            badge.innerHTML='&#9203; Pré-venda';
-          }
-        });
-      }catch(e){}
-    })();
+    var PRODS_DEF = [
+      {id:1, nome:'Barra Coração',  img:'imagens/barra-coracao.png',    tag:'❤ Chocolate ao leite • 140g', desc:'Derrete, cria e encanta! Barra especial em formato de coração, feita com chocolate ao leite de verdade. 140g de puro amor.'},
+      {id:2, nome:'Barra Normal',   img:'imagens/barra-normal.png',     tag:'🍺 Chocolate ao leite • 140g', desc:'Textura cremosa e feita com amor para você! Barra clássica de chocolate ao leite de verdade. 140g de puro prazer.'},
+      {id:3, nome:'Pirulitos',      img:'imagens/pirulitos-novo.png',   tag:'⭐ Chocolate ao leite • 140g', desc:'Pirulitos artesanais em formato de estrela, feitos com chocolate ao leite de verdade. 140g de diversão!'},
+      {id:4, nome:'Boneco Animais', img:'imagens/bonecos-animais.png',  tag:'🐾 Chocolate ao leite • 140g', desc:'Chocolate ao leite com formato especial de animais fofos! Perfeito para presentear e se divertir. 140g de pura alegria.'}
+    ];
+
+    function renderGridProdutos() {
+      var DBKEY = 'chocopingu_db_v2';
+      var dbProds = null;
+      try {
+        var raw = localStorage.getItem(DBKEY);
+        if (raw) {
+          var db = JSON.parse(raw);
+          if (db && Array.isArray(db.produtos)) dbProds = db.produtos;
+        }
+      } catch(e) {}
+
+      var svg = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>';
+
+      var html = PRODS_DEF.map(function(p) {
+        var dbP = dbProds ? dbProds.find(function(x){return x.id===p.id;}) : null;
+        var isPrev = dbP ? (dbP.preVenda !== false) : true;
+        var badgeClass = isPrev ? 'badge badge-prevenda' : 'badge badge-disponivel';
+        var badgeText  = isPrev ? '&#9203; Pré-venda' : '&#10003; Disponível';
+        var cardClass  = isPrev ? 'produto-card destaque produto-card-novo' : 'produto-card destaque';
+        return '<div class="' + cardClass + '" data-prod-id="' + p.id + '">' +
+          '<span class="' + badgeClass + '" id="badge-prod-' + p.id + '">' + badgeText + '</span>' +
+          '<div class="produto-img-wrap"><img src="' + p.img + '" alt="' + p.nome + ' Chocopingu" /></div>' +
+          '<div class="produto-info">' +
+            '<h3>' + p.nome + '</h3>' +
+            '<p>' + p.desc + '</p>' +
+            '<span class="tag tag-novo">' + p.tag + '</span>' +
+            '<button class="btn-add-carrinho" onclick="adicionarAoCarrinho(\'' + p.nome + '\',\'' + p.img + '\')">' +
+              svg + ' Adicionar ao carrinho' +
+            '</button>' +
+          '</div>' +
+        '</div>';
+      }).join('');
+
+      document.getElementById('gridTodos').innerHTML = html;
+    }
+
+    renderGridProdutos();
   </script>
 </body>
 </html>
