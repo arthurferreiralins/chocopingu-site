@@ -207,8 +207,8 @@
 
     <div class="produtos-grid" id="gridTodos">
 
-      <div class="produto-card destaque produto-card-novo">
-        <span class="badge badge-novo">&#10024; Novo Lançamento</span>
+      <div class="produto-card destaque produto-card-novo" data-prod-id="1">
+        <span class="badge badge-prevenda" id="badge-prod-1">&#9203; Pré-venda</span>
         <div class="produto-img-wrap">
           <img src="imagens/barra-coracao.png" alt="Barra Coração Chocopingu" />
         </div>
@@ -223,8 +223,8 @@
         </div>
       </div>
 
-      <div class="produto-card destaque produto-card-novo">
-        <span class="badge badge-novo">&#10024; Novo Lançamento</span>
+      <div class="produto-card destaque produto-card-novo" data-prod-id="2">
+        <span class="badge badge-prevenda" id="badge-prod-2">&#9203; Pré-venda</span>
         <div class="produto-img-wrap">
           <img src="imagens/barra-normal.png" alt="Barra Normal Chocopingu" />
         </div>
@@ -239,8 +239,8 @@
         </div>
       </div>
 
-      <div class="produto-card destaque produto-card-novo">
-        <span class="badge badge-novo">&#10024; Novo Lançamento</span>
+      <div class="produto-card destaque produto-card-novo" data-prod-id="3">
+        <span class="badge badge-prevenda" id="badge-prod-3">&#9203; Pré-venda</span>
         <div class="produto-img-wrap">
           <img src="imagens/pirulitos-novo.png" alt="Pirulitos Chocopingu" />
         </div>
@@ -255,8 +255,8 @@
         </div>
       </div>
 
-      <div class="produto-card destaque produto-card-novo">
-        <span class="badge badge-novo">&#10024; Novo Lançamento</span>
+      <div class="produto-card destaque produto-card-novo" data-prod-id="4">
+        <span class="badge badge-prevenda" id="badge-prod-4">&#9203; Pré-venda</span>
         <div class="produto-img-wrap">
           <img src="imagens/bonecos-animais.png" alt="Boneco Animais Chocopingu" />
         </div>
@@ -486,5 +486,28 @@
   <div class="cursor-ring" id="cursorRing"></div>
 
   <script src="script.js"></script>
+  <script>
+    (function syncPrevenda(){
+      try{
+        const raw=localStorage.getItem('chocopingu_db_v2');
+        if(!raw)return;
+        const db=JSON.parse(raw);
+        if(!db||!Array.isArray(db.produtos))return;
+        db.produtos.forEach(function(p){
+          const badge=document.getElementById('badge-prod-'+p.id);
+          const card=document.querySelector('[data-prod-id="'+p.id+'"]');
+          if(!badge||!card)return;
+          if(p.preVenda===false){
+            badge.className='badge badge-disponivel';
+            badge.innerHTML='&#10003; Disponível';
+            card.classList.remove('produto-card-novo');
+          } else {
+            badge.className='badge badge-prevenda';
+            badge.innerHTML='&#9203; Pré-venda';
+          }
+        });
+      }catch(e){}
+    })();
+  </script>
 </body>
 </html>

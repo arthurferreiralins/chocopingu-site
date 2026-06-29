@@ -306,6 +306,16 @@ tr:hover td{background:#FDFAF7}tr:last-child td{border-bottom:none}
 .vd-ok{background:#FFF8E1;color:#E65100}
 .mp-nota{background:#FFFDE7;border-radius:14px;padding:14px 18px;border-left:4px solid #F9A825;font-size:12px;color:#5D4037;line-height:1.6}
 .mp-nota strong{color:#E65100}
+
+/* PRÉ-VENDA */
+.pv-badge{position:absolute;top:12px;left:12px;background:linear-gradient(135deg,var(--gold),#E09B20);color:#fff;font-size:10px;font-weight:800;padding:5px 13px;border-radius:20px;letter-spacing:.5px;z-index:1;box-shadow:0 2px 8px rgba(196,131,26,.4)}
+.avail-badge{position:absolute;top:12px;left:12px;background:var(--vd);color:#fff;font-size:10px;font-weight:800;padding:5px 13px;border-radius:20px;letter-spacing:.5px;z-index:1}
+.pcard-status-row{margin-top:14px;padding-top:14px;border-top:1px solid var(--bd)}
+.btn-toggle-pv{width:100%;padding:10px 14px;border:none;border-radius:10px;font-size:12px;font-weight:700;cursor:none;transition:all .2s;text-align:center;display:flex;align-items:center;justify-content:center;gap:6px}
+.btn-pv-on{background:var(--vdl);color:var(--vd)}
+.btn-pv-on:hover{background:var(--vd);color:#fff}
+.btn-pv-off{background:var(--vml);color:var(--vm)}
+.btn-pv-off:hover{background:var(--vm);color:#fff}
 </style>
 </head>
 <body>
@@ -959,12 +969,13 @@ const DEF={
   gastos:[],
   vendas:[],
   produtos:[
-    {id:1,nome:'Pirulitos',      emoji:'🍭',custo:0.55,venda:2.50,desc:'Chocolate ao leite e branco em espiral. Irresistível a cada giro!'},
-    {id:2,nome:'Boneguinhos',    emoji:'🐧',custo:1.48,venda:5.00,desc:'Bonequinhos fofos de chocolate ao leite e branco. Mais vendido!'},
-    {id:3,nome:'Barra Crocante', emoji:'🍫',custo:2.48,venda:6.00,desc:'Tablete com recheio crocante que estoura na boca. Puro prazer!'},
+    {id:1,nome:'Barra Coração',  img:'../imagens/barra-coracao-orig.png',  emoji:'❤️🍫',custo:0,venda:0,preVenda:true,desc:'Barra especial em formato de coração, feita com chocolate ao leite. 140g de puro amor.'},
+    {id:2,nome:'Barra Normal',   img:'../imagens/barra-normal-orig.png',   emoji:'🍫',   custo:0,venda:0,preVenda:true,desc:'Barra clássica de chocolate ao leite de verdade. 140g de puro prazer.'},
+    {id:3,nome:'Pirulitos',      img:'../imagens/pirulitos-orig.jpg',      emoji:'🍭',   custo:0,venda:0,preVenda:true,desc:'Pirulitos artesanais em formato de estrela. 140g de diversão!'},
+    {id:4,nome:'Boneco Animais', img:'../imagens/bonecos-animais-orig.jpg',emoji:'🐾',   custo:0,venda:0,preVenda:true,desc:'Chocolate ao leite em formato especial de animais fofos. 140g de pura alegria.'},
   ]
 };
-const DBKEY='chocopingu_db';
+const DBKEY='chocopingu_db_v2';
 let ch={};
 let nid={g:100,v:200,p:20};
 
@@ -981,9 +992,10 @@ function loadDB(){
     }
     if(!raw)return JSON.parse(JSON.stringify(DEF));
     const saved=JSON.parse(raw);
-    // garante que todos os produtos padrão existem (não apaga edições do usuário)
-    DEF.produtos.forEach(dp=>{
-      if(!saved.produtos.find(p=>p.id===dp.id))saved.produtos.push({...dp});
+    // força lista de produtos do DEF, preservando custo/venda que o usuário editou
+    saved.produtos=DEF.produtos.map(dp=>{
+      const ex=saved.produtos?saved.produtos.find(p=>p.id===dp.id):null;
+      return ex?{...dp,custo:ex.custo,venda:ex.venda,preVenda:ex.preVenda!==undefined?ex.preVenda:true}:{...dp};
     });
     if(!Array.isArray(saved.gastos))saved.gastos=JSON.parse(JSON.stringify(DEF.gastos));
     if(!Array.isArray(saved.vendas))saved.vendas=[];
@@ -1049,14 +1061,23 @@ const BAR_OPT=(cb,extra)=>({
 });
 
 // ── CATALOG ──
-const CAT_BG=['linear-gradient(135deg,#FFF0F5,#FFE4EF)','linear-gradient(135deg,#FFF8E1,#FFEFC3)','linear-gradient(135deg,#F0FFF4,#D8F5E1)'];
+const CAT_BG=[
+  'linear-gradient(135deg,#FFF0F5,#FFE4EF)',
+  'linear-gradient(135deg,#FFF8E1,#FFEFC3)',
+  'linear-gradient(135deg,#F0FFF4,#D8F5E1)',
+  'linear-gradient(135deg,#EEF2FF,#E0E7FF)'
+];
 function renderCat(){
   document.getElementById('pgrid-cat').innerHTML=db.produtos.map((p,i)=>{
     const luc=p.venda-p.custo,m=p.venda>0?((luc/p.venda)*100):0;
+    const pv=p.preVenda!==false;
+    const imgContent=p.img
+      ?`<img src="${p.img}" alt="${p.nome}" style="max-height:140px;max-width:85%;object-fit:contain;">`
+      :`<span style="font-size:84px">${p.emoji||'🍫'}</span>`;
     return `<div class="pcard">
-      <div class="pcard-img" style="background:${CAT_BG[i%CAT_BG.length]}">
-        ${p.emoji||'🍫'}
-        ${p.nome==='Boneguinhos'?'<span class="sold-badge">⭐ Mais vendido</span>':''}
+      <div class="pcard-img" style="background:${CAT_BG[i%CAT_BG.length]};position:relative">
+        ${imgContent}
+        <span class="${pv?'pv-badge':'avail-badge'}">${pv?'⏳ Pré-venda':'✅ Disponível'}</span>
       </div>
       <div class="pcard-body">
         <div class="pcard-name">${p.nome}</div>
@@ -1073,9 +1094,22 @@ function renderCat(){
           </div>
           <span class="${p.venda>0?'pcard-marg':'pcard-marg0'}" id="marg-lbl-${p.id}">${p.venda>0?fp(m)+' margem':'—'}</span>
         </div>
+        <div class="pcard-status-row">
+          <button class="btn-toggle-pv ${pv?'btn-pv-on':'btn-pv-off'}" onclick="togglePV(${p.id})">
+            ${pv?'🔓 Marcar como Disponível':'🔒 Voltar para Pré-venda'}
+          </button>
+        </div>
       </div>
     </div>`;
   }).join('');
+}
+
+function togglePV(id){
+  const p=db.produtos.find(x=>x.id===id);
+  if(!p)return;
+  p.preVenda=p.preVenda===false?true:false;
+  save();
+  renderCat();
 }
 
 function editPreco(id){
@@ -1097,7 +1131,6 @@ function savePreco(id){
   p.venda=Math.max(0,parseFloat(inp.value)||0);
   save();
   renderCat();
-  if(document.getElementById('s-prod').classList.contains('on'))renderP();
 }
 
 // ── DASHBOARD ──
@@ -1595,7 +1628,7 @@ function buildPies(){
 }
 
 // ── INIT ──
-function init(){ renderCat(); renderG(); renderP(); }
+function init(){ renderCat(); renderG(); }
 document.getElementById('si').addEventListener('keydown',e=>{if(e.key==='Enter')login();});
 </script>
 </body>
