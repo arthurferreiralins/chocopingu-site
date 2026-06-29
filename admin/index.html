@@ -316,6 +316,20 @@ tr:hover td{background:#FDFAF7}tr:last-child td{border-bottom:none}
 .btn-pv-on:hover{background:var(--vd);color:#fff}
 .btn-pv-off{background:var(--vml);color:var(--vm)}
 .btn-pv-off:hover{background:var(--vm);color:#fff}
+
+/* GRÁFICOS — altura aumentada */
+.chbox canvas{max-height:280px}
+.chbox-tall canvas{max-height:340px}
+.chbox-tall{background:var(--card);border-radius:18px;padding:24px;box-shadow:var(--sh)}
+.chbox-tall h3{font-size:11px;font-weight:700;color:var(--txt2);text-transform:uppercase;letter-spacing:.7px;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--bd)}
+
+/* VENDAS */
+.vend-select{width:100%;padding:9px 12px;border:1.5px solid var(--bd);border-radius:10px;font-size:13px;outline:none;transition:all .2s;background:#fff;color:var(--txt);cursor:none}
+.vend-select:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(196,131,26,.1)}
+.vend-stat-row{display:flex;align-items:center;gap:8px;padding:10px 14px;background:linear-gradient(135deg,var(--br),#5C2E0A);border-radius:14px;margin-bottom:18px}
+.vend-stat-item{flex:1;text-align:center}
+.vend-stat-lbl{font-size:9px;color:rgba(255,255,255,.45);text-transform:uppercase;letter-spacing:.5px}
+.vend-stat-val{font-size:14px;font-weight:800;color:#fff;margin-top:2px}
 </style>
 </head>
 <body>
@@ -358,6 +372,7 @@ tr:hover td{background:#FDFAF7}tr:last-child td{border-bottom:none}
   <!-- TABS -->
   <div class="tnav">
     <button class="tab on"  onclick="go(this,'cat')"> <span class="ti">🏪</span> Catálogo</button>
+    <button class="tab"     onclick="go(this,'vend')"><span class="ti">🛒</span> Vendas</button>
     <button class="tab"     onclick="go(this,'dash')"><span class="ti">📊</span> Dashboard</button>
     <button class="tab"     onclick="go(this,'graf')"><span class="ti">📈</span> Gráficos</button>
     <button class="tab"     onclick="go(this,'gast')"><span class="ti">💸</span> Gastos</button>
@@ -379,6 +394,48 @@ tr:hover td{background:#FDFAF7}tr:last-child td{border-bottom:none}
         </div>
       </div>
       <div class="pgrid" id="pgrid-cat"></div>
+    </div>
+
+    <!-- ── VENDAS ── -->
+    <div id="s-vend" class="sec">
+      <div class="ptitle">🛒 Registro de Vendas</div>
+
+      <!-- Cards resumo -->
+      <div class="crow">
+        <div class="card cv"><span class="cic">💰</span><span class="clb">Total Vendido</span><span class="cval pos" id="v-tot">R$ 0,00</span></div>
+        <div class="card ca"><span class="cic">📦</span><span class="clb">Unidades Vendidas</span><span class="cval" id="v-uni">0 un.</span></div>
+        <div class="card cg"><span class="cic">🏆</span><span class="clb">Produto Campeão</span><span class="cval" id="v-top" style="font-size:13px">—</span></div>
+        <div class="card cr"><span class="cic">🎫</span><span class="clb">Ticket Médio</span><span class="cval" id="v-tick">R$ 0,00</span></div>
+      </div>
+
+      <!-- Formulário nova venda -->
+      <div class="tbox">
+        <div class="thdr"><h3>Registrar Nova Venda</h3></div>
+        <div class="frow">
+          <div class="fg" style="flex:2;min-width:160px">
+            <label>Produto</label>
+            <select class="vend-select" id="v-prod"></select>
+          </div>
+          <div class="fg"><label>Quantidade</label><input type="number" id="v-qtd" placeholder="0" min="1" step="1"></div>
+          <div class="fg"><label>Preço Unit. (R$)</label><input type="number" id="v-preco" placeholder="0,00" min="0" step="0.50"></div>
+          <div class="fg"><label>Data</label><input type="date" id="v-data"></div>
+          <button class="btn badd" onclick="addVenda()">+ Registrar</button>
+        </div>
+      </div>
+
+      <!-- Gráficos de vendas -->
+      <div class="chgrid">
+        <div class="chbox chbox-tall"><h3>Vendas por Produto (R$)</h3><div id="d-vprod"><canvas id="ch-vprod"></canvas></div></div>
+        <div class="chbox chbox-tall"><h3>Proporção de Unidades Vendidas</h3><div id="d-vdist"><canvas id="ch-vdist"></canvas></div></div>
+      </div>
+
+      <!-- Tabela histórico -->
+      <div class="tbox">
+        <div class="thdr"><h3>Histórico de Vendas</h3><span class="ttot pos" id="tot-v">Total: R$ 0,00</span></div>
+        <table><thead><tr>
+          <th>Data</th><th>Produto</th><th>Qtd</th><th>Preço Unit.</th><th>Total</th><th></th>
+        </tr></thead><tbody id="tb-v"></tbody></table>
+      </div>
     </div>
 
     <!-- ── DASHBOARD ── -->
@@ -406,18 +463,19 @@ tr:hover td{background:#FDFAF7}tr:last-child td{border-bottom:none}
 
     <!-- ── GRÁFICOS ── -->
     <div id="s-graf" class="sec">
-      <div class="ptitle">📈 Gráficos — Médias dos Produtos</div>
+      <div class="ptitle">📈 Gráficos — Análise Completa dos Produtos</div>
+      <div class="chgrid">
+        <div class="chbox chbox-tall"><h3>Preço de Venda vs Custo por Produto (R$)</h3><div id="d-cvp"><canvas id="ch-cvp"></canvas></div></div>
+        <div class="chbox chbox-tall"><h3>Distribuição de Margem por Produto</h3><div id="d-mgpie"><canvas id="ch-mgpie"></canvas></div></div>
+      </div>
       <div class="chgrid three">
         <div class="chbox"><h3>Preço médio de venda (R$)</h3><div id="d-pmv"><canvas id="ch-pmv"></canvas></div></div>
         <div class="chbox"><h3>Custo médio por unidade (R$)</h3><div id="d-cmu"><canvas id="ch-cmu"></canvas></div></div>
         <div class="chbox"><h3>Lucro médio por unidade (R$)</h3><div id="d-lm2"><canvas id="ch-lm2"></canvas></div></div>
       </div>
       <div class="chgrid">
-        <div class="chbox"><h3>Comparativo: Custo vs Venda por Produto</h3><div id="d-cvp"><canvas id="ch-cvp"></canvas></div></div>
-        <div class="chbox"><h3>Margem média de lucro (%) por produto</h3><div id="d-mml"><canvas id="ch-mml"></canvas></div></div>
-      </div>
-      <div class="chgrid one">
-        <div class="chbox"><h3>Gastos por categoria — média por item registrado</h3><div id="d-gcat"><canvas id="ch-gcat"></canvas></div></div>
+        <div class="chbox"><h3>Margem de lucro (%) por produto</h3><div id="d-mml"><canvas id="ch-mml"></canvas></div></div>
+        <div class="chbox"><h3>Gastos por categoria — média por item</h3><div id="d-gcat"><canvas id="ch-gcat"></canvas></div></div>
       </div>
     </div>
 
@@ -1043,6 +1101,7 @@ function go(btn,name){
   document.getElementById('s-'+name).classList.add('on');
   btn.classList.add('on');
   if(name==='cat')  renderCat();
+  if(name==='vend') renderVend();
   if(name==='dash') dashUpdate();
   if(name==='graf') renderGraf();
   if(name==='gast'){renderFbBanner();fbSync().then(()=>renderG());}
@@ -1054,10 +1113,13 @@ function go(btn,name){
 function dc(k){if(ch[k]){ch[k].destroy();delete ch[k];}}
 function setC(did,cid){document.getElementById(did).innerHTML=`<canvas id="${cid}"></canvas>`;}
 function empty(did,msg){document.getElementById(did).innerHTML=`<div class="chempty"><span class="ce">📊</span><p>${msg}</p></div>`;}
-const COLORS=['#3E1C00','#C4831A','#6B3A2A'];
+const COLORS=['#C4831A','#3E1C00','#6B3A2A','#1B6B35','#1A4F8A'];
+const COLORS_SOFT=['rgba(196,131,26,.85)','rgba(62,28,0,.85)','rgba(107,58,42,.85)','rgba(27,107,53,.85)','rgba(26,79,138,.85)'];
 const BAR_OPT=(cb,extra)=>({
-  plugins:{legend:{display:false},...extra},
-  scales:{y:{ticks:{callback:cb,font:{size:11}},grid:{color:'#f5f0eb'}},x:{ticks:{font:{size:11}}}}
+  responsive:true,
+  plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>' '+cb(ctx.raw)}},...extra},
+  scales:{y:{ticks:{callback:cb,font:{size:11}},grid:{color:'#f5f0eb'}},x:{ticks:{font:{size:11}}}},
+  animation:{duration:600,easing:'easeOutQuart'}
 });
 
 // ── CATALOG ──
@@ -1182,7 +1244,7 @@ function buildMLP(){
   const margins=p.map(x=>+((x.venda-x.custo)/x.venda*100).toFixed(1));
   ch.mlp=new Chart(document.getElementById('ch-mlp'),{
     type:'bar',
-    data:{labels:p.map(x=>x.nome),datasets:[{data:margins,backgroundColor:margins.map(m=>m>40?'#A5D6A7':m>20?'#FFE082':'#F48FB1'),borderRadius:10,borderWidth:0}]},
+    data:{labels:p.map(x=>x.nome),datasets:[{data:margins,backgroundColor:margins.map(m=>m>40?'#1B6B35':m>20?'#C4831A':'#A93226'),borderRadius:12,borderWidth:0}]},
     options:BAR_OPT(v=>v+'%')
   });
 }
@@ -1202,12 +1264,36 @@ function buildLMU(){
 
 // ── GRÁFICOS ──
 function renderGraf(){
+  buildCVP();
+  buildMGPie();
   buildGrafBar('d-pmv','ch-pmv',db.produtos,'venda','Preço de Venda (R$)','R$');
   buildGrafBar('d-cmu','ch-cmu',db.produtos,'custo','Custo por Unidade (R$)','R$');
   buildGrafBar('d-lm2','ch-lm2',db.produtos.map(p=>({...p,lucro:p.venda-p.custo})),'lucro','Lucro por Unidade (R$)','R$');
-  buildCVP();
   buildGrafBar('d-mml','ch-mml',db.produtos.filter(p=>p.venda>0).map(p=>({...p,marg:+((p.venda-p.custo)/p.venda*100).toFixed(1)})),'marg','Margem %','%');
   buildGastoCat();
+}
+
+function buildMGPie(){
+  dc('mgpie');
+  const p=db.produtos.filter(x=>x.venda>0);
+  if(!p.length){empty('d-mgpie','Adicione preços para ver a distribuição de margem');return;}
+  setC('d-mgpie','ch-mgpie');
+  const margins=p.map(x=>+((x.venda-x.custo)/x.venda*100).toFixed(1));
+  ch.mgpie=new Chart(document.getElementById('ch-mgpie'),{
+    type:'doughnut',
+    data:{
+      labels:p.map(x=>x.nome),
+      datasets:[{data:margins,backgroundColor:COLORS.slice(0,p.length),borderWidth:3,borderColor:'#fff'}]
+    },
+    options:{
+      plugins:{
+        legend:{display:true,position:'bottom',labels:{font:{size:11},padding:14}},
+        tooltip:{callbacks:{label:ctx=>ctx.label+': '+ctx.raw+'% margem'}}
+      },
+      cutout:'55%',
+      animation:{duration:700,easing:'easeOutQuart'}
+    }
+  });
 }
 
 function buildGrafBar(did,cid,data,field,label,prefix){
@@ -1627,8 +1713,135 @@ function buildPies(){
   });
 }
 
+// ── VENDAS ──
+function fillVendaProd(){
+  const sel=document.getElementById('v-prod');
+  if(!sel)return;
+  sel.innerHTML=db.produtos.map(p=>`<option value="${p.id}">${p.nome}</option>`).join('');
+  // preenche preço sugerido ao trocar produto
+  sel.onchange=()=>{
+    const p=db.produtos.find(x=>x.id===parseInt(sel.value));
+    const pi=document.getElementById('v-preco');
+    if(p&&p.venda>0&&pi)pi.value=p.venda;
+  };
+  sel.dispatchEvent(new Event('change'));
+}
+
+function addVenda(){
+  const sel=document.getElementById('v-prod');
+  const prodId=parseInt(sel.value);
+  const prod=db.produtos.find(p=>p.id===prodId);
+  if(!prod)return;
+  const qtd=parseFloat(document.getElementById('v-qtd').value)||0;
+  const preco=parseFloat(document.getElementById('v-preco').value)||0;
+  const data=document.getElementById('v-data').value||new Date().toISOString().split('T')[0];
+  if(!qtd||qtd<1){alert('Informe a quantidade!');return;}
+  if(!preco){alert('Informe o preço!');return;}
+  db.vendas.push({id:nid.v++,produto:prod.nome,prodId,qtd,preco,data});
+  save();
+  document.getElementById('v-qtd').value='';
+  renderVend();
+}
+
+function delVenda(id){
+  if(!confirm('Apagar esta venda?'))return;
+  db.vendas=db.vendas.filter(v=>v.id!==id);
+  save();
+  renderVend();
+}
+
+function renderVend(){
+  fillVendaProd();
+  const dateInput=document.getElementById('v-data');
+  if(dateInput&&!dateInput.value)dateInput.value=new Date().toISOString().split('T')[0];
+
+  const totalVend=db.vendas.reduce((s,v)=>s+(v.qtd*v.preco),0);
+  const totalUni=db.vendas.reduce((s,v)=>s+Number(v.qtd),0);
+  const vendPorProd={};
+  db.vendas.forEach(v=>{
+    if(!vendPorProd[v.produto])vendPorProd[v.produto]={total:0,uni:0};
+    vendPorProd[v.produto].total+=v.qtd*v.preco;
+    vendPorProd[v.produto].uni+=Number(v.qtd);
+  });
+  const topProd=Object.entries(vendPorProd).sort((a,b)=>b[1].total-a[1].total)[0];
+  const tick=db.vendas.length?totalVend/db.vendas.length:0;
+
+  document.getElementById('v-tot').textContent=f(totalVend);
+  document.getElementById('v-uni').textContent=totalUni+' un.';
+  document.getElementById('v-top').textContent=topProd?topProd[0]+' — '+f(topProd[1].total):'—';
+  document.getElementById('v-tick').textContent=f(tick);
+  document.getElementById('tot-v').textContent='Total: '+f(totalVend);
+
+  const tb=document.getElementById('tb-v');
+  if(!db.vendas.length){
+    tb.innerHTML=`<tr><td colspan="6"><div class="estate"><p>Nenhuma venda registrada ainda.<br>Use o formulário acima para adicionar.</p></div></td></tr>`;
+  } else {
+    tb.innerHTML=[...db.vendas].reverse().map(v=>`<tr>
+      <td>${fd(v.data)||'—'}</td>
+      <td><strong>${v.produto}</strong></td>
+      <td>${v.qtd} un.</td>
+      <td>${f(v.preco)}</td>
+      <td class="pos">${f(v.qtd*v.preco)}</td>
+      <td><button class="btn bdel" onclick="delVenda(${v.id})">Excluir</button></td>
+    </tr>`).join('');
+  }
+  buildVProd(vendPorProd);
+  buildVDist(vendPorProd);
+}
+
+function buildVProd(vendPorProd){
+  dc('vprod');
+  const entries=Object.entries(vendPorProd);
+  if(!entries.length){empty('d-vprod','Registre suas vendas para ver o gráfico');return;}
+  setC('d-vprod','ch-vprod');
+  ch.vprod=new Chart(document.getElementById('ch-vprod'),{
+    type:'bar',
+    data:{
+      labels:entries.map(e=>e[0]),
+      datasets:[{
+        label:'Total Vendido',
+        data:entries.map(e=>+e[1].total.toFixed(2)),
+        backgroundColor:COLORS.slice(0,entries.length),
+        borderRadius:14,borderWidth:0
+      }]
+    },
+    options:{
+      responsive:true,
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>' R$ '+ctx.raw.toFixed(2)}}},
+      scales:{y:{ticks:{callback:v=>'R$'+v,font:{size:11}},grid:{color:'#f5f0eb'}},x:{ticks:{font:{size:11}}}},
+      animation:{duration:600,easing:'easeOutQuart'}
+    }
+  });
+}
+
+function buildVDist(vendPorProd){
+  dc('vdist');
+  const entries=Object.entries(vendPorProd);
+  if(!entries.length){empty('d-vdist','Registre suas vendas para ver a distribuição');return;}
+  setC('d-vdist','ch-vdist');
+  ch.vdist=new Chart(document.getElementById('ch-vdist'),{
+    type:'doughnut',
+    data:{
+      labels:entries.map(e=>e[0]+' ('+e[1].uni+'un)'),
+      datasets:[{
+        data:entries.map(e=>e[1].uni),
+        backgroundColor:COLORS.slice(0,entries.length),
+        borderWidth:3,borderColor:'#fff'
+      }]
+    },
+    options:{
+      plugins:{
+        legend:{display:true,position:'bottom',labels:{font:{size:11},padding:14}},
+        tooltip:{callbacks:{label:ctx=>ctx.label}}
+      },
+      cutout:'60%',
+      animation:{duration:700,easing:'easeOutQuart'}
+    }
+  });
+}
+
 // ── INIT ──
-function init(){ renderCat(); renderG(); }
+function init(){ renderCat(); renderG(); fillVendaProd(); }
 document.getElementById('si').addEventListener('keydown',e=>{if(e.key==='Enter')login();});
 </script>
 </body>
