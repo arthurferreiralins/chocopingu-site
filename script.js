@@ -305,7 +305,7 @@ const fecharTipoChocoBtn = document.getElementById('fecharTipoChocolate');
 function abrirModalTipoChocolate() {
   const container = document.getElementById('tipoChocoItens');
   container.innerHTML = carrinho.map((item, i) => `
-    <div class="tipo-choco-item">
+    <div class="tipo-choco-item" id="tipo-item-${i}">
       <img src="${item.img}" alt="${item.nome}" class="tipo-choco-img" />
       <div class="tipo-choco-info">
         <strong>${item.nome}</strong>
@@ -322,6 +322,7 @@ function abrirModalTipoChocolate() {
     </div>
   `).join('');
 
+  atualizarBtnConfirmar();
   modalTipoChoco.classList.add('aberto');
   document.body.style.overflow = 'hidden';
 }
@@ -331,27 +332,23 @@ function fecharModalTipoChocolate() {
   document.body.style.overflow = '';
 }
 
+function atualizarBtnConfirmar() {
+  const btn = document.getElementById('btnConfirmarTipo');
+  const todosSelecionados = carrinho.every(i => i.tipo);
+  btn.style.display = todosSelecionados ? 'block' : 'none';
+}
+
 window.selecionarTipo = function(idx, tipo, btn) {
   carrinho[idx].tipo = tipo;
   btn.closest('.tipo-choco-opcoes').querySelectorAll('.btn-tipo').forEach(b => b.classList.remove('selecionado'));
   btn.classList.add('selecionado');
+  atualizarBtnConfirmar();
 };
 
 fecharTipoChocoBtn.addEventListener('click', fecharModalTipoChocolate);
 modalTipoChoco.addEventListener('click', e => { if (e.target === modalTipoChoco) fecharModalTipoChocolate(); });
 
 document.getElementById('btnConfirmarTipo').addEventListener('click', () => {
-  const semTipo = carrinho.findIndex(i => !i.tipo);
-  if (semTipo >= 0) {
-    const nome = carrinho[semTipo].nome;
-    const container = document.getElementById('tipoChocoItens');
-    const items = container.querySelectorAll('.tipo-choco-item');
-    items[semTipo].scrollIntoView({ behavior: 'smooth', block: 'center' });
-    items[semTipo].style.outline = '2px solid #c0392b';
-    setTimeout(() => { items[semTipo].style.outline = ''; }, 2000);
-    alert(`Escolha o tipo de chocolate para: ${nome}`);
-    return;
-  }
   localStorage.setItem('chocopingu_checkout_cart', JSON.stringify(
     carrinho.map(i => ({ nome: i.nome, img: i.img, preco: i.preco || 0, qtd: i.qtd, tipo: i.tipo }))
   ));

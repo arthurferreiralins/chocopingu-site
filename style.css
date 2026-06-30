@@ -1329,13 +1329,19 @@ h2 span { color: var(--ouro-escuro); }
   border-color: var(--marrom);
 }
 .btn-tipo-confirmar {
+  display: none;
   width: 100%; padding: 1rem; margin-top: 1rem;
   background: var(--marrom); color: white;
   border: none; border-radius: 14px;
   font-size: 1rem; font-weight: 800; cursor: pointer;
   transition: opacity .2s;
+  animation: fadeInUp .3s ease;
 }
 .btn-tipo-confirmar:hover { opacity: .88; }
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
 .resumo-tipo {
   display: inline-block; background: #f0e0cc;
   color: #7a4a1a; border-radius: 6px;
