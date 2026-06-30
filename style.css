@@ -1331,11 +1331,12 @@ h2 span { color: var(--ouro-escuro); }
 .btn-tipo-confirmar {
   display: none;
   width: 100%; padding: 1rem; margin-top: 1rem;
-  background: var(--marrom); color: white;
+  background: #f5c800; color: #3a2000;
   border: none; border-radius: 14px;
   font-size: 1rem; font-weight: 800; cursor: pointer;
   transition: opacity .2s;
   animation: fadeInUp .3s ease;
+  box-shadow: 0 4px 16px rgba(245,200,0,.4);
 }
 .btn-tipo-confirmar:hover { opacity: .88; }
 @keyframes fadeInUp {
