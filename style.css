@@ -1298,6 +1298,51 @@ h2 span { color: var(--ouro-escuro); }
   transform: translateX(4px);
 }
 
+/* ===== MODAL TIPO CHOCOLATE ===== */
+.tipo-choco-box {
+  max-width: 480px;
+  padding: 2.5rem 2rem 2rem;
+  max-height: 85vh;
+  overflow-y: auto;
+}
+.tipo-choco-titulo { font-size: 1.5rem; color: var(--marrom); margin-bottom: .3rem; }
+.tipo-choco-sub { color: #7a5c4a; font-size: .95rem; margin-bottom: 1.5rem; }
+.tipo-choco-item {
+  display: flex; align-items: flex-start; gap: 1rem;
+  background: var(--bege); border-radius: 14px;
+  padding: 1rem; margin-bottom: 1rem;
+}
+.tipo-choco-img { width: 60px; height: 60px; object-fit: cover; border-radius: 10px; flex-shrink: 0; }
+.tipo-choco-info { flex: 1; }
+.tipo-choco-info strong { display: block; font-size: 1rem; color: var(--marrom); margin-bottom: .2rem; }
+.tipo-choco-qtd { font-size: .82rem; color: #8a6a5a; display: block; margin-bottom: .6rem; }
+.tipo-choco-opcoes { display: flex; gap: .5rem; flex-wrap: wrap; }
+.btn-tipo {
+  padding: .4rem .85rem; border-radius: 20px;
+  border: 2px solid #d4a976; background: white;
+  font-size: .85rem; font-weight: 700; cursor: pointer;
+  color: #7a5c3a; transition: all .2s;
+}
+.btn-tipo:hover { background: #f5e8d8; border-color: var(--marrom); }
+.btn-tipo.selecionado {
+  background: var(--marrom); color: white;
+  border-color: var(--marrom);
+}
+.btn-tipo-confirmar {
+  width: 100%; padding: 1rem; margin-top: 1rem;
+  background: var(--marrom); color: white;
+  border: none; border-radius: 14px;
+  font-size: 1rem; font-weight: 800; cursor: pointer;
+  transition: opacity .2s;
+}
+.btn-tipo-confirmar:hover { opacity: .88; }
+.resumo-tipo {
+  display: inline-block; background: #f0e0cc;
+  color: #7a4a1a; border-radius: 6px;
+  padding: .1rem .45rem; font-size: .78rem;
+  font-weight: 700; margin-bottom: .15rem;
+}
+
 /* ===== MODAL ADMIN LOGIN ===== */
 .modal-box-admin {
   max-width: 380px;

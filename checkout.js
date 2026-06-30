@@ -33,7 +33,9 @@
       cartTotal += sub;
       return '<div class="resumo-item">' +
         '<img src="' + it.img + '" alt="' + it.nome + '">' +
-        '<div class="resumo-info"><span>' + it.nome + '</span><small>' + it.qtd + 'x ' + fmt(it.preco) + '</small></div>' +
+        '<div class="resumo-info"><span>' + it.nome + '</span>' +
+        (it.tipo ? '<small class="resumo-tipo">' + it.tipo + '</small>' : '') +
+        '<small>' + it.qtd + 'x ' + fmt(it.preco) + '</small></div>' +
         '<strong>' + fmt(sub) + '</strong>' +
         '</div>';
     }).join('');
@@ -96,7 +98,7 @@
     };
 
     var payload = {
-      itens: cart.map(function (it) { return { nome: it.nome, preco: it.preco, qtd: it.qtd }; }),
+      itens: cart.map(function (it) { return { nome: it.nome, preco: it.preco, qtd: it.qtd, tipo: it.tipo || '' }; }),
       cliente: cliente,
       metodo: metodoAtivo
     };

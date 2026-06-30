@@ -290,11 +290,73 @@ function renderCarrinho() {
 
 function irParaCheckout() {
   if (carrinho.length === 0) return;
+  fecharCarrinho();
+  abrirModalTipoChocolate();
+}
+
+/* =========================================================
+   MODAL TIPO DE CHOCOLATE
+   ========================================================= */
+const TIPOS_CHOCO = ['Ao Leite', 'Meio Amargo', 'Branco'];
+
+const modalTipoChoco   = document.getElementById('modalTipoChocolate');
+const fecharTipoChocoBtn = document.getElementById('fecharTipoChocolate');
+
+function abrirModalTipoChocolate() {
+  const container = document.getElementById('tipoChocoItens');
+  container.innerHTML = carrinho.map((item, i) => `
+    <div class="tipo-choco-item">
+      <img src="${item.img}" alt="${item.nome}" class="tipo-choco-img" />
+      <div class="tipo-choco-info">
+        <strong>${item.nome}</strong>
+        <span class="tipo-choco-qtd">${item.qtd}x</span>
+        <div class="tipo-choco-opcoes">
+          ${TIPOS_CHOCO.map(t => `
+            <button class="btn-tipo${item.tipo === t ? ' selecionado' : ''}"
+              onclick="selecionarTipo(${i}, '${t}', this)">
+              ${t}
+            </button>
+          `).join('')}
+        </div>
+      </div>
+    </div>
+  `).join('');
+
+  modalTipoChoco.classList.add('aberto');
+  document.body.style.overflow = 'hidden';
+}
+
+function fecharModalTipoChocolate() {
+  modalTipoChoco.classList.remove('aberto');
+  document.body.style.overflow = '';
+}
+
+window.selecionarTipo = function(idx, tipo, btn) {
+  carrinho[idx].tipo = tipo;
+  btn.closest('.tipo-choco-opcoes').querySelectorAll('.btn-tipo').forEach(b => b.classList.remove('selecionado'));
+  btn.classList.add('selecionado');
+};
+
+fecharTipoChocoBtn.addEventListener('click', fecharModalTipoChocolate);
+modalTipoChoco.addEventListener('click', e => { if (e.target === modalTipoChoco) fecharModalTipoChocolate(); });
+
+document.getElementById('btnConfirmarTipo').addEventListener('click', () => {
+  const semTipo = carrinho.findIndex(i => !i.tipo);
+  if (semTipo >= 0) {
+    const nome = carrinho[semTipo].nome;
+    const container = document.getElementById('tipoChocoItens');
+    const items = container.querySelectorAll('.tipo-choco-item');
+    items[semTipo].scrollIntoView({ behavior: 'smooth', block: 'center' });
+    items[semTipo].style.outline = '2px solid #c0392b';
+    setTimeout(() => { items[semTipo].style.outline = ''; }, 2000);
+    alert(`Escolha o tipo de chocolate para: ${nome}`);
+    return;
+  }
   localStorage.setItem('chocopingu_checkout_cart', JSON.stringify(
-    carrinho.map(i => ({ nome: i.nome, img: i.img, preco: i.preco || 0, qtd: i.qtd }))
+    carrinho.map(i => ({ nome: i.nome, img: i.img, preco: i.preco || 0, qtd: i.qtd, tipo: i.tipo }))
   ));
   window.location.href = 'pedido.html';
-}
+});
 
 /* =========================================================
    ENDEREÇO RÁPIDO — localStorage
@@ -568,7 +630,7 @@ document.getElementById('btnChocopontos').addEventListener('click', e => { e.pre
 document.getElementById('btnChocopontosBanner').addEventListener('click', abrirModal);
 fecharModal.addEventListener('click', fechar);
 modal.addEventListener('click', e => { if (e.target === modal) fechar(); });
-document.addEventListener('keydown', e => { if (e.key === 'Escape') { fechar(); fecharAuthModal(); fecharEnderecoModal(); fecharCarrinho(); fecharVideo(); } });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { fechar(); fecharAuthModal(); fecharEnderecoModal(); fecharCarrinho(); fecharVideo(); fecharModalTipoChocolate(); } });
 
 /* ===== CONTADOR ANIMADO ===== */
 function animarContador(el) {
