@@ -137,7 +137,7 @@
         <span class="copa-pill">⚽ Edição Especial 2026</span>
         <h2>Copa do <span>Mundo</span></h2>
         <p>Chocolates Chocopingu com a cara de cada seleção. Torça com sabor em cada mordida!</p>
-        <button class="btn-ouro btn-copa-cta" onclick="abrirGateCopa(true)">
+        <button class="btn-ouro btn-copa-cta" onclick="document.getElementById('produtos').scrollIntoView({behavior:'smooth'});setTimeout(()=>mudarAba('copa'),700)">
           Ver coleção Copa &#127942;
         </button>
       </div>
@@ -409,21 +409,6 @@
         <input type="password" class="auth-input" id="adminInputSenha" placeholder="Senha" autocomplete="new-password" />
         <p class="auth-msg" id="adminLoginErro"></p>
         <button class="btn-admin-entrar" id="btnAdminEntrar">Entrar no Painel &#8594;</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ===== MODAL SENHA COPA DO MUNDO ===== -->
-  <div class="modal-overlay" id="modalCopaSenha">
-    <div class="modal-box modal-box-admin">
-      <button class="modal-fechar" id="fecharCopaSenha">&#10005;</button>
-      <div class="admin-login-wrap">
-        <img src="imagens/logo2.png" alt="Chocopingu" class="admin-login-logo" />
-        <h2 class="admin-login-titulo">&#128679; Estamos reformando</h2>
-        <p class="admin-login-sub">Os produtos da Copa do Mundo estão em reforma. Digite a senha para acessar antecipadamente.</p>
-        <input type="password" class="auth-input" id="copaSenhaInput" placeholder="Senha" autocomplete="new-password" />
-        <p class="auth-msg" id="copaSenhaErro"></p>
-        <button class="btn-admin-entrar" id="btnCopaSenhaEntrar">Entrar &#8594;</button>
       </div>
     </div>
   </div>
