@@ -473,10 +473,6 @@ const modalCopaSenha = document.getElementById('modalCopaSenha');
 const fecharCopaSenha = document.getElementById('fecharCopaSenha');
 let pendingCopaScroll = false;
 
-function copaDesbloqueada() {
-  return sessionStorage.getItem('cp_copa_unlock') === '1';
-}
-
 function executarAbaCopa(scroll) {
   if (scroll) {
     document.getElementById('produtos').scrollIntoView({ behavior: 'smooth' });
@@ -487,7 +483,6 @@ function executarAbaCopa(scroll) {
 }
 
 function abrirGateCopa(scroll) {
-  if (copaDesbloqueada()) { executarAbaCopa(scroll); return; }
   pendingCopaScroll = scroll;
   modalCopaSenha.classList.add('aberto');
   document.body.style.overflow = 'hidden';
@@ -512,7 +507,6 @@ document.getElementById('btnCopaSenhaEntrar').addEventListener('click', () => {
   const senha = document.getElementById('copaSenhaInput').value;
   const erroEl = document.getElementById('copaSenhaErro');
   if (senha === COPA_SENHA) {
-    sessionStorage.setItem('cp_copa_unlock', '1');
     fecharModalCopaSenha();
     executarAbaCopa(pendingCopaScroll);
   } else {
