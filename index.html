@@ -137,7 +137,7 @@
         <span class="copa-pill">⚽ Edição Especial 2026</span>
         <h2>Copa do <span>Mundo</span></h2>
         <p>Chocolates Chocopingu com a cara de cada seleção. Torça com sabor em cada mordida!</p>
-        <button class="btn-ouro btn-copa-cta" onclick="document.getElementById('produtos').scrollIntoView({behavior:'smooth'});setTimeout(()=>mudarAba('copa'),700)">
+        <button class="btn-ouro btn-copa-cta" onclick="abrirGateCopa(true)">
           Ver coleção Copa &#127942;
         </button>
       </div>
@@ -191,7 +191,7 @@
 
     <div class="catalogo-tabs">
       <button class="catalogo-tab ativo" id="tabTodos" onclick="mudarAba('todos')">Todos os produtos</button>
-      <button class="catalogo-tab" id="tabCopa" onclick="mudarAba('copa')">⚽ Copa do Mundo 2026</button>
+      <button class="catalogo-tab" id="tabCopa" onclick="abrirGateCopa(false)">&#128274; ⚽ Copa do Mundo 2026</button>
     </div>
 
     <div class="catalogo-admin-wrap">
@@ -409,6 +409,21 @@
         <input type="password" class="auth-input" id="adminInputSenha" placeholder="Senha" autocomplete="new-password" />
         <p class="auth-msg" id="adminLoginErro"></p>
         <button class="btn-admin-entrar" id="btnAdminEntrar">Entrar no Painel &#8594;</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== MODAL SENHA COPA DO MUNDO ===== -->
+  <div class="modal-overlay" id="modalCopaSenha">
+    <div class="modal-box modal-box-admin">
+      <button class="modal-fechar" id="fecharCopaSenha">&#10005;</button>
+      <div class="admin-login-wrap">
+        <img src="imagens/logo2.png" alt="Chocopingu" class="admin-login-logo" />
+        <h2 class="admin-login-titulo">&#128274; Copa do Mundo 2026</h2>
+        <p class="admin-login-sub">Área em preparação. Digite a senha para visualizar.</p>
+        <input type="password" class="auth-input" id="copaSenhaInput" placeholder="Senha" autocomplete="new-password" />
+        <p class="auth-msg" id="copaSenhaErro"></p>
+        <button class="btn-admin-entrar" id="btnCopaSenhaEntrar">Entrar &#8594;</button>
       </div>
     </div>
   </div>

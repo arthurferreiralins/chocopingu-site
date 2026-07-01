@@ -467,6 +467,62 @@ function mudarAba(aba) {
   }
 }
 
+/* Trava de acesso — aba Copa do Mundo ainda em preparação */
+const COPA_SENHA = '1903';
+const modalCopaSenha = document.getElementById('modalCopaSenha');
+const fecharCopaSenha = document.getElementById('fecharCopaSenha');
+let pendingCopaScroll = false;
+
+function copaDesbloqueada() {
+  return sessionStorage.getItem('cp_copa_unlock') === '1';
+}
+
+function executarAbaCopa(scroll) {
+  if (scroll) {
+    document.getElementById('produtos').scrollIntoView({ behavior: 'smooth' });
+    setTimeout(() => mudarAba('copa'), 700);
+  } else {
+    mudarAba('copa');
+  }
+}
+
+function abrirGateCopa(scroll) {
+  if (copaDesbloqueada()) { executarAbaCopa(scroll); return; }
+  pendingCopaScroll = scroll;
+  modalCopaSenha.classList.add('aberto');
+  document.body.style.overflow = 'hidden';
+  document.getElementById('copaSenhaInput').value = '';
+  document.getElementById('copaSenhaErro').textContent = '';
+  setTimeout(() => document.getElementById('copaSenhaInput').focus(), 150);
+}
+
+function fecharModalCopaSenha() {
+  modalCopaSenha.classList.remove('aberto');
+  document.body.style.overflow = '';
+}
+
+fecharCopaSenha.addEventListener('click', fecharModalCopaSenha);
+modalCopaSenha.addEventListener('click', e => { if (e.target === modalCopaSenha) fecharModalCopaSenha(); });
+
+document.getElementById('copaSenhaInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') document.getElementById('btnCopaSenhaEntrar').click();
+});
+
+document.getElementById('btnCopaSenhaEntrar').addEventListener('click', () => {
+  const senha = document.getElementById('copaSenhaInput').value;
+  const erroEl = document.getElementById('copaSenhaErro');
+  if (senha === COPA_SENHA) {
+    sessionStorage.setItem('cp_copa_unlock', '1');
+    fecharModalCopaSenha();
+    executarAbaCopa(pendingCopaScroll);
+  } else {
+    erroEl.textContent = 'Senha incorreta.';
+    erroEl.className = 'auth-msg erro';
+    document.getElementById('copaSenhaInput').value = '';
+    document.getElementById('copaSenhaInput').focus();
+  }
+});
+
 /* =========================================================
    COPA DO MUNDO 2026 — SISTEMA DE VOTAÇÃO
    ========================================================= */
