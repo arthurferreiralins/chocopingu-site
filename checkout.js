@@ -118,6 +118,7 @@
           return;
         }
         localStorage.removeItem(CART_KEY);
+        localStorage.removeItem('chocopingu_checkout_mode');
         showResultado('chocopontos', dataP);
       } catch (e) {
         showErro('Erro de conexão. Verifique sua internet e tente novamente.');
@@ -356,6 +357,15 @@
   // ── INIT ──────────────────────────────────────────────────
   if (carregarCarrinho()) {
     renderResumo();
-    selecionarMetodo('pix');
+    var modoResgate = localStorage.getItem('chocopingu_checkout_mode') === 'chocopontos';
+    if (modoResgate) {
+      document.getElementById('metodo-pix').style.display = 'none';
+      document.getElementById('metodo-boleto').style.display = 'none';
+      document.getElementById('metodo-cartao').style.display = 'none';
+      selecionarMetodo('chocopontos');
+    } else {
+      document.getElementById('metodo-chocopontos').style.display = 'none';
+      selecionarMetodo('pix');
+    }
   }
 })();

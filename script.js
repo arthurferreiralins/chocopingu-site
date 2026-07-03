@@ -290,8 +290,9 @@ function renderCarrinho() {
   `;
 }
 
-function irParaCheckout() {
+function irParaCheckout(modo) {
   if (carrinho.length === 0) return;
+  localStorage.setItem('chocopingu_checkout_mode', modo || 'dinheiro');
   fecharCarrinho();
   abrirModalTipoChocolate();
 }
@@ -352,7 +353,7 @@ modalTipoChoco.addEventListener('click', e => { if (e.target === modalTipoChoco)
 
 document.getElementById('btnConfirmarTipo').addEventListener('click', () => {
   localStorage.setItem('chocopingu_checkout_cart', JSON.stringify(
-    carrinho.map(i => ({ nome: i.nome, img: i.img, preco: i.preco || 0, qtd: i.qtd, tipo: i.tipo }))
+    carrinho.map(i => ({ nome: i.nome, img: i.img, preco: i.preco || 0, qtd: i.qtd, tipo: i.tipo, pontos: i.pontos }))
   ));
   window.location.href = 'pedido.html';
 });
@@ -634,9 +635,10 @@ modal.addEventListener('click', e => { if (e.target === modal) fechar(); });
 function comprarChocopontos(id, pontos) {
   var p = (typeof PRODS_DEF !== 'undefined') ? PRODS_DEF.find(function (x) { return x.id === id; }) : null;
   if (!p) return;
+  carrinho = [];
   adicionarAoCarrinho(p.nome, p.img, p.preco, pontos);
   fechar();
-  irParaCheckout();
+  irParaCheckout('chocopontos');
 }
 document.addEventListener('keydown', e => { if (e.key === 'Escape') { fechar(); fecharAuthModal(); fecharEnderecoModal(); fecharCarrinho(); fecharVideo(); fecharModalTipoChocolate(); } });
 
