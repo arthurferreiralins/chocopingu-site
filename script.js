@@ -201,12 +201,14 @@ document.getElementById('btnCarrinho').addEventListener('click', abrirCarrinho);
 document.getElementById('fecharCarrinho').addEventListener('click', fecharCarrinho);
 carrinhoOverlay.addEventListener('click', fecharCarrinho);
 
-function adicionarAoCarrinho(nome, img, preco) {
+function adicionarAoCarrinho(nome, img, preco, pontos) {
   const idx = carrinho.findIndex(i => i.nome === nome);
   if (idx >= 0) {
     carrinho[idx].qtd++;
   } else {
-    carrinho.push({ nome, img, preco: Number(preco) || 0, qtd: 1 });
+    const item = { nome, img, preco: Number(preco) || 0, qtd: 1 };
+    if (pontos) item.pontos = Number(pontos);
+    carrinho.push(item);
   }
   atualizarBadge();
   flashBotao(nome);
@@ -628,55 +630,15 @@ document.getElementById('btnChocopontosBanner').addEventListener('click', abrirM
 fecharModal.addEventListener('click', fechar);
 modal.addEventListener('click', e => { if (e.target === modal) fechar(); });
 
-/* ===== RESGATE COM CHOCOPONTOS (sem pagamento em dinheiro) ===== */
-const modalResgate       = document.getElementById('modalResgate');
-const fecharResgateBtn   = document.getElementById('fecharResgate');
-let resgateProdutoAtual  = null;
-
+/* ===== CHOCOPONTOS: leva pro carrinho normal, pagamento vira uma aba no checkout ===== */
 function comprarChocopontos(id, pontos) {
   var p = (typeof PRODS_DEF !== 'undefined') ? PRODS_DEF.find(function (x) { return x.id === id; }) : null;
   if (!p) return;
-  resgateProdutoAtual = { id: id, nome: p.nome, pontos: pontos || 0 };
-  document.getElementById('resgateProdutoTxt').textContent =
-    p.nome + ' — ' + resgateProdutoAtual.pontos + ' chocopontos. Preencha seus dados, sem pagamento.';
-  document.getElementById('resgateNome').value = '';
-  document.getElementById('resgateEndereco').value = '';
-  document.getElementById('msgResgate').textContent = '';
+  adicionarAoCarrinho(p.nome, p.img, p.preco, pontos);
   fechar();
-  modalResgate.classList.add('aberto');
-  document.body.style.overflow = 'hidden';
+  irParaCheckout();
 }
-function fecharModalResgate() {
-  modalResgate.classList.remove('aberto');
-  document.body.style.overflow = '';
-}
-fecharResgateBtn.addEventListener('click', fecharModalResgate);
-modalResgate.addEventListener('click', e => { if (e.target === modalResgate) fecharModalResgate(); });
-
-document.getElementById('btnConfirmarResgate').addEventListener('click', async () => {
-  const nome = document.getElementById('resgateNome').value.trim();
-  const endereco = document.getElementById('resgateEndereco').value.trim();
-  const msg = document.getElementById('msgResgate');
-  if (!nome || !endereco) { msg.textContent = 'Preencha nome e endereço.'; return; }
-  if (!resgateProdutoAtual) return;
-  msg.textContent = 'Enviando...';
-  try {
-    const resp = await fetch('/api/chocopontos-resgate', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ nome, endereco, produto: resgateProdutoAtual.nome, pontos: resgateProdutoAtual.pontos })
-    });
-    const data = await resp.json();
-    if (!resp.ok) throw new Error(data.error || 'Erro ao enviar resgate');
-    msg.style.color = '#2e7d32';
-    msg.textContent = 'Resgate registrado! Vamos combinar a entrega em breve.';
-    setTimeout(fecharModalResgate, 2200);
-  } catch (e) {
-    msg.style.color = '#c0392b';
-    msg.textContent = 'Erro: ' + e.message;
-  }
-});
-document.addEventListener('keydown', e => { if (e.key === 'Escape') { fechar(); fecharAuthModal(); fecharEnderecoModal(); fecharCarrinho(); fecharVideo(); fecharModalTipoChocolate(); fecharModalResgate(); } });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { fechar(); fecharAuthModal(); fecharEnderecoModal(); fecharCarrinho(); fecharVideo(); fecharModalTipoChocolate(); } });
 
 /* ===== CONTADOR ANIMADO ===== */
 function animarContador(el) {

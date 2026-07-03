@@ -216,6 +216,9 @@ body{font-family:'Nunito',sans-serif;background:var(--bege);color:var(--texto);m
         <button class="metodo-btn" id="metodo-cartao" onclick="selecionarMetodo('cartao')">
           <span class="m-icon">💳</span>Cartão
         </button>
+        <button class="metodo-btn" id="metodo-chocopontos" onclick="selecionarMetodo('chocopontos')">
+          <span class="m-icon">⭐</span>Chocopontos
+        </button>
       </div>
 
       <!-- PIX: sem campos extras -->
@@ -249,6 +252,13 @@ body{font-family:'Nunito',sans-serif;background:var(--bege);color:var(--texto);m
         </div>
         <div style="background:var(--azul-bg);border-radius:12px;padding:12px 14px;font-size:.78rem;color:var(--azul);margin-top:4px">
           🔒 Dados protegidos pela PagarMe. Nunca armazenamos os dados do seu cartão.
+        </div>
+      </div>
+
+      <!-- CHOCOPONTOS: sem pagamento, só nome e endereço -->
+      <div class="metodo-form" id="form-chocopontos">
+        <div style="background:var(--laranja-bg);border-radius:14px;padding:16px 18px;color:var(--laranja);font-size:.88rem;line-height:1.6">
+          <strong>Pague com Chocopontos:</strong> resgate seus produtos usando os pontos acumulados, sem cobrança nenhuma. Preencha nome e endereço acima e confirme — entraremos em contato pelo WhatsApp/e-mail (se informados) para combinar a entrega.
         </div>
       </div>
 

@@ -9,20 +9,23 @@ module.exports = async (req, res) => {
   const SB_KEY = process.env.SUPABASE_SERVICE_KEY;
   if (!SB_URL || !SB_KEY) return res.status(500).json({ error: 'Supabase não configurado' });
 
-  const { nome, endereco, produto, pontos } = req.body || {};
-  if (!nome || !endereco || !produto)
-    return res.status(400).json({ error: 'nome, endereco e produto são obrigatórios' });
+  const { itens, cliente } = req.body || {};
+  if (!Array.isArray(itens) || itens.length === 0)
+    return res.status(400).json({ error: 'itens[] obrigatório' });
+  if (!cliente || !cliente.nome || !cliente.endereco || !cliente.endereco.rua)
+    return res.status(400).json({ error: 'cliente.nome e cliente.endereco são obrigatórios' });
 
+  const orderId = 'chocopontos_' + Date.now();
   const pedido = {
-    order_id: 'chocopontos_' + Date.now(),
+    order_id: orderId,
     status: 'pendente',
     metodo: 'chocopontos',
-    nome_cliente: String(nome),
-    email_cliente: '',
-    cpf_cliente: '',
-    whatsapp_cliente: '',
-    endereco: { endereco: String(endereco) },
-    itens: [{ nome: String(produto), qtd: 1, pontos: Number(pontos) || 0 }],
+    nome_cliente: String(cliente.nome),
+    email_cliente: cliente.email || '',
+    cpf_cliente: (cliente.cpf || '').replace(/\D/g, ''),
+    whatsapp_cliente: (cliente.whatsapp || '').replace(/\D/g, ''),
+    endereco: cliente.endereco,
+    itens: itens,
     total_centavos: 0
   };
 
@@ -41,7 +44,7 @@ module.exports = async (req, res) => {
       const detail = await resp.text();
       return res.status(resp.status).json({ error: 'Erro ao salvar no Supabase', detail });
     }
-    return res.json({ ok: true, order_id: pedido.order_id });
+    return res.json({ ok: true, order_id: orderId });
   } catch (err) {
     return res.status(500).json({ error: err?.message || String(err) });
   }

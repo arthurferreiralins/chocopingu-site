@@ -71,10 +71,12 @@
     return data.id;
   }
 
+  var PONTOS_MAP = { 'Barra Coração': 8, 'Barra Normal': 10, 'Pirulitos': 4, 'Boneco Animais': 8 };
+
   // ── FINALIZAR PAGAMENTO ───────────────────────────────────
   async function finalizarPagamento() {
     showErro('');
-    if (!validarForm()) return;
+    if (!validarForm(metodoAtivo)) return;
     if (metodoAtivo === 'cartao' && !validarCartao()) return;
 
     var btn = document.getElementById('btnPagar');
@@ -96,6 +98,34 @@
         estado: document.getElementById('fEstado').value
       }
     };
+
+    if (metodoAtivo === 'chocopontos') {
+      var payloadPontos = {
+        itens: cart.map(function (it) { return { nome: it.nome, qtd: it.qtd, pontos: (it.pontos || PONTOS_MAP[it.nome] || 0) * it.qtd }; }),
+        cliente: cliente
+      };
+      try {
+        var respP = await fetch('/api/chocopontos-resgate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payloadPontos)
+        });
+        var dataP = await respP.json();
+        if (!respP.ok) {
+          showErro(dataP.error || 'Erro ao registrar resgate. Tente novamente.');
+          btn.disabled = false;
+          btn.textContent = labelBtn(metodoAtivo);
+          return;
+        }
+        localStorage.removeItem(CART_KEY);
+        showResultado('chocopontos', dataP);
+      } catch (e) {
+        showErro('Erro de conexão. Verifique sua internet e tente novamente.');
+        btn.disabled = false;
+        btn.textContent = labelBtn(metodoAtivo);
+      }
+      return;
+    }
 
     var payload = {
       itens: cart.map(function (it) { return { nome: it.nome, preco: it.preco, qtd: it.qtd, tipo: it.tipo || '' }; }),
@@ -140,7 +170,7 @@
   }
 
   function labelBtn(m) {
-    return m === 'pix' ? 'Gerar PIX' : m === 'boleto' ? 'Gerar Boleto' : 'Pagar com Cartão';
+    return m === 'pix' ? 'Gerar PIX' : m === 'boleto' ? 'Gerar Boleto' : m === 'chocopontos' ? 'Confirmar resgate' : 'Pagar com Cartão';
   }
 
   // ── ERROS ─────────────────────────────────────────────────
@@ -181,6 +211,13 @@
         '</div>' +
         (data.boleto_pdf ? '<a href="' + data.boleto_pdf + '" target="_blank" class="btn-boleto-pdf">Abrir PDF do boleto</a>' : '') +
         '<div class="resultado-info">Vencimento em 3 dias. Pague em qualquer banco, lotérica ou aplicativo. Compensação em até 3 dias úteis.</div>' +
+        '</div>';
+    } else if (metodo === 'chocopontos') {
+      html = '<div class="resultado-box">' +
+        '<div class="resultado-icone">&#11088;</div>' +
+        '<h2>Resgate registrado!</h2>' +
+        '<p>Pedido <strong>#' + (data.order_id || '') + '</strong></p>' +
+        '<div class="resultado-info">Seu resgate com Chocopontos foi registrado, sem nenhuma cobrança. Vamos entrar em contato para combinar a entrega.</div>' +
         '</div>';
     } else if (metodo === 'cartao') {
       var ok = data.charge_status === 'paid';
@@ -226,18 +263,18 @@
   };
 
   // ── VALIDAÇÕES ────────────────────────────────────────────
-  function validarForm() {
+  function validarForm(metodo) {
     var campos = [
       ['fNome', 'Nome completo'],
-      ['fEmail', 'E-mail'],
-      ['fCpf', 'CPF'],
-      ['fWhatsapp', 'WhatsApp'],
       ['fCep', 'CEP'],
       ['fRua', 'Rua'],
       ['fNumero', 'Número'],
       ['fBairro', 'Bairro'],
       ['fCidade', 'Cidade']
     ];
+    if (metodo !== 'chocopontos') {
+      campos.splice(1, 0, ['fEmail', 'E-mail'], ['fCpf', 'CPF'], ['fWhatsapp', 'WhatsApp']);
+    }
     for (var i = 0; i < campos.length; i++) {
       var el = document.getElementById(campos[i][0]);
       if (!el.value.trim()) {
@@ -246,8 +283,10 @@
         return false;
       }
     }
-    var cpf = document.getElementById('fCpf').value.replace(/\D/g, '');
-    if (cpf.length < 11) { showErro('CPF inválido. Digite os 11 dígitos.'); return false; }
+    if (metodo !== 'chocopontos') {
+      var cpf = document.getElementById('fCpf').value.replace(/\D/g, '');
+      if (cpf.length < 11) { showErro('CPF inválido. Digite os 11 dígitos.'); return false; }
+    }
     return true;
   }
 
