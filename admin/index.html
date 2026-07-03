@@ -1976,11 +1976,11 @@ async function carregarPedidos(){
     document.getElementById('ped-pend').textContent=pend;
     document.getElementById('ped-receita').textContent='R$ '+(receita/100).toFixed(2).replace('.',',');
     // tabela
-    const metodoLabel={pix:'PIX',boleto:'Boleto',cartao:'Cartão'};
-    const statusLabel={paid:'✅ Pago',processing:'🔄 Processando',pending:'⏳ Pendente',failed:'❌ Falhou',canceled:'🚫 Cancelado'};
+    const metodoLabel={pix:'PIX',boleto:'Boleto',cartao:'Cartão',chocopontos:'⭐ Chocopontos'};
+    const statusLabel={paid:'✅ Pago',processing:'🔄 Processando',pending:'⏳ Pendente',pendente:'⏳ Pendente',failed:'❌ Falhou',canceled:'🚫 Cancelado'};
     tbody.innerHTML=data.map(p=>{
       const dt=p.created_at?new Date(p.created_at).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',year:'2-digit',hour:'2-digit',minute:'2-digit'}):'—';
-      const itens=Array.isArray(p.itens)?p.itens.map(i=>`${i.qtd||1}x ${i.nome||'?'}`).join(', '):'—';
+      const itens=Array.isArray(p.itens)?p.itens.map(i=>`${i.qtd||1}x ${i.nome||'?'}${i.pontos?' ('+i.pontos+' pts)':''}`).join(', '):'—';
       const total=p.total_centavos?'R$ '+(p.total_centavos/100).toFixed(2).replace('.',','):'—';
       return `<tr>
         <td style="font-size:12px;white-space:nowrap">${dt}</td>
