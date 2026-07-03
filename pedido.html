@@ -204,7 +204,7 @@ body{font-family:'Nunito',sans-serif;background:var(--bege);color:var(--texto);m
 
     <!-- PAGAMENTO -->
     <div class="ck-card">
-      <h2>Forma de pagamento</h2>
+      <h2 id="tituloForma">Forma de pagamento</h2>
 
       <div class="metodos">
         <button class="metodo-btn" id="metodo-pix" onclick="selecionarMetodo('pix')">
@@ -281,7 +281,7 @@ body{font-family:'Nunito',sans-serif;background:var(--bege);color:var(--texto);m
         <strong id="resumoTotal">R$ 0,00</strong>
       </div>
       <div style="margin-top:14px;padding:12px 14px;background:var(--creme);border-radius:12px;font-size:.8rem;color:var(--cinza);line-height:1.5">
-        🚚 <strong>Frete a combinar</strong> — entraremos em contato após a confirmação do pagamento.
+        🚚 <strong>Frete a combinar</strong> — <span id="txtFreteAviso">entraremos em contato após a confirmação do pagamento.</span>
       </div>
     </div>
   </div>

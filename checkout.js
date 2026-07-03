@@ -259,6 +259,10 @@
     var fm = document.getElementById('form-' + m);
     if (fm) fm.style.display = 'block';
     document.getElementById('btnPagar').textContent = labelBtn(m);
+    document.getElementById('tituloForma').textContent = m === 'chocopontos' ? 'Você paga com Chocopontos ⭐' : 'Forma de pagamento';
+    document.getElementById('txtFreteAviso').textContent = m === 'chocopontos'
+      ? 'entraremos em contato para combinar a entrega do seu resgate.'
+      : 'entraremos em contato após a confirmação do pagamento.';
     showErro('');
   };
 
