@@ -627,6 +627,23 @@ document.getElementById('btnChocopontos').addEventListener('click', e => { e.pre
 document.getElementById('btnChocopontosBanner').addEventListener('click', abrirModal);
 fecharModal.addEventListener('click', fechar);
 modal.addEventListener('click', e => { if (e.target === modal) fechar(); });
+
+function comprarChocopontos(id) {
+  var p = (typeof PRODS_DEF !== 'undefined') ? PRODS_DEF.find(function (x) { return x.id === id; }) : null;
+  if (!p) return;
+  var preco = p.preco;
+  try {
+    var raw = localStorage.getItem('chocopingu_db_v2');
+    if (raw) {
+      var db = JSON.parse(raw);
+      var dbP = db && Array.isArray(db.produtos) ? db.produtos.find(function (x) { return x.id === id; }) : null;
+      if (dbP && Number(dbP.venda) > 0) preco = Number(dbP.venda);
+    }
+  } catch (e) {}
+  adicionarAoCarrinho(p.nome, p.img, preco);
+  fechar();
+  irParaCheckout();
+}
 document.addEventListener('keydown', e => { if (e.key === 'Escape') { fechar(); fecharAuthModal(); fecharEnderecoModal(); fecharCarrinho(); fecharVideo(); fecharModalTipoChocolate(); } });
 
 /* ===== CONTADOR ANIMADO ===== */

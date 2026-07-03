@@ -1049,6 +1049,26 @@ h2 span { color: var(--ouro-escuro); }
   background: linear-gradient(135deg, var(--ouro-claro), var(--ouro));
   color: var(--choco); font-weight: 800; font-size: .82rem;
 }
+.modal-ganha-aviso {
+  margin-top: .5rem; font-weight: 700; color: var(--ouro-escuro);
+}
+.btn-comprar-chocopontos {
+  display: block; width: 100%; margin-top: .8rem;
+  padding: .65rem 1rem;
+  background: var(--choco-mid);
+  color: var(--ouro-claro);
+  border: 1.5px solid var(--ouro-escuro);
+  border-radius: 50px;
+  font-size: .88rem; font-weight: 700;
+  cursor: pointer;
+  transition: background .2s, color .2s, transform .15s;
+}
+.btn-comprar-chocopontos:hover {
+  background: var(--ouro);
+  color: var(--branco);
+  border-color: var(--ouro);
+  transform: translateY(-2px);
+}
 
 /* ===== FOOTER ===== */
 .footer {
