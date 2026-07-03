@@ -1043,6 +1043,12 @@ h2 span { color: var(--ouro-escuro); }
 .modal-info { padding: 1rem 1.2rem 1.2rem; }
 .modal-info h3 { font-family: 'Playfair Display', serif; font-size: 1.1rem; margin-bottom: .3rem; }
 .modal-info p { font-size: .88rem; color: var(--cinza); line-height: 1.4; }
+.modal-pontos {
+  display: inline-block; margin-top: .6rem;
+  padding: .3rem .8rem; border-radius: 50px;
+  background: linear-gradient(135deg, var(--ouro-claro), var(--ouro));
+  color: var(--choco); font-weight: 800; font-size: .82rem;
+}
 
 /* ===== FOOTER ===== */
 .footer {
