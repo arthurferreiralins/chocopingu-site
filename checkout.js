@@ -73,6 +73,34 @@
 
   var PONTOS_MAP = { 'Barra Coração': 8, 'Barra Normal': 10, 'Pirulitos': 4, 'Boneco Animais': 8 };
 
+  // ── SALDO CHOCOPONTOS ─────────────────────────────────────
+  function pontosNecessarios() {
+    return cart.reduce(function (s, it) { return s + (it.pontos || PONTOS_MAP[it.nome] || 0) * it.qtd; }, 0);
+  }
+
+  async function checarSaldoChocopontos() {
+    var el = document.getElementById('saldoChocopontos');
+    var cpf = document.getElementById('fCpf').value.replace(/\D/g, '');
+    if (metodoAtivo !== 'chocopontos' || cpf.length !== 11) {
+      el.style.display = 'none';
+      return;
+    }
+    try {
+      var resp = await fetch('/api/chocopontos-saldo?cpf=' + cpf);
+      var data = await resp.json();
+      if (!resp.ok) { el.style.display = 'none'; return; }
+      var necessario = pontosNecessarios();
+      var ok = data.saldo >= necessario;
+      el.style.display = 'block';
+      el.style.background = ok ? 'var(--verde-bg)' : '#fff0f0';
+      el.style.color = ok ? 'var(--verde)' : '#c62828';
+      el.textContent = 'Você tem ' + data.saldo + ' chocoponto(s). Esse resgate custa ' + necessario + ' ponto(s).' +
+        (ok ? '' : ' Saldo insuficiente para resgatar agora.');
+    } catch (e) {
+      el.style.display = 'none';
+    }
+  }
+
   // ── FINALIZAR PAGAMENTO ───────────────────────────────────
   async function finalizarPagamento() {
     showErro('');
@@ -265,12 +293,14 @@
       ? 'entraremos em contato para combinar a entrega do seu resgate.'
       : 'entraremos em contato após a confirmação do pagamento.';
     showErro('');
+    checarSaldoChocopontos();
   };
 
   // ── VALIDAÇÕES ────────────────────────────────────────────
   function validarForm(metodo) {
     var campos = [
       ['fNome', 'Nome completo'],
+      ['fCpf', 'CPF'],
       ['fCep', 'CEP'],
       ['fRua', 'Rua'],
       ['fNumero', 'Número'],
@@ -278,7 +308,7 @@
       ['fCidade', 'Cidade']
     ];
     if (metodo !== 'chocopontos') {
-      campos.splice(1, 0, ['fEmail', 'E-mail'], ['fCpf', 'CPF'], ['fWhatsapp', 'WhatsApp']);
+      campos.splice(2, 0, ['fEmail', 'E-mail'], ['fWhatsapp', 'WhatsApp']);
     }
     for (var i = 0; i < campos.length; i++) {
       var el = document.getElementById(campos[i][0]);
@@ -288,10 +318,8 @@
         return false;
       }
     }
-    if (metodo !== 'chocopontos') {
-      var cpf = document.getElementById('fCpf').value.replace(/\D/g, '');
-      if (cpf.length < 11) { showErro('CPF inválido. Digite os 11 dígitos.'); return false; }
-    }
+    var cpf = document.getElementById('fCpf').value.replace(/\D/g, '');
+    if (cpf.length < 11) { showErro('CPF inválido. Digite os 11 dígitos.'); return false; }
     return true;
   }
 
@@ -336,6 +364,7 @@
     else if (v.length > 3) v = v.slice(0, 3) + '.' + v.slice(3);
     this.value = v;
   });
+  document.getElementById('fCpf').addEventListener('blur', checarSaldoChocopontos);
 
   document.getElementById('fCardNum').addEventListener('input', function () {
     var v = this.value.replace(/\D/g, '').slice(0, 16);

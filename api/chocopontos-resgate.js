@@ -1,3 +1,5 @@
+const { calcularSaldo } = require('./_lib/chocopontos');
+
 module.exports = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
@@ -15,6 +17,23 @@ module.exports = async (req, res) => {
   if (!cliente || !cliente.nome || !cliente.endereco || !cliente.endereco.rua)
     return res.status(400).json({ error: 'cliente.nome e cliente.endereco são obrigatórios' });
 
+  const cpf = String(cliente.cpf || '').replace(/\D/g, '');
+  if (cpf.length !== 11)
+    return res.status(400).json({ error: 'CPF é obrigatório para pagar com Chocopontos — é como identificamos seu saldo de pontos.' });
+
+  const pontosNecessarios = itens.reduce((s, it) => s + (Number(it.pontos) || 0), 0);
+
+  try {
+    const { saldo } = await calcularSaldo(cpf);
+    if (saldo < pontosNecessarios) {
+      return res.status(400).json({
+        error: `Saldo insuficiente de Chocopontos. Você tem ${saldo} ponto(s) e precisa de ${pontosNecessarios}.`
+      });
+    }
+  } catch (err) {
+    return res.status(500).json({ error: err?.message || String(err) });
+  }
+
   const orderId = 'chocopontos_' + Date.now();
   const pedido = {
     order_id: orderId,
@@ -22,7 +41,7 @@ module.exports = async (req, res) => {
     metodo: 'chocopontos',
     nome_cliente: String(cliente.nome),
     email_cliente: cliente.email || '',
-    cpf_cliente: (cliente.cpf || '').replace(/\D/g, ''),
+    cpf_cliente: cpf,
     whatsapp_cliente: (cliente.whatsapp || '').replace(/\D/g, ''),
     endereco: cliente.endereco,
     itens: itens,

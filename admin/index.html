@@ -1023,6 +1023,10 @@ tr:hover td{background:#FDFAF7}tr:last-child td{border-bottom:none}
         <div class="card cr"><span class="cic">⏳</span><span class="clb">Pendentes</span><span class="cval" id="ped-pend">—</span></div>
         <div class="card cg"><span class="cic">💰</span><span class="clb">Receita Total</span><span class="cval pos" id="ped-receita">—</span></div>
       </div>
+      <div class="crow" style="grid-template-columns:repeat(2,1fr)">
+        <div class="card cv"><span class="cic">⭐</span><span class="clb">Resgates com Chocopontos</span><span class="cval" id="ped-choco-qtd">—</span></div>
+        <div class="card ca"><span class="cic">⭐</span><span class="clb">Pontos Resgatados</span><span class="cval" id="ped-choco-pts">—</span></div>
+      </div>
       <div class="tbox">
         <div class="thdr">
           <h3>Pedidos Recentes</h3>
@@ -1975,6 +1979,10 @@ async function carregarPedidos(){
     document.getElementById('ped-pagos').textContent=pagos;
     document.getElementById('ped-pend').textContent=pend;
     document.getElementById('ped-receita').textContent='R$ '+(receita/100).toFixed(2).replace('.',',');
+    const pedChoco=data.filter(p=>p.metodo==='chocopontos');
+    const ptsChoco=pedChoco.reduce((s,p)=>s+(Array.isArray(p.itens)?p.itens.reduce((s2,i)=>s2+(Number(i.pontos)||0),0):0),0);
+    document.getElementById('ped-choco-qtd').textContent=pedChoco.length;
+    document.getElementById('ped-choco-pts').textContent=ptsChoco+' pts';
     // tabela
     const metodoLabel={pix:'PIX',boleto:'Boleto',cartao:'Cartão',chocopontos:'⭐ Chocopontos'};
     const statusLabel={paid:'✅ Pago',processing:'🔄 Processando',pending:'⏳ Pendente',pendente:'⏳ Pendente',failed:'❌ Falhou',canceled:'🚫 Cancelado'};
@@ -1985,7 +1993,7 @@ async function carregarPedidos(){
       return `<tr>
         <td style="font-size:12px;white-space:nowrap">${dt}</td>
         <td style="font-size:11px;color:#888">${(p.order_id||'').slice(-8)}</td>
-        <td>${p.nome_cliente||'—'}<br><span style="font-size:11px;color:#888">${p.email_cliente||''}</span></td>
+        <td>${p.nome_cliente||'—'}<br><span style="font-size:11px;color:#888">${p.metodo==='chocopontos'?('CPF '+(p.cpf_cliente||'—')):(p.email_cliente||'')}</span></td>
         <td>${metodoLabel[p.metodo]||p.metodo||'—'}</td>
         <td>${statusLabel[p.status]||p.status||'—'}</td>
         <td><strong>${total}</strong></td>
