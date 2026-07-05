@@ -1052,6 +1052,31 @@ h2 span { color: var(--ouro-escuro); }
 .modal-ganha-aviso {
   margin-top: .5rem; font-weight: 700; color: var(--ouro-escuro);
 }
+.chocopontos-saldo-consulta {
+  display: flex; flex-wrap: wrap; gap: .6rem;
+  justify-content: center; align-items: center;
+  margin: 1.2rem 0 1.5rem; padding: 1rem;
+  background: rgba(200,148,26,.08);
+  border: 1.5px solid rgba(200,148,26,.3);
+  border-radius: 14px;
+}
+.chocopontos-saldo-consulta input {
+  padding: .7rem 1rem; border-radius: 10px;
+  border: 1.5px solid var(--ouro-escuro);
+  font-family: inherit; font-size: .9rem; min-width: 180px;
+}
+.chocopontos-saldo-consulta button {
+  padding: .7rem 1.3rem; border: none; border-radius: 10px;
+  background: linear-gradient(135deg, var(--choco-mid), var(--choco-claro));
+  color: var(--ouro-claro); font-weight: 800; font-size: .88rem;
+  cursor: pointer; font-family: inherit; transition: opacity .2s;
+}
+.chocopontos-saldo-consulta button:hover { opacity: .88; }
+.saldo-chocopontos-resultado {
+  display: none; flex-basis: 100%;
+  text-align: center; padding: .6rem 1rem;
+  border-radius: 10px; font-weight: 700; font-size: .88rem;
+}
 .btn-comprar-chocopontos {
   display: block; width: 100%; margin-top: .8rem;
   padding: .65rem 1rem;

@@ -571,6 +571,51 @@ document.getElementById('btnChocopontosBanner').addEventListener('click', abrirM
 fecharModal.addEventListener('click', fechar);
 modal.addEventListener('click', e => { if (e.target === modal) fechar(); });
 
+/* ===== CHOCOPONTOS: consultar saldo pelo CPF dentro do modal ===== */
+const cpfSaldoInput = document.getElementById('cpfSaldoChocopontos');
+const saldoResultEl = document.getElementById('saldoChocopontosModal');
+
+cpfSaldoInput.addEventListener('input', function () {
+  let v = this.value.replace(/\D/g, '').slice(0, 11);
+  if (v.length > 9) v = v.slice(0, 3) + '.' + v.slice(3, 6) + '.' + v.slice(6, 9) + '-' + v.slice(9);
+  else if (v.length > 6) v = v.slice(0, 3) + '.' + v.slice(3, 6) + '.' + v.slice(6);
+  else if (v.length > 3) v = v.slice(0, 3) + '.' + v.slice(3);
+  this.value = v;
+  saldoResultEl.style.display = 'none';
+});
+
+async function verSaldoChocopontos() {
+  const cpf = cpfSaldoInput.value.replace(/\D/g, '');
+  if (cpf.length !== 11) {
+    saldoResultEl.style.display = 'block';
+    saldoResultEl.style.background = '#fff0f0';
+    saldoResultEl.style.color = '#c62828';
+    saldoResultEl.textContent = 'Digite um CPF válido (11 dígitos).';
+    return;
+  }
+  try {
+    const resp = await fetch('/api/chocopontos-saldo?cpf=' + cpf);
+    const data = await resp.json();
+    saldoResultEl.style.display = 'block';
+    if (!resp.ok) {
+      saldoResultEl.style.background = '#fff0f0';
+      saldoResultEl.style.color = '#c62828';
+      saldoResultEl.textContent = 'Não foi possível consultar seu saldo agora.';
+      return;
+    }
+    saldoResultEl.style.background = '#e6f4ec';
+    saldoResultEl.style.color = '#1a7a3a';
+    saldoResultEl.textContent = 'Você tem ' + data.saldo + ' chocoponto(s)!';
+  } catch (e) {
+    saldoResultEl.style.display = 'block';
+    saldoResultEl.style.background = '#fff0f0';
+    saldoResultEl.style.color = '#c62828';
+    saldoResultEl.textContent = 'Não foi possível consultar seu saldo agora.';
+  }
+}
+document.getElementById('btnVerSaldoChocopontos').addEventListener('click', verSaldoChocopontos);
+cpfSaldoInput.addEventListener('keydown', e => { if (e.key === 'Enter') verSaldoChocopontos(); });
+
 /* ===== CHOCOPONTOS: leva pro carrinho normal, pagamento vira uma aba no checkout ===== */
 function comprarChocopontos(id, pontos) {
   var p = (typeof PRODS_DEF !== 'undefined') ? PRODS_DEF.find(function (x) { return x.id === id; }) : null;

@@ -1,4 +1,4 @@
-const PONTOS_POR_COMPRA = 4;
+const PONTOS_POR_COMPRA = 2;
 
 async function calcularSaldo(cpf) {
   const SB_URL = process.env.SUPABASE_URL;
