@@ -1105,12 +1105,6 @@ h2 span { color: var(--ouro-escuro); }
   color: rgba(255,255,255,.4);
   position: relative;
 }
-.footer-admin-link {
-  position: absolute; bottom: 1.2rem; right: 1.5rem;
-  font-size: .75rem; color: rgba(255,255,255,.12);
-  text-decoration: none; transition: color .2s;
-}
-.footer-admin-link:hover { color: rgba(255,255,255,.45); }
 
 /* ===== COPA DO MUNDO 2026 ===== */
 .copa-section {
@@ -1255,75 +1249,6 @@ h2 span { color: var(--ouro-escuro); }
   border-color: var(--ouro);
   box-shadow: 0 4px 16px rgba(200,148,26,.35);
 }
-.catalogo-admin-wrap {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 2.5rem;
-}
-
-.btn-admin-catalogo {
-  display: inline-flex;
-  align-items: center;
-  gap: 1rem;
-  padding: 1rem 2rem;
-  background: linear-gradient(135deg, var(--choco) 0%, var(--choco-mid) 50%, #3d1a00 100%);
-  border: 2px solid var(--ouro-escuro);
-  border-radius: 18px;
-  cursor: pointer;
-  font-family: 'Nunito', sans-serif;
-  transition: all .25s;
-  box-shadow: 0 6px 24px rgba(13,4,0,.35);
-  position: relative;
-  overflow: hidden;
-}
-.btn-admin-catalogo::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(135deg, rgba(200,148,26,.15), transparent);
-  opacity: 0;
-  transition: opacity .25s;
-}
-.btn-admin-catalogo:hover {
-  transform: translateY(-3px);
-  border-color: var(--ouro);
-  box-shadow: 0 12px 32px rgba(13,4,0,.5), 0 0 0 1px var(--ouro);
-}
-.btn-admin-catalogo:hover::before { opacity: 1; }
-
-.btn-admin-icon {
-  font-size: 1.8rem;
-  line-height: 1;
-  filter: drop-shadow(0 2px 4px rgba(0,0,0,.4));
-}
-.btn-admin-text {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: .1rem;
-}
-.btn-admin-text strong {
-  font-size: 1.05rem;
-  font-weight: 900;
-  color: var(--ouro-claro);
-  letter-spacing: .3px;
-}
-.btn-admin-text small {
-  font-size: .75rem;
-  font-weight: 600;
-  color: rgba(255,248,242,.5);
-  letter-spacing: .2px;
-}
-.btn-admin-arrow {
-  font-size: 1.2rem;
-  color: var(--ouro);
-  transition: transform .2s;
-  margin-left: .3rem;
-}
-.btn-admin-catalogo:hover .btn-admin-arrow {
-  transform: translateX(4px);
-}
-
 /* ===== MODAL TIPO CHOCOLATE ===== */
 .tipo-choco-box {
   max-width: 480px;
@@ -1375,25 +1300,6 @@ h2 span { color: var(--ouro-escuro); }
   padding: .1rem .45rem; font-size: .78rem;
   font-weight: 700; margin-bottom: .15rem;
 }
-
-/* ===== MODAL ADMIN LOGIN ===== */
-.modal-box-admin {
-  max-width: 380px;
-  padding: 2.5rem 2rem 2rem;
-}
-.admin-login-wrap { text-align: center; }
-.admin-login-logo { height: 64px; margin-bottom: 1rem; }
-.admin-login-titulo { font-size: 1.3rem; color: var(--texto); margin-bottom: .3rem; }
-.admin-login-sub { font-size: .83rem; color: var(--cinza); margin-bottom: 1.5rem; }
-.btn-admin-entrar {
-  width: 100%; padding: .85rem;
-  background: linear-gradient(135deg, var(--choco-mid), var(--choco-claro));
-  color: var(--ouro-claro); font-weight: 900; font-size: 1rem;
-  border: none; border-radius: 50px; cursor: pointer;
-  font-family: inherit; margin-top: .5rem;
-  transition: opacity .2s;
-}
-.btn-admin-entrar:hover { opacity: .88; }
 
 .hidden { display: none !important; }
 

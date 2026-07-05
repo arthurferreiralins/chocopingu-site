@@ -115,66 +115,6 @@ document.getElementById('btnGoogleEntrar').addEventListener('click', iniciarGoog
 renderNavAuth();
 
 /* =========================================================
-   MODAL ÁREA RESTRITA — ACESSO AO PAINEL ADMIN
-   ========================================================= */
-const ADMIN_USUARIOS = {
-  'arthur':   '262b06d105e1c865b01c3e0a74291cdae511ef15f3d456e14fbe2dffd9efe3b9',
-  'michelle': 'fd8307642fb3c5873e843940c6e903448d3f4012e39eda0caff5d918878aff41',
-};
-
-async function sha256Admin(text) {
-  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
-  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
-}
-
-const modalAdmin  = document.getElementById('modalAdmin');
-const fecharAdmin = document.getElementById('fecharAdmin');
-
-function abrirModalAdmin() {
-  modalAdmin.classList.add('aberto');
-  document.body.style.overflow = 'hidden';
-  document.getElementById('adminInputNome').value = '';
-  document.getElementById('adminInputSenha').value = '';
-  document.getElementById('adminLoginErro').textContent = '';
-  setTimeout(() => document.getElementById('adminInputNome').focus(), 150);
-}
-function fecharModalAdmin() {
-  modalAdmin.classList.remove('aberto');
-  document.body.style.overflow = '';
-}
-
-fecharAdmin.addEventListener('click', fecharModalAdmin);
-modalAdmin.addEventListener('click', e => { if (e.target === modalAdmin) fecharModalAdmin(); });
-
-document.getElementById('adminInputSenha').addEventListener('keydown', e => {
-  if (e.key === 'Enter') document.getElementById('btnAdminEntrar').click();
-});
-
-document.getElementById('btnAdminEntrar').addEventListener('click', async () => {
-  const nome = document.getElementById('adminInputNome').value.trim().toLowerCase();
-  const senha = document.getElementById('adminInputSenha').value;
-  const erroEl = document.getElementById('adminLoginErro');
-
-  if (!nome || !senha) {
-    erroEl.textContent = 'Preencha nome e senha.';
-    erroEl.className = 'auth-msg erro';
-    return;
-  }
-
-  const hash = await sha256Admin(senha);
-  if (ADMIN_USUARIOS[nome] && hash === ADMIN_USUARIOS[nome]) {
-    sessionStorage.setItem('cp_admin', '1');
-    fecharModalAdmin();
-    window.location.href = 'admin/';
-  } else {
-    erroEl.textContent = 'Nome ou senha incorretos.';
-    erroEl.className = 'auth-msg erro';
-    document.getElementById('adminInputSenha').value = '';
-    document.getElementById('adminInputSenha').focus();
-  }
-});
-
-/* =========================================================
    CARRINHO DE COMPRAS
    ========================================================= */
 let carrinho = [];
