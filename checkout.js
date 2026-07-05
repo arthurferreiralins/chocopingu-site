@@ -222,7 +222,11 @@
         '<h2>PIX gerado!</h2>' +
         '<p>Pedido <strong>#' + (data.order_id || '') + '</strong></p>' +
         '<p class="resultado-sub">Escaneie o QR Code ou copie o código abaixo</p>' +
-        (data.pix_qr_code_url ? '<img src="' + data.pix_qr_code_url + '" alt="QR Code PIX" class="pix-qr">' : '') +
+        (data.pix_qr_code_url
+          ? '<img src="' + data.pix_qr_code_url + '" alt="QR Code PIX" class="pix-qr">'
+          : (data.pix_qr_code
+            ? '<img src="https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=' + encodeURIComponent(data.pix_qr_code) + '" alt="QR Code PIX" class="pix-qr">'
+            : '')) +
         '<div class="codigo-wrap">' +
         '<input type="text" id="codigoPix" value="' + (data.pix_qr_code || '') + '" readonly>' +
         '<button onclick="window.copiarCodigo(\'codigoPix\')" class="btn-copiar">Copiar</button>' +
