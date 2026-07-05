@@ -111,6 +111,12 @@ module.exports = async (req, res) => {
     const charge = data.charges?.[0];
     const tx = charge?.last_transaction;
 
+    if (metodo !== 'cartao' && (data.status === 'failed' || charge?.status === 'failed')) {
+      const motivo = tx?.gateway_response?.errors?.[0]?.message
+        || 'Pagamento recusado. Verifique os dados informados e tente novamente.';
+      return res.status(400).json({ error: motivo });
+    }
+
     const result = { order_id: data.id, status: data.status, metodo };
 
     if (metodo === 'pix' && tx) {
