@@ -7,7 +7,7 @@
   ],
   "routes": [
     { "src": "/api/(.*)", "dest": "/api/$1.js" },
-    { "src": "/painel-1903/?", "dest": "/admin/index.html" },
+    { "src": "/admin(.*)", "status": 404 },
     { "src": "/(.*)", "dest": "/$1" }
   ]
 }
