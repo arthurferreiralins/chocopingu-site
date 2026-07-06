@@ -664,7 +664,16 @@ document.getElementById('btnAbrirVideo').addEventListener('click', abrirVideo);
 document.getElementById('fecharVideo').addEventListener('click', fecharVideo);
 modalVideo.addEventListener('click', e => { if (e.target === modalVideo) fecharVideo(); });
 
-/* ===== INSTAGRAM: feed de posts ===== */
+/* ===== INSTAGRAM: feed de posts (embed oficial via embed.js, sem scraping/API) ===== */
+function processarEmbedsInstagram(tentativas) {
+  if (window.instgrm && window.instgrm.Embeds) {
+    window.instgrm.Embeds.process();
+  } else if (tentativas > 0) {
+    // embed.js carrega async e pode ainda não estar pronto quando os posts chegam da API
+    setTimeout(() => processarEmbedsInstagram(tentativas - 1), 300);
+  }
+}
+
 async function carregarInstagram() {
   const grid = document.getElementById('instagramGrid');
   if (!grid) return;
@@ -678,7 +687,7 @@ async function carregarInstagram() {
     grid.innerHTML = data.map(p =>
       `<blockquote class="instagram-media" data-instgrm-permalink="${p.url}" data-instgrm-version="14" style="margin:0 auto;"></blockquote>`
     ).join('');
-    if (window.instgrm && window.instgrm.Embeds) window.instgrm.Embeds.process();
+    processarEmbedsInstagram(10);
   } catch (e) {
     grid.innerHTML = '<p class="instagram-empty">Não foi possível carregar o Instagram agora.</p>';
   }
