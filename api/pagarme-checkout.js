@@ -17,11 +17,16 @@ module.exports = async (req, res) => {
   if (!cliente || !cliente.nome || !cliente.email || !cliente.cpf)
     return res.status(400).json({ error: 'cliente.nome, .email e .cpf obrigatórios' });
 
-  const orderItems = itens.map(it => ({
-    amount: Math.round(Number(it.preco) * 100),
-    description: String(it.nome),
-    quantity: Number(it.qtd) || 1
-  }));
+  const orderItems = itens.map((it, idx) => {
+    var slug = String(it.nome)
+      .toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+    return {
+      amount: Math.round(Number(it.preco) * 100),
+      description: String(it.nome),
+      quantity: Number(it.qtd) || 1,
+      code: slug || ('item-' + (idx + 1))
+    };
+  });
   const totalAmount = orderItems.reduce((s, it) => s + it.amount * it.quantity, 0);
   const cpf = String(cliente.cpf).replace(/\D/g, '');
   const tel = String(cliente.whatsapp || '').replace(/\D/g, '');
