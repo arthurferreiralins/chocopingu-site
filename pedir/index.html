@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Peça seu Chocopingu</title>
+<meta name="description" content="Chocolate artesanal Chocopingu — escolha, peça pelo WhatsApp e receba." />
+<link rel="icon" href="../imagens/pingu_squared.png" />
+<style>
+  :root{
+    --ouro:        #C8941A;
+    --ouro-claro:  #E5B84A;
+    --ouro-escuro: #A07015;
+    --choco:       #0d0400;
+    --choco-mid:   #2a1000;
+    --choco-claro: #6b3300;
+    --creme:       #FFF8F2;
+    --bege:        #F5EDE0;
+    --texto:       #1a0800;
+    --cinza:       #777;
+    --branco:      #ffffff;
+    --radius:      18px;
+    --sombra:      0 8px 32px rgba(13,4,0,0.10);
+    --sombra-h:    0 24px 56px rgba(13,4,0,0.18);
+  }
+  * { box-sizing: border-box; margin:0; padding:0; }
+  body {
+    font-family: 'Nunito', -apple-system, 'Segoe UI', sans-serif;
+    background: var(--creme);
+    color: var(--texto);
+    line-height: 1.5;
+    padding-bottom: 5rem;
+  }
+  h1, h2 { font-family: 'Playfair Display', Georgia, serif; }
+
+  .topo {
+    display:flex; flex-direction:column; align-items:center;
+    text-align:center; padding: 2.2rem 5% 1.6rem;
+    background: var(--choco); color: var(--creme);
+  }
+  .topo img { width:56px; height:56px; border-radius:50%; margin-bottom:.6rem; }
+  .topo h1 { font-size:1.5rem; margin-bottom:.3rem; text-wrap:balance; }
+  .topo p { color: rgba(255,248,242,.75); font-size:.92rem; max-width:32ch; }
+
+  .passos {
+    display:flex; justify-content:center; gap:1.2rem;
+    padding: 1.6rem 5%; flex-wrap:wrap; background: var(--bege);
+  }
+  .passo { text-align:center; max-width:160px; }
+  .passo-num {
+    width:32px; height:32px; border-radius:50%; background:var(--ouro); color:var(--choco);
+    display:flex; align-items:center; justify-content:center; font-weight:800;
+    margin:0 auto .4rem;
+  }
+  .passo h3 { font-size:.9rem; margin-bottom:.15rem; }
+  .passo p { font-size:.78rem; color:var(--cinza); }
+
+  .produtos {
+    padding: 2.2rem 5% 1rem;
+    max-width: 720px;
+    margin: 0 auto;
+  }
+  .produtos h2 { text-align:center; font-size:1.35rem; margin-bottom:1.4rem; }
+  .grid {
+    display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:1.1rem;
+  }
+  .card {
+    background:var(--branco); border-radius:var(--radius); box-shadow:var(--sombra);
+    padding:1rem; display:flex; flex-direction:column; gap:.5rem; transition:transform .2s;
+  }
+  .card:hover { transform:translateY(-4px); box-shadow:var(--sombra-h); }
+  .card img { width:100%; aspect-ratio:1/1; object-fit:cover; border-radius:12px; background:var(--bege); }
+  .card h3 { font-size:1.02rem; }
+  .card .tag { font-size:.74rem; color:var(--cinza); }
+  .card .preco { font-family:'Playfair Display', serif; font-size:1.15rem; color:var(--ouro-escuro); font-weight:700; }
+  .btn-pedir {
+    margin-top:.2rem; border:none; border-radius:999px; padding:.7rem 1rem;
+    background:var(--ouro); color:var(--choco); font-weight:800; font-size:.9rem;
+    cursor:pointer; text-align:center; text-decoration:none; display:block;
+  }
+  .btn-pedir:hover { background:var(--ouro-claro); }
+
+  .choco-banner {
+    max-width:720px; margin:1.6rem auto 0; padding:1.1rem 1.3rem;
+    background:var(--choco); color:var(--creme); border-radius:var(--radius);
+    display:flex; align-items:center; gap:.9rem; font-size:.88rem;
+  }
+  .choco-banner strong { color:var(--ouro-claro); }
+
+  .rodape {
+    text-align:center; padding:2.2rem 5% 0; font-size:.82rem; color:var(--cinza);
+  }
+  .rodape a { color:var(--ouro-escuro); font-weight:700; text-decoration:none; }
+
+  /* ===== ASSISTENTE (FAQ automático) ===== */
+  .assist-btn {
+    position:fixed; right:1.1rem; bottom:1.1rem; z-index:40;
+    background:var(--ouro); color:var(--choco); border:none; border-radius:999px;
+    padding:.8rem 1.1rem; font-weight:800; font-size:.88rem; cursor:pointer;
+    box-shadow:var(--sombra-h); display:flex; align-items:center; gap:.4rem;
+  }
+  .assist-panel {
+    position:fixed; right:1.1rem; bottom:4.6rem; z-index:41;
+    width:min(320px, 88vw); max-height:70vh; overflow-y:auto;
+    background:var(--branco); border-radius:16px; box-shadow:var(--sombra-h);
+    display:none; flex-direction:column;
+  }
+  .assist-panel.aberto { display:flex; }
+  .assist-head {
+    background:var(--choco); color:var(--creme); padding:.8rem 1rem;
+    border-radius:16px 16px 0 0; display:flex; justify-content:space-between; align-items:center;
+  }
+  .assist-head span { font-weight:800; font-size:.92rem; }
+  .assist-head button { background:none; border:none; color:var(--creme); font-size:1.1rem; cursor:pointer; }
+  .assist-body { padding:.9rem 1rem; display:flex; flex-direction:column; gap:.6rem; }
+  .msg { font-size:.86rem; padding:.6rem .8rem; border-radius:12px; max-width:88%; }
+  .msg.bot { background:var(--bege); align-self:flex-start; }
+  .msg.user { background:var(--ouro); color:var(--choco); align-self:flex-end; font-weight:700; }
+  .chips { display:flex; flex-wrap:wrap; gap:.4rem; }
+  .chip {
+    font-size:.78rem; background:var(--branco); border:1px solid var(--bege);
+    border-radius:999px; padding:.4rem .7rem; cursor:pointer; text-align:left;
+  }
+  .chip:hover { background:var(--bege); }
+  .wpp-link {
+    margin-top:.2rem; display:inline-block; background:#25D366; color:#fff;
+    font-weight:800; font-size:.82rem; text-decoration:none; padding:.55rem .9rem;
+    border-radius:999px; align-self:flex-start;
+  }
+</style>
+</head>
+<body>
+
+  <div class="topo">
+    <img src="../imagens/pingu_squared.png" alt="Chocopingu" />
+    <h1>Peça seu chocolate em 3 passos</h1>
+    <p>Chocolate artesanal, feito à mão em Recife — do jeito que chocolate bom merece ser feito.</p>
+  </div>
+
+  <div class="passos">
+    <div class="passo">
+      <div class="passo-num">1</div>
+      <h3>Escolha</h3>
+      <p>Veja os produtos abaixo e escolha seu favorito.</p>
+    </div>
+    <div class="passo">
+      <div class="passo-num">2</div>
+      <h3>Fale no WhatsApp</h3>
+      <p>Clique em "Pedir esse" e confirme com a gente.</p>
+    </div>
+    <div class="passo">
+      <div class="passo-num">3</div>
+      <h3>Receba</h3>
+      <p>Combinamos a entrega e seu chocolate chega fresquinho.</p>
+    </div>
+  </div>
+
+  <div class="produtos">
+    <h2>Nossos produtos</h2>
+    <div class="grid" id="grid"></div>
+  </div>
+
+  <div class="choco-banner">
+    🐧⭐ <div>Toda compra em dinheiro já vira <strong>Chocopontos</strong> — junte e troque por chocolate depois.</div>
+  </div>
+
+  <div class="rodape">
+    <p>Quer ver o cardápio completo, pagar com PIX/cartão ou consultar seus Chocopontos?<br>
+    Visite o <a href="https://chocopingu.com.br" target="_blank" rel="noopener">site completo</a> ou chame no
+    <a href="https://wa.me/5581981553632" target="_blank" rel="noopener">WhatsApp</a>.</p>
+  </div>
+
+  <!-- ===== ASSISTENTE ===== -->
+  <button class="assist-btn" id="assistBtn">🐧 Fala com a gente</button>
+  <div class="assist-panel" id="assistPanel">
+    <div class="assist-head">
+      <span>🐧 Assistente Chocopingu</span>
+      <button id="assistFechar">&times;</button>
+    </div>
+    <div class="assist-body" id="assistBody">
+      <div class="msg bot">Oi! Sou o assistente automático da Chocopingu. Escolha uma dúvida ou chame direto no WhatsApp:</div>
+      <div class="chips" id="assistChips"></div>
+    </div>
+  </div>
+
+<script>
+var WPP = '5581981553632';
+function wppLink(msg){ return 'https://wa.me/' + WPP + '?text=' + encodeURIComponent(msg); }
+
+var PRODS = [
+  {nome:'Barra Coração',  preco:4.00, img:'../imagens/barra-coracao.png',   tag:'❤ Chocolate ao leite • 140g'},
+  {nome:'Barra Normal',   preco:4.00, img:'../imagens/barra-normal.png',    tag:'🍫 Chocolate ao leite • 140g'},
+  {nome:'Pirulitos',      preco:6.00, img:'../imagens/pirulitos-novo.png',  tag:'⭐ Chocolate ao leite • 140g'},
+  {nome:'Boneco Animais', preco:5.00, img:'../imagens/bonecos-animais.png', tag:'🐾 Chocolate ao leite • 140g'}
+];
+
+document.getElementById('grid').innerHTML = PRODS.map(function(p){
+  var precoFmt = 'R$ ' + p.preco.toFixed(2).replace('.', ',');
+  var msg = 'Olá! Quero pedir: ' + p.nome + ' (' + precoFmt + ')';
+  return '<div class="card">' +
+    '<img src="' + p.img + '" alt="' + p.nome + '" />' +
+    '<h3>' + p.nome + '</h3>' +
+    '<span class="tag">' + p.tag + '</span>' +
+    '<span class="preco">' + precoFmt + '</span>' +
+    '<a class="btn-pedir" href="' + wppLink(msg) + '" target="_blank" rel="noopener">Pedir esse 🍫</a>' +
+    '</div>';
+}).join('');
+
+/* ===== Assistente: FAQ automático (sem IA generativa — respostas fixas + fallback pro WhatsApp) ===== */
+var FAQS = [
+  { q: '💳 Formas de pagamento', a: 'Aceitamos PIX, boleto e cartão pelo site, ou combinamos direto no WhatsApp.' },
+  { q: '⭐ Como funciona o Chocopontos', a: 'A cada compra em dinheiro você ganha Chocopontos, que depois trocamos por chocolate. Dá pra consultar seu saldo pelo site.' },
+  { q: '🚚 Prazo de entrega', a: 'O prazo varia de acordo com a sua região — me chama no WhatsApp que te confirmo certinho.', wpp:true },
+  { q: '📦 Fazer meu pedido', a: 'Perfeito! Me chama no WhatsApp com o que você quer pedir.', wpp:true },
+  { q: '🗣️ Falar com atendente', a: 'Claro, é só chamar por aqui que alguém da equipe te responde.', wpp:true }
+];
+
+var chatBody = document.getElementById('assistBody');
+var chipsWrap = document.getElementById('assistChips');
+chipsWrap.innerHTML = FAQS.map(function(f, i){
+  return '<button class="chip" data-i="' + i + '">' + f.q + '</button>';
+}).join('');
+
+chipsWrap.addEventListener('click', function(e){
+  var btn = e.target.closest('.chip');
+  if(!btn) return;
+  var f = FAQS[Number(btn.dataset.i)];
+
+  var userMsg = document.createElement('div');
+  userMsg.className = 'msg user';
+  userMsg.textContent = f.q;
+  chatBody.insertBefore(userMsg, chipsWrap);
+
+  var botMsg = document.createElement('div');
+  botMsg.className = 'msg bot';
+  botMsg.textContent = f.a;
+  chatBody.insertBefore(botMsg, chipsWrap);
+
+  if (f.wpp) {
+    var link = document.createElement('a');
+    link.className = 'wpp-link';
+    link.href = wppLink('Olá! ' + f.q.replace(/^[^\s]+ /, ''));
+    link.target = '_blank'; link.rel = 'noopener';
+    link.textContent = '💬 Continuar no WhatsApp';
+    chatBody.insertBefore(link, chipsWrap);
+  }
+
+  chatBody.scrollTop = chatBody.scrollHeight;
+});
+
+var assistBtn = document.getElementById('assistBtn');
+var assistPanel = document.getElementById('assistPanel');
+assistBtn.addEventListener('click', function(){ assistPanel.classList.toggle('aberto'); });
+document.getElementById('assistFechar').addEventListener('click', function(){ assistPanel.classList.remove('aberto'); });
+</script>
+</body>
+</html>
