@@ -625,7 +625,7 @@ function comprarChocopontos(id, pontos) {
   fechar();
   irParaCheckout('chocopontos');
 }
-document.addEventListener('keydown', e => { if (e.key === 'Escape') { fechar(); fecharAuthModal(); fecharEnderecoModal(); fecharCarrinho(); fecharVideo(); fecharModalTipoChocolate(); } });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { fechar(); fecharAuthModal(); fecharEnderecoModal(); fecharCarrinho(); fecharVideo(); fecharModalTipoChocolate(); fecharModalAvaliacao(); } });
 
 /* ===== CONTADOR ANIMADO ===== */
 function animarContador(el) {
@@ -663,3 +663,103 @@ function fecharVideo() {
 document.getElementById('btnAbrirVideo').addEventListener('click', abrirVideo);
 document.getElementById('fecharVideo').addEventListener('click', fecharVideo);
 modalVideo.addEventListener('click', e => { if (e.target === modalVideo) fecharVideo(); });
+
+/* ===== INSTAGRAM: feed de posts ===== */
+async function carregarInstagram() {
+  const grid = document.getElementById('instagramGrid');
+  if (!grid) return;
+  try {
+    const resp = await fetch('/api/instagram-posts');
+    const data = await resp.json();
+    if (!resp.ok || !Array.isArray(data) || data.length === 0) {
+      grid.innerHTML = '<p class="instagram-empty">Em breve, novidades por aqui! Enquanto isso, siga <a href="https://www.instagram.com/lojadopingu" target="_blank" rel="noopener">@lojadopingu</a>.</p>';
+      return;
+    }
+    grid.innerHTML = data.map(p =>
+      `<blockquote class="instagram-media" data-instgrm-permalink="${p.url}" data-instgrm-version="14" style="margin:0 auto;"></blockquote>`
+    ).join('');
+    if (window.instgrm && window.instgrm.Embeds) window.instgrm.Embeds.process();
+  } catch (e) {
+    grid.innerHTML = '<p class="instagram-empty">Não foi possível carregar o Instagram agora.</p>';
+  }
+}
+carregarInstagram();
+
+/* ===== AVALIAÇÕES: listar e enviar ===== */
+async function carregarAvaliacoes() {
+  const grid = document.getElementById('avaliacoesGrid');
+  if (!grid) return;
+  try {
+    const resp = await fetch('/api/avaliacoes');
+    const data = await resp.json();
+    if (!resp.ok || !Array.isArray(data) || data.length === 0) {
+      grid.innerHTML = '<p class="instagram-empty">Ainda não temos avaliações públicas. Seja o primeiro a avaliar!</p>';
+      return;
+    }
+    grid.innerHTML = data.map(a =>
+      `<div class="avaliacao-card">
+        <div class="estrelas">${'★'.repeat(a.nota)}${'☆'.repeat(5 - a.nota)}</div>
+        <p>"${a.comentario.replace(/</g, '&lt;')}"</p>
+        <span class="avaliador">— ${a.nome.replace(/</g, '&lt;')}</span>
+      </div>`
+    ).join('');
+  } catch (e) {
+    grid.innerHTML = '<p class="instagram-empty">Não foi possível carregar as avaliações agora.</p>';
+  }
+}
+carregarAvaliacoes();
+
+const modalAvaliacao   = document.getElementById('modalAvaliacao');
+const estrelasInput    = document.getElementById('avaliacaoEstrelas');
+const msgAvaliacao     = document.getElementById('msgAvaliacao');
+let notaSelecionada = 0;
+
+function abrirModalAvaliacao() {
+  modalAvaliacao.classList.add('aberto');
+  document.body.style.overflow = 'hidden';
+}
+function fecharModalAvaliacao() {
+  modalAvaliacao.classList.remove('aberto');
+  document.body.style.overflow = '';
+}
+document.getElementById('btnAbrirAvaliacao').addEventListener('click', abrirModalAvaliacao);
+document.getElementById('fecharAvaliacao').addEventListener('click', fecharModalAvaliacao);
+modalAvaliacao.addEventListener('click', e => { if (e.target === modalAvaliacao) fecharModalAvaliacao(); });
+
+estrelasInput.querySelectorAll('span').forEach(span => {
+  span.addEventListener('click', () => {
+    notaSelecionada = Number(span.dataset.v);
+    estrelasInput.querySelectorAll('span').forEach(s => {
+      s.classList.toggle('selecionada', Number(s.dataset.v) <= notaSelecionada);
+    });
+  });
+});
+
+document.getElementById('btnEnviarAvaliacao').addEventListener('click', async () => {
+  const nome = document.getElementById('avaliacaoNome').value.trim();
+  const comentario = document.getElementById('avaliacaoComentario').value.trim();
+  msgAvaliacao.className = 'auth-msg';
+  if (nome.length < 2) { msgAvaliacao.textContent = 'Digite seu nome.'; msgAvaliacao.classList.add('erro'); return; }
+  if (notaSelecionada < 1) { msgAvaliacao.textContent = 'Escolha uma nota de 1 a 5 estrelas.'; msgAvaliacao.classList.add('erro'); return; }
+  if (comentario.length < 3) { msgAvaliacao.textContent = 'Conte um pouco da sua experiência.'; msgAvaliacao.classList.add('erro'); return; }
+
+  try {
+    const resp = await fetch('/api/avaliacoes', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ nome, nota: notaSelecionada, comentario })
+    });
+    const data = await resp.json();
+    if (!resp.ok) { msgAvaliacao.textContent = data.error || 'Erro ao enviar avaliação.'; msgAvaliacao.classList.add('erro'); return; }
+    msgAvaliacao.textContent = 'Obrigado! Sua avaliação foi enviada e aparecerá após aprovação.';
+    msgAvaliacao.classList.add('ok');
+    document.getElementById('avaliacaoNome').value = '';
+    document.getElementById('avaliacaoComentario').value = '';
+    notaSelecionada = 0;
+    estrelasInput.querySelectorAll('span').forEach(s => s.classList.remove('selecionada'));
+    setTimeout(fecharModalAvaliacao, 2000);
+  } catch (e) {
+    msgAvaliacao.textContent = 'Erro ao enviar avaliação.';
+    msgAvaliacao.classList.add('erro');
+  }
+});

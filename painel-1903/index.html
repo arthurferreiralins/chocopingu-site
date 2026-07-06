@@ -379,6 +379,8 @@ tr:hover td{background:#FDFAF7}tr:last-child td{border-bottom:none}
     <button class="tab"     onclick="go(this,'econ')"><span class="ti">💡</span> Economia</button>
     <button class="tab"     onclick="go(this,'ped');carregarPedidos()"><span class="ti">📋</span> Pedidos</button>
     <button class="tab"     onclick="go(this,'copaprod')"><span class="ti">⚽</span> Produtos Copa</button>
+    <button class="tab"     onclick="go(this,'aval');carregarAvaliacoesAdmin()"><span class="ti">⭐</span> Avaliações</button>
+    <button class="tab"     onclick="go(this,'insta');carregarInstagramAdmin()"><span class="ti">📸</span> Instagram</button>
     <div style="flex:1"></div>
     <button class="tab" style="color:#A93226" onclick="logout()"><span class="ti">🚪</span> Sair</button>
   </div>
@@ -1078,6 +1080,63 @@ tr:hover td{background:#FDFAF7}tr:last-child td{border-bottom:none}
       </div>
 
       <div class="pgrid" id="pgrid-copa"></div>
+    </div>
+
+    <!-- ── AVALIAÇÕES ── -->
+    <div id="s-aval" class="sec">
+      <div class="ptitle">⭐ Avaliações de Clientes</div>
+      <div class="crow">
+        <div class="card cv"><span class="cic">📝</span><span class="clb">Total</span><span class="cval" id="aval-total">—</span></div>
+        <div class="card ca"><span class="cic">✅</span><span class="clb">Aprovadas</span><span class="cval pos" id="aval-aprovadas">—</span></div>
+        <div class="card cr"><span class="cic">⏳</span><span class="clb">Pendentes</span><span class="cval" id="aval-pendentes">—</span></div>
+      </div>
+      <div class="tbox">
+        <div class="thdr">
+          <h3>Todas as avaliações</h3>
+          <button class="btn-sm" onclick="carregarAvaliacoesAdmin()" style="background:var(--gold);color:#000;border:none;padding:6px 14px;border-radius:8px;cursor:pointer;font-weight:700">↺ Atualizar</button>
+        </div>
+        <div id="aval-loading" style="padding:24px;text-align:center;color:#888">Carregando avaliações...</div>
+        <div id="aval-erro" style="display:none;padding:16px;color:#c0392b;background:#fdf;border-radius:8px;margin:12px 0"></div>
+        <div id="aval-tabela" style="display:none">
+          <table>
+            <thead><tr>
+              <th>Data</th><th>Nome</th><th>Nota</th><th>Comentário</th><th>Status</th><th>Ações</th>
+            </tr></thead>
+            <tbody id="aval-tbody"></tbody>
+          </table>
+        </div>
+        <div id="aval-vazio" style="display:none;padding:32px;text-align:center;color:#aaa">Nenhuma avaliação recebida ainda.</div>
+      </div>
+    </div>
+
+    <!-- ── INSTAGRAM ── -->
+    <div id="s-insta" class="sec">
+      <div class="ptitle">📸 Feed do Instagram</div>
+      <div class="cat-banner">
+        <div>
+          <h2>Posts em destaque na home</h2>
+          <p>Cole o link de um post ou reel público do Instagram (@lojadopingu) para exibi-lo no site.</p>
+          <span class="cb-tag">🔒 Área restrita ao admin</span>
+        </div>
+      </div>
+      <div class="tbox">
+        <div class="thdr"><h3>Adicionar post</h3></div>
+        <div class="frow">
+          <div class="fg" style="flex:1;min-width:260px"><label>URL do post/reel</label>
+            <input type="text" id="ig-url" placeholder="https://www.instagram.com/p/XXXXXXXXX/"></div>
+          <button class="btn badd" onclick="addInstagramPost()">+ Adicionar</button>
+        </div>
+        <p id="ig-msg" style="padding:0 4px;color:#c0392b"></p>
+      </div>
+      <div class="tbox">
+        <div class="thdr"><h3>Posts cadastrados</h3></div>
+        <div id="ig-loading" style="padding:24px;text-align:center;color:#888">Carregando...</div>
+        <div id="ig-vazio" style="display:none;padding:32px;text-align:center;color:#aaa">Nenhum post cadastrado ainda.</div>
+        <table id="ig-tabela" style="display:none">
+          <thead><tr><th>URL</th><th>Adicionado em</th><th>Ações</th></tr></thead>
+          <tbody id="ig-tbody"></tbody>
+        </table>
+      </div>
     </div>
 
   </div><!-- /content -->
@@ -2004,6 +2063,101 @@ async function carregarPedidos(){
   }catch(e){
     loading.style.display='none';erro.style.display='block';erro.textContent='Erro: '+e.message;
   }
+}
+
+// ── AVALIAÇÕES ──
+async function carregarAvaliacoesAdmin(){
+  const loading=document.getElementById('aval-loading');
+  const tabela=document.getElementById('aval-tabela');
+  const vazio=document.getElementById('aval-vazio');
+  const erro=document.getElementById('aval-erro');
+  const tbody=document.getElementById('aval-tbody');
+  loading.style.display='block';tabela.style.display='none';vazio.style.display='none';erro.style.display='none';
+  try{
+    const resp=await fetch('/api/admin-avaliacoes');
+    const data=await resp.json();
+    if(!resp.ok){throw new Error(data.error||'Erro ao buscar avaliações');}
+    loading.style.display='none';
+    if(!Array.isArray(data)||data.length===0){vazio.style.display='block';return;}
+    document.getElementById('aval-total').textContent=data.length;
+    document.getElementById('aval-aprovadas').textContent=data.filter(a=>a.aprovado).length;
+    document.getElementById('aval-pendentes').textContent=data.filter(a=>!a.aprovado).length;
+    tbody.innerHTML=data.map(a=>{
+      const dt=a.created_at?new Date(a.created_at).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',year:'2-digit',hour:'2-digit',minute:'2-digit'}):'—';
+      return `<tr>
+        <td style="font-size:12px;white-space:nowrap">${dt}</td>
+        <td>${a.nome}</td>
+        <td>${'⭐'.repeat(a.nota)}</td>
+        <td style="font-size:12px;max-width:280px">${a.comentario}</td>
+        <td>${a.aprovado?'✅ Aprovada':'⏳ Pendente'}</td>
+        <td style="white-space:nowrap">
+          ${a.aprovado
+            ? `<button class="btn-sm" onclick="moderarAvaliacao('${a.id}',false)" style="background:#eee;border:none;padding:4px 10px;border-radius:6px;cursor:pointer">Ocultar</button>`
+            : `<button class="btn-sm" onclick="moderarAvaliacao('${a.id}',true)" style="background:var(--gold);color:#000;border:none;padding:4px 10px;border-radius:6px;cursor:pointer;font-weight:700">Aprovar</button>`
+          }
+          <button class="btn-sm" onclick="excluirAvaliacao('${a.id}')" style="background:#A93226;color:#fff;border:none;padding:4px 10px;border-radius:6px;cursor:pointer;margin-left:4px">Excluir</button>
+        </td>
+      </tr>`;
+    }).join('');
+    tabela.style.display='block';
+  }catch(e){
+    loading.style.display='none';erro.style.display='block';erro.textContent='Erro: '+e.message;
+  }
+}
+async function moderarAvaliacao(id,aprovado){
+  await fetch('/api/admin-avaliacoes',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({id,aprovado})});
+  carregarAvaliacoesAdmin();
+}
+async function excluirAvaliacao(id){
+  if(!confirm('Excluir esta avaliação?'))return;
+  await fetch('/api/admin-avaliacoes?id='+encodeURIComponent(id),{method:'DELETE'});
+  carregarAvaliacoesAdmin();
+}
+
+// ── INSTAGRAM ──
+async function carregarInstagramAdmin(){
+  const loading=document.getElementById('ig-loading');
+  const tabela=document.getElementById('ig-tabela');
+  const vazio=document.getElementById('ig-vazio');
+  const tbody=document.getElementById('ig-tbody');
+  loading.style.display='block';tabela.style.display='none';vazio.style.display='none';
+  try{
+    const resp=await fetch('/api/instagram-posts');
+    const data=await resp.json();
+    loading.style.display='none';
+    if(!resp.ok||!Array.isArray(data)||data.length===0){vazio.style.display='block';return;}
+    tbody.innerHTML=data.map(p=>{
+      const dt=p.created_at?new Date(p.created_at).toLocaleDateString('pt-BR'):'—';
+      return `<tr>
+        <td style="font-size:12px;word-break:break-all">${p.url}</td>
+        <td style="font-size:12px;white-space:nowrap">${dt}</td>
+        <td><button class="btn-sm" onclick="excluirInstagramPost('${p.id}')" style="background:#A93226;color:#fff;border:none;padding:4px 10px;border-radius:6px;cursor:pointer">Excluir</button></td>
+      </tr>`;
+    }).join('');
+    tabela.style.display='block';
+  }catch(e){
+    loading.style.display='none';vazio.style.display='block';
+  }
+}
+async function addInstagramPost(){
+  const input=document.getElementById('ig-url');
+  const msg=document.getElementById('ig-msg');
+  const url=input.value.trim();
+  msg.textContent='';
+  try{
+    const resp=await fetch('/api/instagram-posts',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({url})});
+    const data=await resp.json();
+    if(!resp.ok){msg.textContent=data.error||'Erro ao adicionar post';return;}
+    input.value='';
+    carregarInstagramAdmin();
+  }catch(e){
+    msg.textContent='Erro ao adicionar post';
+  }
+}
+async function excluirInstagramPost(id){
+  if(!confirm('Remover este post do site?'))return;
+  await fetch('/api/instagram-posts?id='+encodeURIComponent(id),{method:'DELETE'});
+  carregarInstagramAdmin();
 }
 
 // ── INIT ──

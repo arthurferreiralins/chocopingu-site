@@ -215,6 +215,51 @@
 
   </section>
 
+  <!-- ===== INSTAGRAM ===== -->
+  <section class="instagram-feed" id="instagram">
+    <div class="section-header">
+      <span class="section-tag">Siga a gente</span>
+      <h2>No <span>Instagram</span></h2>
+      <p class="section-sub">Acompanhe novidades e bastidores em <a href="https://www.instagram.com/lojadopingu" target="_blank" rel="noopener">@lojadopingu</a></p>
+    </div>
+    <div class="instagram-grid" id="instagramGrid">
+      <p class="instagram-empty">Carregando posts...</p>
+    </div>
+  </section>
+
+  <!-- ===== AVALIAÇÕES ===== -->
+  <section class="avaliacoes" id="avaliacoes">
+    <div class="section-header">
+      <span class="section-tag">Opiniões reais</span>
+      <h2>O que nossos <span>clientes dizem</span></h2>
+      <p class="section-sub">Avaliações de verdade de quem já provou</p>
+    </div>
+    <div class="avaliacoes-grid" id="avaliacoesGrid">
+      <p class="instagram-empty">Carregando avaliações...</p>
+    </div>
+    <div class="avaliacoes-cta">
+      <button class="btn-ouro" id="btnAbrirAvaliacao">Deixar minha avaliação &#9733;</button>
+    </div>
+  </section>
+
+  <!-- ===== MODAL AVALIAÇÃO ===== -->
+  <div class="modal-overlay" id="modalAvaliacao">
+    <div class="modal-box auth-box">
+      <button class="modal-fechar" id="fecharAvaliacao">&#10005;</button>
+      <div class="auth-logo">
+        <img src="imagens/logo2.png" alt="Chocopingu" />
+      </div>
+      <h3 style="text-align:center;margin:0 0 .5rem">Deixe sua avaliação</h3>
+      <input type="text" class="auth-input" id="avaliacaoNome" placeholder="Seu nome" maxlength="80" />
+      <div class="estrelas-input" id="avaliacaoEstrelas">
+        <span data-v="1">&#9733;</span><span data-v="2">&#9733;</span><span data-v="3">&#9733;</span><span data-v="4">&#9733;</span><span data-v="5">&#9733;</span>
+      </div>
+      <textarea class="auth-input" id="avaliacaoComentario" placeholder="Conte sua experiência..." maxlength="500" rows="3"></textarea>
+      <button class="btn-ouro auth-submit" id="btnEnviarAvaliacao">Enviar avaliação</button>
+      <p class="auth-msg" id="msgAvaliacao"></p>
+    </div>
+  </div>
+
   <!-- ===== BANNER CHOCOPONTOS ===== -->
   <div class="banner-chocopontos">
     <div class="banner-content">
@@ -427,6 +472,7 @@
   <div class="cursor-ring" id="cursorRing"></div>
 
   <script src="script.js"></script>
+  <script async src="https://www.instagram.com/embed.js"></script>
   <script>
     var PRODS_DEF = [
       {id:1, nome:'Barra Coração',  preco:4.00, img:'imagens/barra-coracao.png',    tag:'❤ Chocolate ao leite • 140g', desc:'Derrete, cria e encanta! Barra especial em formato de coração, feita com chocolate ao leite de verdade. 140g de puro amor.'},
