@@ -458,14 +458,18 @@ h2 span { color: var(--ouro-escuro); }
 /* ===== INSTAGRAM ===== */
 .instagram-feed {
   padding: 5rem 5% 5.5rem;
-  background: linear-gradient(180deg, var(--bege) 0%, var(--branco) 100%);
+  background: linear-gradient(160deg, #062306 0%, #0d3a0a 35%, #0a1f05 65%, var(--choco-mid) 100%);
   text-align: center;
 }
 .instagram-feed .section-tag {
   background: linear-gradient(135deg, var(--ouro-claro), var(--ouro));
   color: var(--choco);
 }
-.instagram-feed .section-sub a { color: var(--ouro-escuro); font-weight: 700; }
+.instagram-feed h2 { color: var(--branco); }
+.instagram-feed h2 span { color: var(--ouro-claro); }
+.instagram-feed .section-sub { color: rgba(255,255,255,.75); }
+.instagram-feed .section-sub a { color: var(--ouro-claro); font-weight: 700; }
+.instagram-feed .instagram-empty { color: rgba(255,255,255,.6); }
 .instagram-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
