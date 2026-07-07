@@ -122,6 +122,9 @@ h2 span { color: var(--ouro-escuro); }
   margin-right: auto;
 }
 
+/* ===== ÂNCORAS: evita que a navbar fixa cubra o topo das seções ===== */
+section[id], footer[id] { scroll-margin-top: 90px; }
+
 /* ===== NAVBAR ===== */
 .navbar {
   position: fixed; top: 0; left: 0; right: 0; z-index: 100;
