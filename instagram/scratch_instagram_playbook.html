@@ -1,0 +1,443 @@
+<style>
+  :root{
+    --bg: #FFF8F2;
+    --bg-card: #ffffff;
+    --bg-subtle: #F5EDE0;
+    --text: #1a0800;
+    --text-muted: #7a6656;
+    --accent: #C8941A;
+    --accent-strong: #A07015;
+    --accent-soft: #E5B84A;
+    --border: rgba(107,51,0,0.16);
+    --choco: #0d0400;
+    --font-display: Georgia, 'Iowan Old Style', 'Palatino Linotype', 'Times New Roman', serif;
+    --font-body: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    --font-mono: ui-monospace, 'SF Mono', 'Cascadia Code', Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg: #160b04;
+      --bg-card: #241206;
+      --bg-subtle: #2a1508;
+      --text: #FBEEDD;
+      --text-muted: #c7ac95;
+      --accent: #E5B84A;
+      --accent-strong: #E5B84A;
+      --border: rgba(229,184,74,0.25);
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg: #160b04;
+    --bg-card: #241206;
+    --bg-subtle: #2a1508;
+    --text: #FBEEDD;
+    --text-muted: #c7ac95;
+    --accent: #E5B84A;
+    --accent-strong: #E5B84A;
+    --border: rgba(229,184,74,0.25);
+  }
+  :root[data-theme="light"]{
+    --bg: #FFF8F2;
+    --bg-card: #ffffff;
+    --bg-subtle: #F5EDE0;
+    --text: #1a0800;
+    --text-muted: #7a6656;
+    --accent: #C8941A;
+    --accent-strong: #A07015;
+    --accent-soft: #E5B84A;
+    --border: rgba(107,51,0,0.16);
+  }
+
+  * { box-sizing: border-box; }
+  body { background: var(--bg); }
+  .doc {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 3.5rem 1.5rem 6rem;
+    font-family: var(--font-body);
+    color: var(--text);
+    line-height: 1.6;
+  }
+  .masthead {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 2px solid var(--accent);
+    margin-bottom: 0.5rem;
+    flex-wrap: wrap;
+  }
+  .brand {
+    font-family: var(--font-display);
+    font-size: 1.05rem;
+    letter-spacing: .04em;
+    color: var(--accent-strong);
+  }
+  .masthead h1 {
+    font-family: var(--font-display);
+    font-size: clamp(1.6rem, 4vw, 2.3rem);
+    font-weight: 700;
+    margin: .3rem 0 0;
+    text-wrap: balance;
+    flex: 1 1 100%;
+  }
+  .premise {
+    font-size: 1.02rem;
+    color: var(--text-muted);
+    max-width: 60ch;
+    margin: .6rem 0 3rem;
+  }
+  .eyebrow {
+    font-family: var(--font-body);
+    font-size: .72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .12em;
+    color: var(--accent-strong);
+  }
+  section { margin-top: 3.2rem; }
+  section h2 {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    margin: .25rem 0 .9rem;
+    text-wrap: balance;
+  }
+  section > p.lede { color: var(--text-muted); margin-bottom: 1.2rem; }
+  hr.rule {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 3.2rem 0 0;
+  }
+
+  .note {
+    background: var(--bg-subtle);
+    border-left: 3px solid var(--accent);
+    padding: .9rem 1.1rem;
+    border-radius: 4px;
+    font-size: .92rem;
+    color: var(--text-muted);
+  }
+
+  .copybox {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.1rem 1.2rem;
+    margin: .9rem 0;
+  }
+  .copybox-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: .6rem;
+  }
+  .copybox-label {
+    font-size: .72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    color: var(--text-muted);
+  }
+  .copy-btn {
+    font-family: var(--font-body);
+    font-size: .78rem;
+    font-weight: 600;
+    background: transparent;
+    color: var(--accent-strong);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: .3rem .65rem;
+    cursor: pointer;
+  }
+  .copy-btn:hover { background: var(--bg-subtle); }
+  .copy-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .copytext {
+    font-family: var(--font-mono);
+    font-size: .88rem;
+    white-space: pre-wrap;
+    color: var(--text);
+  }
+
+  .pillars {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+  .pillar {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.1rem 1.2rem;
+  }
+  .pillar .tag { font-size: 1.3rem; }
+  .pillar h3 { font-family: var(--font-display); font-size: 1.05rem; margin: .4rem 0 .3rem; }
+  .pillar p { font-size: .88rem; color: var(--text-muted); margin: 0; }
+
+  table.cal {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: .88rem;
+  }
+  table.cal th, table.cal td {
+    text-align: left;
+    padding: .55rem .6rem;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  table.cal th { font-size: .72rem; text-transform: uppercase; letter-spacing: .06em; color: var(--text-muted); font-weight: 700; }
+  table.cal td.day { font-weight: 700; white-space: nowrap; }
+  .cal-wrap { overflow-x: auto; }
+
+  .checklist { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: .5rem; }
+  .checklist li { display: flex; gap: .6rem; font-size: .94rem; }
+  .checklist li::before { content: '—'; color: var(--accent); flex-shrink: 0; }
+
+  .tagrow { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: .5rem; }
+  .tagchip {
+    font-family: var(--font-mono);
+    font-size: .8rem;
+    background: var(--bg-subtle);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: .2rem .7rem;
+    color: var(--text);
+  }
+  .tagset-label { font-size: .78rem; font-weight: 700; color: var(--accent-strong); margin-top: 1.1rem; }
+
+  .highlight-list { display: flex; flex-direction: column; gap: .7rem; }
+  .highlight-item { display: flex; gap: .9rem; align-items: flex-start; }
+  .highlight-dot {
+    width: 34px; height: 34px; border-radius: 50%; flex-shrink: 0;
+    background: var(--accent); color: var(--choco);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1rem; margin-top: .1rem;
+  }
+  .highlight-item h4 { margin: 0 0 .15rem; font-size: .96rem; }
+  .highlight-item p { margin: 0; font-size: .86rem; color: var(--text-muted); }
+
+  footer.cta {
+    margin-top: 3.5rem;
+    padding-top: 2rem;
+    border-top: 2px solid var(--accent);
+    font-size: .92rem;
+    color: var(--text-muted);
+  }
+  footer.cta strong { color: var(--text); }
+
+  @media (max-width: 560px){
+    .pillars { grid-template-columns: 1fr; }
+  }
+</style>
+
+<div class="doc">
+  <div class="masthead">
+    <span class="brand">🐧 Chocopingu</span>
+    <span class="eyebrow">Guia interno · Instagram</span>
+    <h1>Como crescer no orgânico e vender mais pelo Instagram</h1>
+  </div>
+  <p class="premise">Pacote pronto pra colar hoje: bio, destaques, pilares de conteúdo, guia de gravação de vídeo, calendário semanal, legendas e hashtags. Montado com o que já sei da Chocopingu — chocolate artesanal em Recife/PE, pedido por WhatsApp, programa Chocopontos. Sem acesso à sua conta real ainda, então é ponto de partida: me manda os prints (perfil + insights) quando puder e eu recalibro em cima do que está performando de verdade.</p>
+
+  <section id="bio">
+    <span class="eyebrow">01 · Perfil</span>
+    <h2>Bio</h2>
+    <p class="lede">Sua bio é o único texto que decide se alguém vira seguidor ou cliente em 3 segundos. Ela precisa dizer <em>o quê</em>, <em>onde</em> e <em>como comprar</em> — nessa ordem. O Instagram só permite <strong>150 caracteres</strong> na bio — o texto abaixo tem 136, com folga.</p>
+    <div class="copybox">
+      <div class="copybox-head">
+        <span class="copybox-label">Cole na bio (136/150 caracteres)</span>
+        <button class="copy-btn" onclick="copiar('bio-text', this)">Copiar</button>
+      </div>
+      <div class="copytext" id="bio-text">🐧🍫 Chocolate artesanal feito à mão em Recife
+Barra, Pirulito & Boneco de chocolate
+⭐ Ganhe Chocopontos a cada compra
+👇 Peça pelo link</div>
+    </div>
+    <p class="lede" style="margin-top:.8rem">Link da bio: aponte pro <strong>chocopingu.com.br/pedir</strong> — página enxuta feita pra converter quem clica vindo do Instagram: passo a passo, produtos com botão direto pro WhatsApp e um assistente de dúvidas. Quem quiser pagar por PIX/cartão ou ver o cardápio completo, essa página já linka pro site principal.</p>
+  </section>
+
+  <hr class="rule" />
+
+  <section id="destaques">
+    <span class="eyebrow">02 · Perfil</span>
+    <h2>Destaques (Stories fixados)</h2>
+    <p class="lede">Cinco destaques cobrem a jornada inteira de quem chega no perfil pela primeira vez:</p>
+    <div class="highlight-list">
+      <div class="highlight-item">
+        <div class="highlight-dot">1</div>
+        <div><h4>Cardápio</h4><p>Uma foto por produto, preço visível, "peça pelo WhatsApp" no final de cada story.</p></div>
+      </div>
+      <div class="highlight-item">
+        <div class="highlight-dot">2</div>
+        <div><h4>Bastidores</h4><p>Processo de fazer o chocolate — derretendo, moldando, embalando. É o conteúdo que mais gera confiança.</p></div>
+      </div>
+      <div class="highlight-item">
+        <div class="highlight-dot">3</div>
+        <div><h4>Chocopontos</h4><p>Como funciona o programa: quantos pontos por compra, o que dá pra resgatar.</p></div>
+      </div>
+      <div class="highlight-item">
+        <div class="highlight-dot">4</div>
+        <div><h4>Avaliações</h4><p>Print dos comentários do site e mensagens de clientes satisfeitos no WhatsApp.</p></div>
+      </div>
+      <div class="highlight-item">
+        <div class="highlight-dot">5</div>
+        <div><h4>Como pedir</h4><p>Passo a passo: escolher → WhatsApp ou site → receber. Mesmo fluxo que já existe no site.</p></div>
+      </div>
+    </div>
+    <p class="lede" style="margin-top:1rem">Capas: todas no mesmo estilo (fundo marrom-choco ou dourado, ícone branco simples) pra ficar como um conjunto, não uma bagunça de cores.</p>
+  </section>
+
+  <hr class="rule" />
+
+  <section id="pilares">
+    <span class="eyebrow">03 · Estratégia</span>
+    <h2>4 pilares de conteúdo</h2>
+    <p class="lede">Alterne entre eles — não poste a mesma coisa toda hora. Isso é o que dá variedade pro algoritmo e mantém quem já segue interessado.</p>
+    <div class="pillars">
+      <div class="pillar"><span class="tag">🍫</span><h3>Produto & processo</h3><p>Close no chocolate, quebrando a barra, o pirulito sendo moldado. Sensorial, "dá vontade de comer".</p></div>
+      <div class="pillar"><span class="tag">🐧</span><h3>Bastidores & marca</h3><p>Você fazendo, embalando, o pinguim mascote, o dia a dia da produção. Humaniza a marca.</p></div>
+      <div class="pillar"><span class="tag">⭐</span><h3>Prova social</h3><p>Prints de avaliação do site, cliente recebendo o pedido, mensagens de WhatsApp elogiando.</p></div>
+      <div class="pillar"><span class="tag">🎁</span><h3>Oferta & Chocopontos</h3><p>Promoção da semana, lembrete de como resgatar pontos, urgência ("só essa semana").</p></div>
+    </div>
+  </section>
+
+  <hr class="rule" />
+
+  <section id="video">
+    <span class="eyebrow">04 · Produção</span>
+    <h2>Como gravar (Reels)</h2>
+    <p class="lede">Hoje o Instagram entrega Reels pra gente que nem te segue ainda — é a porta de entrada de seguidor novo. Posts estáticos só alcançam quem já segue. Priorize vídeo.</p>
+    <ul class="checklist">
+      <li><strong>Vertical 9:16</strong>, sempre. Filme já na posição certa, não recorte depois.</li>
+      <li><strong>Luz natural perto de janela</strong>, de dia. Nunca flash direto — o chocolate fica com brilho estourado e sem textura.</li>
+      <li><strong>Gancho nos primeiros 2 segundos</strong>: comece já quebrando a barra, cortando o pirulito, ou mostrando o produto pronto — nunca com “oi gente” ou logo de abertura.</li>
+      <li><strong>Texto na tela</strong> desde o início — mais da metade assiste sem som.</li>
+      <li><strong>Duração:</strong> 7–15s pra vídeo de produto (quanto mais gente assiste até o fim, mais o Instagram empurra); até 30s pra bastidores com narrativa.</li>
+      <li><strong>Áudio em alta</strong> (som que está bombando), mas com volume baixo o suficiente pra não abafar o som do chocolate quebrando — esse som "ASMR" prende sozinho.</li>
+      <li><strong>Fecha com CTA falado ou escrito:</strong> "chama no WhatsApp" ou "link na bio pra pedir".</li>
+      <li><strong>Grave em lote:</strong> reserve 1h por semana, grave 4–5 vídeos de uma vez com a mesma luz montada.</li>
+    </ul>
+  </section>
+
+  <hr class="rule" />
+
+  <section id="calendario">
+    <span class="eyebrow">05 · Rotina</span>
+    <h2>Calendário semanal</h2>
+    <p class="lede">Ritmo sustentável — melhor postar pouco e sempre do que muito por 2 semanas e sumir.</p>
+    <div class="cal-wrap">
+      <table class="cal">
+        <thead><tr><th>Dia</th><th>Formato</th><th>Pilar</th></tr></thead>
+        <tbody>
+          <tr><td class="day">Segunda</td><td>Stories (2-3)</td><td>Bastidores da semana / enquete "qual sabor hoje?"</td></tr>
+          <tr><td class="day">Terça</td><td>Reels</td><td>Produto & processo</td></tr>
+          <tr><td class="day">Quarta</td><td>Stories</td><td>Prova social (print de avaliação/WhatsApp)</td></tr>
+          <tr><td class="day">Quinta</td><td>Post no feed (foto)</td><td>Produto, bem iluminado, preço na legenda</td></tr>
+          <tr><td class="day">Sexta</td><td>Reels</td><td>Oferta / Chocopontos da semana</td></tr>
+          <tr><td class="day">Sábado</td><td>Stories</td><td>Bastidores / cliente recebendo pedido</td></tr>
+          <tr><td class="day">Domingo</td><td>Descanso ou repost</td><td>Reaproveitar o Reels de melhor desempenho da semana</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="lede" style="margin-top:.9rem">Teste horários de 11h–13h e 18h–20h primeiro — costuma ser quando o público de Recife está mais no celular fora do trabalho. Ajusta depois que tiver dado de Insights.</p>
+  </section>
+
+  <hr class="rule" />
+
+  <section id="legendas">
+    <span class="eyebrow">06 · Copy</span>
+    <h2>Modelos de legenda</h2>
+    <p class="lede">Troque o que está entre [colchetes] e cole. Pergunta no início prende mais comentário do que afirmação.</p>
+
+    <div class="tagset-label">Produto</div>
+    <div class="copybox">
+      <div class="copybox-head"><span class="copybox-label">Modelo A</span><button class="copy-btn" onclick="copiar('cap-a', this)">Copiar</button></div>
+      <div class="copytext" id="cap-a">Já pensou em [morder/quebrar] isso agora? 🍫
+[Nome do produto] feito à mão, sem pressa, do jeito que chocolate bom merece ser feito.
+Peça pelo link da bio ou chama no WhatsApp 🐧</div>
+    </div>
+
+    <div class="tagset-label">Bastidores</div>
+    <div class="copybox">
+      <div class="copybox-head"><span class="copybox-label">Modelo B</span><button class="copy-btn" onclick="copiar('cap-b', this)">Copiar</button></div>
+      <div class="copytext" id="cap-b">Por trás de cada [produto] tem [tempo/detalhe do processo].
+Não é indústria, é feito por gente que gosta do que faz.
+É isso que a gente bota em cada encomenda 🐧🍫</div>
+    </div>
+
+    <div class="tagset-label">Prova social</div>
+    <div class="copybox">
+      <div class="copybox-head"><span class="copybox-label">Modelo C</span><button class="copy-btn" onclick="copiar('cap-c', this)">Copiar</button></div>
+      <div class="copytext" id="cap-c">"[Trecho da avaliação real do cliente]" — [Nome do cliente]
+Isso que nos motiva a continuar. Obrigado por confiar na Chocopingu! ⭐
+Quer ser o próximo? Link na bio.</div>
+    </div>
+
+    <div class="tagset-label">Oferta / Chocopontos</div>
+    <div class="copybox">
+      <div class="copybox-head"><span class="copybox-label">Modelo D</span><button class="copy-btn" onclick="copiar('cap-d', this)">Copiar</button></div>
+      <div class="copytext" id="cap-d">Toda compra em dinheiro já vira Chocoponto ⭐
+Junta e troca por [produto]. Sem pegadinha, sem complicação.
+Comece hoje — link na bio.</div>
+    </div>
+  </section>
+
+  <hr class="rule" />
+
+  <section id="hashtags">
+    <span class="eyebrow">07 · Alcance</span>
+    <h2>Hashtags</h2>
+    <p class="lede">Misture os 3 grupos, 15 a 20 no total. Hashtag genérica demais (#chocolate) some em segundos; a combinação com local + nicho é o que te coloca na frente de quem procura de verdade.</p>
+    <div class="tagset-label">Marca</div>
+    <div class="tagrow">
+      <span class="tagchip">#chocopingu</span><span class="tagchip">#chocopinguoficial</span>
+    </div>
+    <div class="tagset-label">Nicho</div>
+    <div class="tagrow">
+      <span class="tagchip">#chocolateartesanal</span><span class="tagchip">#chocolatecaseiro</span><span class="tagchip">#docesartesanais</span><span class="tagchip">#confeitariaartesanal</span><span class="tagchip">#chocolatelovers</span>
+    </div>
+    <div class="tagset-label">Local</div>
+    <div class="tagrow">
+      <span class="tagchip">#recife</span><span class="tagchip">#olinda</span><span class="tagchip">#caruaru</span><span class="tagchip">#pernambuco</span><span class="tagchip">#docesrecife</span><span class="tagchip">#recifeindica</span>
+    </div>
+  </section>
+
+  <hr class="rule" />
+
+  <section id="site">
+    <span class="eyebrow">08 · Já está pronto</span>
+    <h2>O elo com o site</h2>
+    <p class="lede">Três coisas já publicadas que trabalham junto com o Instagram:</p>
+    <ul class="checklist">
+      <li><strong>chocopingu.com.br/pedir</strong> — a página que vai no link da bio (ver seção 01). Passo a passo, produtos com botão direto pro WhatsApp já com a mensagem pronta, e um assistente que responde dúvidas de pagamento/Chocopontos/prazo.</li>
+      <li>Todo post que você quiser destacar na home do site: cole a URL na aba <strong>Instagram</strong> do painel admin — aparece automaticamente.</li>
+      <li>Toda avaliação de cliente no site precisa da sua aprovação na aba <strong>Avaliações</strong> do painel antes de virar prova social pública — e pode virar legenda (Modelo C acima).</li>
+    </ul>
+  </section>
+
+  <footer class="cta">
+    Próximo passo: me manda os prints do perfil e dos Insights (30/90 dias, top posts) — aí eu troco a estimativa por diagnóstico real: o que já está funcionando, o que está travando o alcance, e ajusto calendário e legendas em cima disso.
+  </footer>
+</div>
+
+<script>
+function copiar(id, btn){
+  var el = document.getElementById(id);
+  var text = el.innerText;
+  var done = function(){
+    var orig = btn.textContent;
+    btn.textContent = 'Copiado ✓';
+    setTimeout(function(){ btn.textContent = orig; }, 1500);
+  };
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(done, done);
+  } else {
+    var range = document.createRange();
+    range.selectNode(el);
+    window.getSelection().removeAllRanges();
+    window.getSelection().addRange(range);
+    document.execCommand('copy');
+    window.getSelection().removeAllRanges();
+    done();
+  }
+}
+</script>
