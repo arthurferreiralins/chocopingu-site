@@ -117,8 +117,10 @@ module.exports = async (req, res) => {
     const tx = charge?.last_transaction;
 
     if (metodo !== 'cartao' && (data.status === 'failed' || charge?.status === 'failed')) {
-      const motivo = tx?.gateway_response?.errors?.[0]?.message
-        || 'Pagamento recusado. Verifique os dados informados e tente novamente.';
+      const gatewayMsg = tx?.gateway_response?.errors?.[0]?.message || '';
+      const motivo = /cpf/i.test(gatewayMsg)
+        ? 'CPF inválido. Confira os números digitados e tente novamente.'
+        : gatewayMsg || 'Pagamento recusado. Verifique os dados informados e tente novamente.';
       return res.status(400).json({ error: motivo });
     }
 

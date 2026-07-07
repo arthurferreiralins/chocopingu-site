@@ -323,8 +323,21 @@
       }
     }
     var cpf = document.getElementById('fCpf').value.replace(/\D/g, '');
-    if (cpf.length < 11) { showErro('CPF inválido. Digite os 11 dígitos.'); return false; }
+    if (!cpfValido(cpf)) { showErro('CPF inválido. Confira os números digitados.'); return false; }
     return true;
+  }
+
+  function cpfValido(cpf) {
+    if (cpf.length !== 11 || /^(\d)\1{10}$/.test(cpf)) return false;
+    function digito(base) {
+      var soma = 0, peso = base.length + 1;
+      for (var i = 0; i < base.length; i++) soma += Number(base[i]) * (peso - i);
+      var resto = soma % 11;
+      return resto < 2 ? 0 : 11 - resto;
+    }
+    var d1 = digito(cpf.slice(0, 9));
+    var d2 = digito(cpf.slice(0, 9) + d1);
+    return d1 === Number(cpf[9]) && d2 === Number(cpf[10]);
   }
 
   function validarCartao() {
