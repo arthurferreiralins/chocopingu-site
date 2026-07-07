@@ -659,6 +659,8 @@ const playerCacau = document.getElementById('playerCacau');
 function abrirVideo() {
   modalVideo.classList.add('aberto');
   document.body.style.overflow = 'hidden';
+  playerCacau.currentTime = 0;
+  playerCacau.play();
 }
 function fecharVideo() {
   modalVideo.classList.remove('aberto');
