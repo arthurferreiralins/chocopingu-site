@@ -457,21 +457,40 @@ h2 span { color: var(--ouro-escuro); }
 
 /* ===== INSTAGRAM ===== */
 .instagram-feed {
-  padding: 5rem 5% 2rem;
-  background: var(--branco);
+  padding: 5rem 5% 5.5rem;
+  background: linear-gradient(180deg, var(--bege) 0%, var(--branco) 100%);
   text-align: center;
 }
-.instagram-feed .section-sub a { color: var(--ouro); font-weight: 700; }
+.instagram-feed .section-tag {
+  background: linear-gradient(135deg, var(--ouro-claro), var(--ouro));
+  color: var(--choco);
+}
+.instagram-feed .section-sub a { color: var(--ouro-escuro); font-weight: 700; }
 .instagram-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 1.5rem;
+  gap: 1.75rem;
   margin-top: 3rem;
   max-width: 1100px;
   margin-left: auto;
   margin-right: auto;
 }
+.instagram-card {
+  background: var(--branco);
+  border-radius: var(--radius);
+  padding: .6rem;
+  box-shadow: var(--sombra);
+  border: 1px solid rgba(200,148,26,.16);
+  transition: transform .25s, box-shadow .25s, border-color .25s;
+  overflow: hidden;
+}
+.instagram-card:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--sombra-h);
+  border-color: rgba(200,148,26,.4);
+}
 .instagram-empty { grid-column: 1 / -1; color: var(--cinza); padding: 2rem 0; }
+.instagram-cta { margin-top: 2.75rem; }
 
 /* ===== PRODUTOS ===== */
 .produtos {

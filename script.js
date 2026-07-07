@@ -685,7 +685,7 @@ async function carregarInstagram() {
       return;
     }
     grid.innerHTML = data.map(p =>
-      `<blockquote class="instagram-media" data-instgrm-permalink="${p.url}" data-instgrm-version="14" style="margin:0 auto;"></blockquote>`
+      `<div class="instagram-card"><blockquote class="instagram-media" data-instgrm-permalink="${p.url}" data-instgrm-version="14" style="margin:0 auto;"></blockquote></div>`
     ).join('');
     processarEmbedsInstagram(10);
   } catch (e) {
