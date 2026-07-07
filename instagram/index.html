@@ -225,6 +225,40 @@
   }
   footer.cta strong { color: var(--text); }
 
+  .quicknav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .5rem;
+    margin: 0 0 2.6rem;
+  }
+  .quicknav a {
+    font-size: .78rem;
+    font-weight: 600;
+    color: var(--accent-strong);
+    background: var(--bg-subtle);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: .35rem .8rem;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  .quicknav a:hover { background: var(--accent-soft); color: var(--choco); }
+
+  .smallshop {
+    display: flex;
+    gap: .7rem;
+    align-items: flex-start;
+    background: var(--bg-subtle);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1rem 1.1rem;
+    margin: 1.4rem 0 0;
+    font-size: .9rem;
+    color: var(--text-muted);
+  }
+  .smallshop .ico { font-size: 1.1rem; flex-shrink: 0; }
+  .smallshop strong { color: var(--text); }
+
   @media (max-width: 560px){
     .pillars { grid-template-columns: 1fr; }
   }
@@ -236,7 +270,19 @@
     <span class="eyebrow">Guia interno · Instagram</span>
     <h1>Como crescer no orgânico e vender mais pelo Instagram</h1>
   </div>
-  <p class="premise">Pacote pronto pra colar hoje: bio, destaques, pilares de conteúdo, guia de gravação de vídeo, calendário semanal, legendas e hashtags. Montado com o que já sei da Chocopingu — chocolate artesanal em Recife/PE, pedido por WhatsApp, programa Chocopontos. Sem acesso à sua conta real ainda, então é ponto de partida: me manda os prints (perfil + insights) quando puder e eu recalibro em cima do que está performando de verdade.</p>
+  <p class="premise">Pacote pronto pra colar hoje: bio, destaques, pilares de conteúdo, guia de gravação de vídeo, calendário semanal, legendas, hashtags e táticas de graça. Montado pensando numa loja pequena de verdade — <strong>1 ou 2 pessoas tocando tudo, sem orçamento de anúncio e sem agência</strong> — não um plano de time de marketing. Cada seção cabe no tempo que sobra depois de fazer o chocolate. Sem acesso à sua conta real ainda, então é ponto de partida: me manda os prints (perfil + insights) quando puder e eu recalibro em cima do que está performando de verdade.</p>
+
+  <nav class="quicknav">
+    <a href="#bio">Bio</a>
+    <a href="#destaques">Destaques</a>
+    <a href="#pilares">Pilares</a>
+    <a href="#video">Gravar</a>
+    <a href="#calendario">Calendário</a>
+    <a href="#legendas">Legendas</a>
+    <a href="#hashtags">Hashtags</a>
+    <a href="#gratis">Zero orçamento</a>
+    <a href="#site">Site</a>
+  </nav>
 
   <section id="bio">
     <span class="eyebrow">01 · Perfil</span>
@@ -339,6 +385,10 @@ Barra, Pirulito & Boneco de chocolate
       </table>
     </div>
     <p class="lede" style="margin-top:.9rem">Teste horários de 11h–13h e 18h–20h primeiro — costuma ser quando o público de Recife está mais no celular fora do trabalho. Ajusta depois que tiver dado de Insights.</p>
+    <div class="smallshop">
+      <span class="ico">🐧</span>
+      <div><strong>Loja pequena não segue calendário de agência.</strong> Se a semana foi corrida na cozinha, corta pela metade: só Terça (Reels) e Sexta (oferta) já mantém o perfil vivo. O pior cenário não é postar pouco — é sumir 3 semanas e voltar do zero.</div>
+    </div>
   </section>
 
   <hr class="rule" />
@@ -403,8 +453,24 @@ Comece hoje — link na bio.</div>
 
   <hr class="rule" />
 
+  <section id="gratis">
+    <span class="eyebrow">08 · Sem gastar nada</span>
+    <h2>Zero orçamento</h2>
+    <p class="lede">Sem verba pra anúncio? Dá pra crescer só com tempo e consistência. Isso é o que rende mais pra uma loja pequena, na ordem de esforço:</p>
+    <ul class="checklist">
+      <li><strong>Responda todo comentário e DM em até 1h</strong> — o Instagram entrega mais pra quem gera conversa rápido, e vira venda direto no WhatsApp.</li>
+      <li><strong>Marque a localização</strong> (Recife/bairro) em todo post — é como aparecer pra gente perto de você que nunca ouviu falar da loja.</li>
+      <li><strong>Troque figurinha com lojas parecidas</strong> (docerias, cafés, ateliês da região): comente de verdade nos posts um do outro, marque em Stories quando usar o produto do outro. Trocar público de graça vale mais que impulsionar post.</li>
+      <li><strong>Poste no WhatsApp Status</strong> o mesmo Reels do Instagram — é outro público, mesmo conteúdo, custo zero.</li>
+      <li><strong>Peça pro cliente marcar a loja</strong> quando postar o produto (Stories/feed) — repost isso nos seus Stories. Prova social de graça.</li>
+      <li><strong>Participe de grupos/feiras locais</strong> de Recife (WhatsApp, Facebook) — poste lá também, não só no Instagram.</li>
+    </ul>
+  </section>
+
+  <hr class="rule" />
+
   <section id="site">
-    <span class="eyebrow">08 · Já está pronto</span>
+    <span class="eyebrow">09 · Já está pronto</span>
     <h2>O elo com o site</h2>
     <p class="lede">Três coisas já publicadas que trabalham junto com o Instagram:</p>
     <ul class="checklist">
