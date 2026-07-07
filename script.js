@@ -540,6 +540,12 @@ document.addEventListener('mousemove', e => {
 document.addEventListener('mousedown', () => dot.style.transform = 'translate(-50%,-50%) scale(0.7)');
 document.addEventListener('mouseup',   () => dot.style.transform = 'translate(-50%,-50%) scale(1)');
 
+// Scroll reveal: elementos aparecem rápido ao entrar na tela (descendo ou subindo)
+const revealObserver = new IntersectionObserver(entries => {
+  entries.forEach(entry => entry.target.classList.toggle('mostrar', entry.isIntersecting));
+}, { threshold: 0.15 });
+document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
 // Navbar: transparente no hero, sólida ao scrollar
 const navbar = document.getElementById('navbar');
 window.addEventListener('scroll', () => {

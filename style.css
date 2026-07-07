@@ -29,6 +29,22 @@ body {
 img { max-width: 100%; display: block; }
 a   { text-decoration: none; color: inherit; }
 
+/* ===== SCROLL REVEAL: aparece rápido ao descer, some e reaparece ao subir ===== */
+.reveal {
+  opacity: 0;
+  transform: translateY(26px);
+  transition: opacity .32s ease-out, transform .32s ease-out;
+  will-change: opacity, transform;
+}
+.reveal.mostrar { opacity: 1; transform: translateY(0); }
+.reveal-esq { transform: translateX(-32px); }
+.reveal-esq.mostrar { transform: translateX(0); }
+.reveal-dir { transform: translateX(32px); }
+.reveal-dir.mostrar { transform: translateX(0); }
+@media (prefers-reduced-motion: reduce) {
+  .reveal, .reveal-esq, .reveal-dir { opacity: 1; transform: none; transition: none; }
+}
+
 /* ===== CURSOR ===== */
 .cursor-dot {
   position: fixed; width: 18px; height: 18px;
