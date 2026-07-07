@@ -135,7 +135,25 @@ h2 span { color: var(--ouro-escuro); }
   box-shadow: 0 2px 20px rgba(13,4,0,.1);
 }
 
+.navbar-logo { display: flex; align-items: center; gap: .65rem; }
 .navbar-logo img { height: 52px; transition: opacity .2s; }
+.navbar-logo-texto { display: flex; flex-direction: column; line-height: 1.15; }
+.navbar-logo-texto strong {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.3rem;
+  font-weight: 900;
+  color: var(--branco);
+  transition: color .35s;
+}
+.navbar-logo-texto small {
+  font-size: .68rem;
+  font-weight: 700;
+  letter-spacing: .3px;
+  color: rgba(255,255,255,.75);
+  transition: color .35s;
+}
+.navbar.scrolled .navbar-logo-texto strong { color: var(--texto); }
+.navbar.scrolled .navbar-logo-texto small { color: var(--cinza); }
 
 .nav-links { display: flex; gap: 2rem; align-items: center; }
 
@@ -1539,6 +1557,8 @@ h2 span { color: var(--ouro-escuro); }
   .copa-trofeu { font-size: 4rem; }
   .copa-paises { grid-template-columns: repeat(4, 1fr); gap: .4rem; }
   .menu-toggle { display: block; }
+  .navbar-logo-texto small { display: none; }
+  .navbar-logo-texto strong { font-size: 1.1rem; }
   .nav-links {
     display: none; position: fixed;
     top: 70px; left: 0; right: 0;
