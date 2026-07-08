@@ -14,9 +14,9 @@
   --vm:#A93226;--vml:#FDECEA;
   --az:#1A4F8A;--azl:#E8F0FB;
   --bd:#E2D9CF;--txt:#1A1A1A;--txt2:#7A7068;
-  --sh:0 2px 18px rgba(26,10,0,.09);
-  --sh2:0 8px 32px rgba(26,10,0,.14);
-  --hh:64px;--nh:52px
+  --sh:0 1px 3px rgba(26,10,0,.06),0 1px 2px rgba(26,10,0,.04);
+  --sh2:0 8px 24px rgba(26,10,0,.10);
+  --sbw:236px
 }
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--txt);overflow-x:hidden}
@@ -40,49 +40,43 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 /* ADMIN */
 #ap{display:none}
 
-/* HEADER */
-.hdr{
-  position:fixed;top:0;left:0;right:0;height:var(--hh);
+/* SIDEBAR */
+.sidebar{
+  position:fixed;top:0;left:0;bottom:0;width:var(--sbw);
   background:var(--br);z-index:100;
-  display:flex;align-items:center;justify-content:space-between;padding:0 32px;
-  box-shadow:0 2px 20px rgba(0,0,0,.3)
+  display:flex;flex-direction:column;padding:26px 14px 18px;
+  overflow-y:auto
 }
-.hdr-left{display:flex;align-items:center;gap:14px}
-.hdr-logo{font-size:34px;line-height:1}
-.hdr-info .hn{font-size:17px;font-weight:800;color:#fff;letter-spacing:-.3px}
-.hdr-info .hs{font-size:11px;color:rgba(255,255,255,.4);font-style:italic}
-.hdr-right{display:flex;align-items:center;gap:10px}
-.cbadge{display:flex;align-items:center;gap:6px;padding:6px 13px;border-radius:20px;font-size:12px;font-weight:600}
-.cwa{background:rgba(76,175,80,.15);color:#81C784;border:1px solid rgba(76,175,80,.2)}
-.cig{background:rgba(233,30,99,.12);color:#F48FB1;border:1px solid rgba(233,30,99,.2)}
+.sb-brand{display:flex;align-items:center;gap:12px;padding:2px 10px 22px;margin-bottom:10px;border-bottom:1px solid rgba(255,255,255,.08)}
+.sb-logo{font-size:28px;line-height:1}
+.sb-name{font-size:16px;font-weight:800;color:#fff;letter-spacing:-.2px}
+.sb-tag{font-size:10.5px;color:rgba(255,255,255,.4);font-style:italic;margin-top:1px}
+.sb-nav{display:flex;flex-direction:column;gap:2px;flex:1;min-height:0}
+.sb-spacer{flex:1}
+.sb-contact{display:flex;flex-direction:column;gap:6px;padding:14px 8px 4px;margin-top:8px;border-top:1px solid rgba(255,255,255,.08)}
+.cbadge{display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:20px;font-size:11.5px;font-weight:600}
+.cwa{background:rgba(76,175,80,.12);color:#81C784;border:1px solid rgba(76,175,80,.18)}
+.cig{background:rgba(233,30,99,.10);color:#F48FB1;border:1px solid rgba(233,30,99,.18)}
 
-/* TOP NAV TABS */
-.tnav{
-  position:fixed;top:var(--hh);left:0;right:0;height:var(--nh);
-  background:#fff;z-index:99;
-  display:flex;align-items:stretch;
-  border-bottom:1px solid var(--bd);
-  box-shadow:0 2px 12px rgba(26,10,0,.06);
-  padding:0 24px
-}
+/* NAV ITEMS (sidebar) */
 .tab{
-  display:flex;align-items:center;gap:8px;
-  padding:0 20px;background:none;border:none;
-  color:var(--txt2);font-size:13.5px;font-weight:600;
-  cursor:pointer;position:relative;transition:color .2s;white-space:nowrap
+  display:flex;align-items:center;gap:10px;
+  padding:10px 12px;background:none;border:none;border-radius:10px;
+  color:rgba(255,255,255,.55);font-size:13.5px;font-weight:600;
+  cursor:pointer;position:relative;transition:background .15s,color .15s;
+  white-space:nowrap;text-align:left;width:100%
 }
-.tab .ti{font-size:16px}
-.tab::after{content:'';position:absolute;bottom:0;left:16px;right:16px;height:3px;background:var(--gold);border-radius:3px 3px 0 0;transform:scaleX(0);transition:transform .25s cubic-bezier(.34,1.56,.64,1)}
-.tab:hover{color:var(--br)}
-.tab.on{color:var(--br)}
-.tab.on::after{transform:scaleX(1)}
+.tab .ti{font-size:16px;width:18px;text-align:center;flex-shrink:0}
+.tab:hover{background:rgba(255,255,255,.06);color:#fff}
+.tab.on{background:var(--gold);color:#fff}
 
 /* CONTENT */
-.content{margin-top:calc(var(--hh) + var(--nh));padding:32px}
+.content{margin-left:var(--sbw);padding:32px 36px}
 .sec{display:none;animation:fadeIn .25s ease}
 .sec.on{display:block}
 @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
-.ptitle{font-size:22px;font-weight:800;color:var(--br);margin-bottom:22px;letter-spacing:-.3px;display:flex;align-items:center;gap:8px}
+.ptitle{font-size:20px;font-weight:800;color:var(--br);margin-bottom:4px;letter-spacing:-.3px;display:flex;align-items:center;gap:8px}
+.psub{font-size:13px;color:var(--txt2);margin-bottom:22px}
 
 /* CARDS ROW */
 .crow{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px}
@@ -111,14 +105,14 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 
 /* CATALOG */
 .cat-banner{
-  background:linear-gradient(135deg,var(--br) 0%,var(--br3) 60%,#A0522D 100%);
-  border-radius:22px;padding:36px 40px;margin-bottom:28px;
-  display:flex;align-items:center;justify-content:space-between;overflow:hidden;position:relative
+  background:var(--card);border-left:4px solid var(--gold);
+  border-radius:14px;padding:24px 28px;margin-bottom:24px;
+  display:flex;align-items:center;justify-content:space-between;position:relative;
+  box-shadow:var(--sh)
 }
-.cat-banner::before{content:'🍫🍭🐧';position:absolute;right:160px;top:50%;transform:translateY(-50%);font-size:60px;opacity:.12;letter-spacing:8px}
-.cat-banner h2{font-size:26px;font-weight:800;color:#fff;letter-spacing:-.4px}
-.cat-banner p{color:rgba(255,255,255,.55);font-size:14px;margin-top:4px}
-.cat-banner .cb-tag{background:var(--gold);color:#fff;padding:6px 16px;border-radius:20px;font-size:12px;font-weight:700;display:inline-block;margin-top:14px}
+.cat-banner h2{font-size:20px;font-weight:800;color:var(--br);letter-spacing:-.3px}
+.cat-banner p{color:var(--txt2);font-size:13px;margin-top:4px}
+.cat-banner .cb-tag{background:var(--goldl);color:#fff;padding:5px 14px;border-radius:20px;font-size:11.5px;font-weight:700;display:inline-block;margin-top:12px}
 
 .pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:22px}
 .pcard{
@@ -179,11 +173,11 @@ tr:hover td{background:#FDFAF7}tr:last-child td{border-bottom:none}
 .estate p{font-size:13px;line-height:1.6}
 
 /* ECONOMIA */
-.eco-banner{background:linear-gradient(135deg,var(--br) 0%,#5C2E0A 50%,var(--gold) 100%);border-radius:22px;padding:28px 36px;margin-bottom:22px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px}
-.eb-title{font-size:22px;font-weight:800;color:#fff;letter-spacing:-.3px}
-.eb-sub{font-size:12px;color:rgba(255,255,255,.5);margin-top:4px}
+.eco-banner{background:var(--card);border-left:4px solid var(--gold);border-radius:14px;padding:22px 28px;margin-bottom:22px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;box-shadow:var(--sh)}
+.eb-title{font-size:19px;font-weight:800;color:var(--br);letter-spacing:-.3px}
+.eb-sub{font-size:12px;color:var(--txt2);margin-top:4px}
 .eb-pills{display:flex;flex-wrap:wrap;gap:8px}
-.epill{background:rgba(255,255,255,.12);color:#fff;padding:7px 15px;border-radius:20px;font-size:12px;font-weight:600;border:1px solid rgba(255,255,255,.15)}
+.epill{background:#FDFAF7;color:var(--br);padding:7px 15px;border-radius:20px;font-size:12px;font-weight:600;border:1px solid var(--bd)}
 .eco-save{font-size:11px;color:var(--vd);font-weight:700;background:var(--vdl);padding:3px 9px;border-radius:10px;display:inline-block}
 .dicas-box{background:var(--card);border-radius:22px;padding:28px;box-shadow:var(--sh)}
 .dic-title{font-size:16px;font-weight:800;color:var(--br);margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid var(--bd)}
@@ -265,10 +259,10 @@ tr:hover td{background:#FDFAF7}tr:last-child td{border-bottom:none}
 
 /* MELHOR PREÇO */
 .mp-section{margin-bottom:24px}
-.mp-banner{background:linear-gradient(135deg,#1A0A00,#4A2000,#C4831A);border-radius:22px;padding:28px 36px;margin-bottom:22px;display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
-.mp-banner-t{font-size:22px;font-weight:800;color:#fff;letter-spacing:-.4px}
-.mp-banner-s{font-size:12px;color:rgba(255,255,255,.5);margin-top:4px}
-.mp-banner-chip{background:rgba(255,255,255,.12);color:#FFD54F;padding:8px 18px;border-radius:20px;font-size:12px;font-weight:700;border:1px solid rgba(255,255,255,.15)}
+.mp-banner{background:var(--card);border-left:4px solid var(--gold);border-radius:14px;padding:22px 28px;margin-bottom:22px;display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;box-shadow:var(--sh)}
+.mp-banner-t{font-size:19px;font-weight:800;color:var(--br);letter-spacing:-.3px}
+.mp-banner-s{font-size:12px;color:var(--txt2);margin-top:4px}
+.mp-banner-chip{background:#FDFAF7;color:var(--br);padding:8px 16px;border-radius:20px;font-size:11.5px;font-weight:700;border:1px solid var(--bd)}
 .mp-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-bottom:20px}
 .mp-card{background:#fff;border-radius:22px;overflow:hidden;box-shadow:var(--sh);transition:transform .25s,box-shadow .25s}
 .mp-card:hover{transform:translateY(-5px);box-shadow:var(--sh2)}
@@ -347,35 +341,33 @@ tr:hover td{background:#FDFAF7}tr:last-child td{border-bottom:none}
 <!-- ADMIN -->
 <div id="ap">
 
-  <!-- HEADER -->
-  <div class="hdr">
-    <div class="hdr-left">
-      <span class="hdr-logo">🐧🍫</span>
-      <div class="hdr-info">
-        <div class="hn">ChocoPingu</div>
-        <div class="hs">"Chocolate que diverte!"</div>
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sb-brand">
+      <span class="sb-logo">🐧🍫</span>
+      <div>
+        <div class="sb-name">ChocoPingu</div>
+        <div class="sb-tag">"Chocolate que diverte!"</div>
       </div>
     </div>
-    <div class="hdr-right">
+    <nav class="sb-nav">
+      <button class="tab on"  onclick="go(this,'cat')"><span class="ti">🏪</span> Catálogo</button>
+      <button class="tab"     onclick="go(this,'vend')"><span class="ti">🛒</span> Vendas</button>
+      <button class="tab"     onclick="go(this,'dash')"><span class="ti">📊</span> Dashboard</button>
+      <button class="tab"     onclick="go(this,'graf')"><span class="ti">📈</span> Gráficos</button>
+      <button class="tab"     onclick="go(this,'gast')"><span class="ti">💸</span> Gastos</button>
+      <button class="tab"     onclick="go(this,'econ')"><span class="ti">💡</span> Economia</button>
+      <button class="tab"     onclick="go(this,'ped');carregarPedidos()"><span class="ti">📋</span> Pedidos</button>
+      <button class="tab"     onclick="go(this,'copaprod')"><span class="ti">⚽</span> Produtos Copa</button>
+      <button class="tab"     onclick="go(this,'insta');carregarInstagramAdmin()"><span class="ti">📸</span> Instagram</button>
+      <div class="sb-spacer"></div>
+      <button class="tab" style="color:#F1948A" onclick="logout()"><span class="ti">🚪</span> Sair</button>
+    </nav>
+    <div class="sb-contact">
       <span class="cbadge cwa">📱 (81) 98155-3632</span>
       <span class="cbadge cig">📸 @lojadopingu</span>
     </div>
-  </div>
-
-  <!-- TABS -->
-  <div class="tnav">
-    <button class="tab on"  onclick="go(this,'cat')"> <span class="ti">🏪</span> Catálogo</button>
-    <button class="tab"     onclick="go(this,'vend')"><span class="ti">🛒</span> Vendas</button>
-    <button class="tab"     onclick="go(this,'dash')"><span class="ti">📊</span> Dashboard</button>
-    <button class="tab"     onclick="go(this,'graf')"><span class="ti">📈</span> Gráficos</button>
-    <button class="tab"     onclick="go(this,'gast')"><span class="ti">💸</span> Gastos</button>
-    <button class="tab"     onclick="go(this,'econ')"><span class="ti">💡</span> Economia</button>
-    <button class="tab"     onclick="go(this,'ped');carregarPedidos()"><span class="ti">📋</span> Pedidos</button>
-    <button class="tab"     onclick="go(this,'copaprod')"><span class="ti">⚽</span> Produtos Copa</button>
-    <button class="tab"     onclick="go(this,'insta');carregarInstagramAdmin()"><span class="ti">📸</span> Instagram</button>
-    <div style="flex:1"></div>
-    <button class="tab" style="color:#A93226" onclick="logout()"><span class="ti">🚪</span> Sair</button>
-  </div>
+  </aside>
 
   <!-- CONTEÚDO -->
   <div class="content">
@@ -395,6 +387,7 @@ tr:hover td{background:#FDFAF7}tr:last-child td{border-bottom:none}
     <!-- ── VENDAS ── -->
     <div id="s-vend" class="sec">
       <div class="ptitle">🛒 Registro de Vendas</div>
+      <div class="psub">Acompanhe o que já foi vendido e registre novas vendas</div>
 
       <!-- Cards resumo -->
       <div class="crow">
@@ -437,6 +430,7 @@ tr:hover td{background:#FDFAF7}tr:last-child td{border-bottom:none}
     <!-- ── DASHBOARD ── -->
     <div id="s-dash" class="sec">
       <div class="ptitle">📊 Dashboard</div>
+      <div class="psub">Visão geral de vendas, gastos e lucro do negócio</div>
       <div class="crow">
         <div class="card cv"><span class="cic">💰</span><span class="clb">Total Vendido</span><span class="cval" id="c-v">R$ 0,00</span></div>
         <div class="card cr"><span class="cic">💸</span><span class="clb">Total de Gastos</span><span class="cval" id="c-g">R$ 0,00</span></div>
@@ -459,7 +453,8 @@ tr:hover td{background:#FDFAF7}tr:last-child td{border-bottom:none}
 
     <!-- ── GRÁFICOS ── -->
     <div id="s-graf" class="sec">
-      <div class="ptitle">📈 Gráficos — Análise Completa dos Produtos</div>
+      <div class="ptitle">📈 Gráficos</div>
+      <div class="psub">Análise completa de preço, custo e margem por produto</div>
       <div class="chgrid">
         <div class="chbox chbox-tall"><h3>Preço de Venda vs Custo por Produto (R$)</h3><div id="d-cvp"><canvas id="ch-cvp"></canvas></div></div>
         <div class="chbox chbox-tall"><h3>Distribuição de Margem por Produto</h3><div id="d-mgpie"><canvas id="ch-mgpie"></canvas></div></div>
@@ -478,6 +473,7 @@ tr:hover td{background:#FDFAF7}tr:last-child td{border-bottom:none}
     <!-- ── GASTOS ── -->
     <div id="s-gast" class="sec">
       <div class="ptitle">💸 Controle de Gastos</div>
+      <div class="psub">Registre e acompanhe os insumos comprados</div>
       <!-- FIREBASE SETUP -->
       <div id="fb-banner-area"></div>
 
@@ -1011,6 +1007,7 @@ tr:hover td{background:#FDFAF7}tr:last-child td{border-bottom:none}
     <!-- ── PEDIDOS ── -->
     <div id="s-ped" class="sec">
       <div class="ptitle">📋 Pedidos Online</div>
+      <div class="psub">Pedidos feitos pelo site, com status e pagamento</div>
       <div class="crow">
         <div class="card cv"><span class="cic">📦</span><span class="clb">Total de Pedidos</span><span class="cval" id="ped-total">—</span></div>
         <div class="card ca"><span class="cic">✅</span><span class="clb">Pagos</span><span class="cval pos" id="ped-pagos">—</span></div>
