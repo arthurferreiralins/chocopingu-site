@@ -58,6 +58,22 @@ img{max-width:100%;display:block}
 .sb-toc a.active .num{opacity:.85}
 .sb-foot{margin-top:auto;padding:16px 10px 4px;font-size:10.5px;color:rgba(255,255,255,.3);border-top:1px solid rgba(255,255,255,.08)}
 
+/* PROGRESS BAR */
+#progress{position:fixed;top:0;left:var(--sbw);right:0;height:3px;background:rgba(107,51,0,.1);z-index:200}
+#progress i{display:block;height:100%;width:0%;background:linear-gradient(90deg,var(--gold),var(--goldl));transition:width .1s linear}
+
+/* BACK TO TOP */
+.totop{
+  position:fixed;right:26px;bottom:26px;width:44px;height:44px;border-radius:50%;
+  background:var(--br);color:var(--goldl);border:none;box-shadow:var(--sh);
+  font-size:18px;cursor:pointer;z-index:150;
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;transform:translateY(8px);
+  transition:opacity .2s,transform .2s
+}
+.totop.show{opacity:1;pointer-events:auto;transform:translateY(0)}
+.totop:hover{background:var(--br3)}
+
 /* MAIN */
 main{margin-left:var(--sbw);max-width:900px}
 
@@ -80,14 +96,23 @@ main{margin-left:var(--sbw);max-width:900px}
 section{scroll-margin-top:24px;margin-bottom:28px}
 .panel{
   background:var(--card);border-radius:18px;box-shadow:var(--sh);
-  padding:28px 32px;border-left:4px solid var(--gold)
+  padding:28px 32px;border-left:4px solid var(--gold);
+  transition:transform .2s,box-shadow .2s
 }
+.panel:hover{transform:translateY(-3px);box-shadow:0 16px 38px rgba(13,4,0,.12)}
 .phead{display:flex;align-items:center;gap:12px;margin-bottom:6px}
 .pnum{
   width:32px;height:32px;border-radius:9px;background:var(--bgsub);color:var(--golds);
   display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;flex-shrink:0
 }
 .panel h2{font-family:var(--fd);font-weight:900;font-size:1.35rem}
+
+/* Cores por categoria de seção */
+.c1 .panel{border-left-color:#C8941A}.c1 .pnum{background:#FFF3DC;color:#A07015}
+.c2 .panel{border-left-color:#B5502E}.c2 .pnum{background:#FBE7E0;color:#8B3A22}
+.c3 .panel{border-left-color:#2F6B3A}.c3 .pnum{background:#E3F3E6;color:#20502A}
+.c4 .panel{border-left-color:#2A5C8A}.c4 .pnum{background:#E4EEF7;color:#1F4568}
+.c5 .panel{border-left-color:#7B3F6B}.c5 .pnum{background:#F3E6F0;color:#5C2E4E}
 .lede{color:var(--text2);margin:.6rem 0 1.2rem;line-height:1.65}
 .lede:last-child{margin-bottom:0}
 
@@ -142,10 +167,15 @@ section{scroll-margin-top:24px;margin-bottom:28px}
 .cta-panel strong{color:var(--goldl)}
 
 @media (max-width:900px){
-  .sidebar{position:static;width:100%;height:auto;flex-direction:row;flex-wrap:wrap;align-items:center;padding:14px 16px}
-  .sb-toc{display:none}
+  .sidebar{position:sticky;top:0;width:100%;height:auto;flex-direction:row;flex-wrap:wrap;align-items:center;padding:12px 16px;z-index:100}
+  .sb-toc{
+    flex:1 0 100%;flex-direction:row;flex-wrap:nowrap;overflow-x:auto;gap:6px;
+    margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,.08)
+  }
+  .sb-toc a{flex:0 0 auto;white-space:nowrap;padding:7px 12px}
   .sb-foot{display:none}
   .sb-back{margin:0 0 0 auto}
+  #progress{left:0}
   main{margin-left:0;max-width:100%}
   .hero{padding:36px 24px}
   .wrap{padding:28px 20px 48px}
@@ -155,6 +185,7 @@ section{scroll-margin-top:24px;margin-bottom:28px}
 }
 @media (max-width:520px){
   .week{grid-template-columns:repeat(2,1fr)}
+  .totop{right:16px;bottom:16px}
 }
 </style>
 </head>
@@ -183,6 +214,8 @@ section{scroll-margin-top:24px;margin-bottom:28px}
   <div class="sb-foot">Atualizado em jul/2026</div>
 </aside>
 
+<div id="progress"><i></i></div>
+
 <main>
   <div class="hero">
     <div class="hero-eyebrow">Guia interno · Instagram</div>
@@ -197,7 +230,7 @@ section{scroll-margin-top:24px;margin-bottom:28px}
 
   <div class="wrap">
 
-    <section id="bio">
+    <section id="bio" class="c1">
       <div class="panel">
         <div class="phead"><div class="pnum">01</div><h2>Bio</h2></div>
         <p class="lede">Sua bio é o único texto que decide se alguém vira seguidor ou cliente em 3 segundos. Ela precisa dizer <em>o quê</em>, <em>onde</em> e <em>como comprar</em> — nessa ordem. O Instagram só permite <strong>150 caracteres</strong> — o texto abaixo tem 136, com folga.</p>
@@ -215,7 +248,7 @@ Barra, Pirulito & Boneco de chocolate
       </div>
     </section>
 
-    <section id="destaques">
+    <section id="destaques" class="c2">
       <div class="panel">
         <div class="phead"><div class="pnum">02</div><h2>Destaques (Stories fixados)</h2></div>
         <p class="lede">Cinco destaques cobrem a jornada inteira de quem chega no perfil pela primeira vez:</p>
@@ -230,7 +263,7 @@ Barra, Pirulito & Boneco de chocolate
       </div>
     </section>
 
-    <section id="pilares">
+    <section id="pilares" class="c3">
       <div class="panel">
         <div class="phead"><div class="pnum">03</div><h2>4 pilares de conteúdo</h2></div>
         <p class="lede">Alterne entre eles — não poste a mesma coisa toda hora. Isso é o que dá variedade pro algoritmo e mantém quem já segue interessado.</p>
@@ -243,7 +276,7 @@ Barra, Pirulito & Boneco de chocolate
       </div>
     </section>
 
-    <section id="video">
+    <section id="video" class="c4">
       <div class="panel">
         <div class="phead"><div class="pnum">04</div><h2>Como gravar (Reels)</h2></div>
         <p class="lede">Hoje o Instagram entrega Reels pra gente que nem te segue ainda — é a porta de entrada de seguidor novo. Posts estáticos só alcançam quem já segue. Priorize vídeo.</p>
@@ -260,7 +293,7 @@ Barra, Pirulito & Boneco de chocolate
       </div>
     </section>
 
-    <section id="calendario">
+    <section id="calendario" class="c5">
       <div class="panel">
         <div class="phead"><div class="pnum">05</div><h2>Calendário semanal</h2></div>
         <p class="lede">Ritmo sustentável — melhor postar pouco e sempre do que muito por 2 semanas e sumir.</p>
@@ -281,7 +314,7 @@ Barra, Pirulito & Boneco de chocolate
       </div>
     </section>
 
-    <section id="legendas">
+    <section id="legendas" class="c1">
       <div class="panel">
         <div class="phead"><div class="pnum">06</div><h2>Modelos de legenda</h2></div>
         <p class="lede">Troque o que está entre [colchetes] e cole. Pergunta no início prende mais comentário do que afirmação.</p>
@@ -320,7 +353,7 @@ Comece hoje — link na bio.</div>
       </div>
     </section>
 
-    <section id="hashtags">
+    <section id="hashtags" class="c2">
       <div class="panel">
         <div class="phead"><div class="pnum">07</div><h2>Hashtags</h2></div>
         <p class="lede">Misture os 3 grupos, 15 a 20 no total. Hashtag genérica demais (#chocolate) some em segundos; a combinação com local + nicho é o que te coloca na frente de quem procura de verdade.</p>
@@ -333,7 +366,7 @@ Comece hoje — link na bio.</div>
       </div>
     </section>
 
-    <section id="gratis">
+    <section id="gratis" class="c3">
       <div class="panel">
         <div class="phead"><div class="pnum">08</div><h2>Zero orçamento</h2></div>
         <p class="lede">Sem verba pra anúncio? Dá pra crescer só com tempo e consistência. Isso é o que rende mais pra uma loja pequena, na ordem de esforço:</p>
@@ -348,7 +381,7 @@ Comece hoje — link na bio.</div>
       </div>
     </section>
 
-    <section id="site">
+    <section id="site" class="c4">
       <div class="panel">
         <div class="phead"><div class="pnum">09</div><h2>O elo com o site</h2></div>
         <p class="lede">Três coisas já publicadas que trabalham junto com o Instagram:</p>
@@ -367,6 +400,8 @@ Comece hoje — link na bio.</div>
 
   </div>
 </main>
+
+<button class="totop" id="totop" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Voltar ao topo">↑</button>
 
 <script>
 function copiar(id, btn){
@@ -406,6 +441,21 @@ function copiar(id, btn){
     });
   }, { rootMargin: '-20% 0px -70% 0px' });
   document.querySelectorAll('section[id]').forEach(function(s){ obs.observe(s); });
+})();
+
+// barra de progresso de leitura + botão voltar ao topo
+(function(){
+  var bar = document.querySelector('#progress i');
+  var btn = document.getElementById('totop');
+  function onScroll(){
+    var h = document.documentElement;
+    var scrolled = h.scrollTop;
+    var max = h.scrollHeight - h.clientHeight;
+    bar.style.width = (max > 0 ? (scrolled / max) * 100 : 0) + '%';
+    btn.classList.toggle('show', scrolled > 600);
+  }
+  document.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
 })();
 </script>
 </body>
