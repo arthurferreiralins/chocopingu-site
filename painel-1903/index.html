@@ -19,12 +19,7 @@
   --hh:64px;--nh:52px
 }
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--txt);cursor:none;overflow-x:hidden}
-
-/* CURSOR */
-#cb1,#cb2{position:fixed;border-radius:50%;pointer-events:none;z-index:99999;transform:translate(-50%,-50%);transition:width .15s,height .15s}
-#cb1{width:10px;height:10px;background:var(--gold)}
-#cb2{width:30px;height:30px;border:2px solid var(--gold);opacity:.35}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--txt);overflow-x:hidden}
 
 /* LOGIN */
 #ls{position:fixed;inset:0;background:linear-gradient(145deg,#1A0A00 0%,#3E1C00 50%,#7B3F10 100%);display:flex;align-items:center;justify-content:center;z-index:999}
@@ -33,9 +28,9 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 .lcard .le{font-size:76px;display:block;margin-bottom:8px}
 .lcard h1{font-size:32px;font-weight:800;color:var(--br);letter-spacing:-.5px}
 .lcard .lsub{color:#bbb;font-size:13px;margin:4px 0 32px;font-style:italic}
-.lcard input{width:100%;padding:16px 20px;border:2px solid var(--bd);border-radius:14px;font-size:30px;text-align:center;letter-spacing:16px;outline:none;transition:all .2s;color:var(--br)}
+.lcard input{width:100%;padding:14px 18px;border:1.5px solid var(--bd);border-radius:12px;font-size:16px;text-align:left;letter-spacing:0;outline:none;transition:all .2s;color:var(--br)}
 .lcard input:focus{border-color:var(--gold);box-shadow:0 0 0 4px rgba(196,131,26,.12)}
-.lcard .lbtn{width:100%;padding:16px;margin-top:14px;background:linear-gradient(135deg,var(--br),var(--gold));color:#fff;border:none;border-radius:14px;font-size:16px;font-weight:700;cursor:none;transition:all .2s;letter-spacing:.3px}
+.lcard .lbtn{width:100%;padding:16px;margin-top:14px;background:linear-gradient(135deg,var(--br),var(--gold));color:#fff;border:none;border-radius:14px;font-size:16px;font-weight:700;cursor:pointer;transition:all .2s;letter-spacing:.3px}
 .lcard .lbtn:hover{opacity:.9;transform:translateY(-1px)}
 .lerr{color:#e53935;font-size:13px;margin-top:12px;display:none}
 .lerr.on{display:block}
@@ -57,7 +52,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 .hdr-info .hn{font-size:17px;font-weight:800;color:#fff;letter-spacing:-.3px}
 .hdr-info .hs{font-size:11px;color:rgba(255,255,255,.4);font-style:italic}
 .hdr-right{display:flex;align-items:center;gap:10px}
-.cbadge{display:flex;align-items:center;gap:6px;padding:6px 13px;border-radius:20px;font-size:12px;font-weight:600;cursor:none}
+.cbadge{display:flex;align-items:center;gap:6px;padding:6px 13px;border-radius:20px;font-size:12px;font-weight:600}
 .cwa{background:rgba(76,175,80,.15);color:#81C784;border:1px solid rgba(76,175,80,.2)}
 .cig{background:rgba(233,30,99,.12);color:#F48FB1;border:1px solid rgba(233,30,99,.2)}
 
@@ -74,7 +69,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
   display:flex;align-items:center;gap:8px;
   padding:0 20px;background:none;border:none;
   color:var(--txt2);font-size:13.5px;font-weight:600;
-  cursor:none;position:relative;transition:color .2s;white-space:nowrap
+  cursor:pointer;position:relative;transition:color .2s;white-space:nowrap
 }
 .tab .ti{font-size:16px}
 .tab::after{content:'';position:absolute;bottom:0;left:16px;right:16px;height:3px;background:var(--gold);border-radius:3px 3px 0 0;transform:scaleX(0);transition:transform .25s cubic-bezier(.34,1.56,.64,1)}
@@ -141,7 +136,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 .pcard-price0{font-size:13px;color:#ccc;font-weight:600}
 .pcard-marg{font-size:11px;background:var(--vdl);color:var(--vd);padding:4px 10px;border-radius:10px;font-weight:700}
 .pcard-marg0{background:#F5F5F5;color:#ccc}
-.pcard-price-edit{cursor:none;border-bottom:2px dashed var(--gold);padding-bottom:1px;transition:color .15s}
+.pcard-price-edit{cursor:pointer;border-bottom:2px dashed var(--gold);padding-bottom:1px;transition:color .15s}
 .pcard-price-edit:hover{color:var(--gold)}
 .pcard-edit-hint{font-size:10px;color:var(--gold);margin-top:4px;opacity:.7}
 .inline-price-input{width:90px;font-size:18px;font-weight:800;color:var(--vd);border:2px solid var(--gold);border-radius:10px;padding:5px 10px;outline:none;background:#fff;cursor:text}
@@ -168,7 +163,7 @@ tr:hover td{background:#FDFAF7}tr:last-child td{border-bottom:none}
 .fg input:focus,.fg select:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(196,131,26,.1)}
 
 /* BUTTONS */
-.btn{padding:10px 17px;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:none;transition:all .2s;display:inline-flex;align-items:center;gap:6px}
+.btn{padding:10px 17px;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:6px}
 .badd{background:var(--vd);color:#fff;box-shadow:0 2px 8px rgba(27,107,53,.2)}
 .badd:hover{background:#145228;transform:translateY(-1px)}
 .bdel{background:transparent;color:var(--vm);border:1.5px solid var(--vm);padding:5px 10px;font-size:11px;border-radius:8px}
@@ -207,7 +202,7 @@ tr:hover td{background:#FDFAF7}tr:last-child td{border-bottom:none}
 .fb-banner .fbs{font-size:11px;color:var(--txt2);margin-top:2px}
 .fb-input{flex:1;padding:9px 13px;border:1.5px solid var(--gold);border-radius:10px;font-size:12px;outline:none;background:#fff;cursor:text;min-width:0}
 .fb-input:focus{border-color:var(--br);box-shadow:0 0 0 3px rgba(196,131,26,.1)}
-.fb-btn{padding:9px 16px;background:var(--gold);color:#fff;border:none;border-radius:10px;font-size:12px;font-weight:700;cursor:none;white-space:nowrap}
+.fb-btn{padding:9px 16px;background:var(--gold);color:#fff;border:none;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap}
 .fb-btn:hover{opacity:.9}
 
 /* LOJAS */
@@ -235,7 +230,7 @@ tr:hover td{background:#FDFAF7}tr:last-child td{border-bottom:none}
 .ci-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
 .ci-name{font-size:12px;font-weight:700;color:var(--br)}
 .ci-unit{font-size:10px;color:var(--txt2);background:#F0EAE2;padding:2px 8px;border-radius:8px;font-weight:600}
-.ci-in{width:100%;padding:10px 12px;border:1.5px solid var(--bd);border-radius:10px;font-size:20px;font-weight:800;color:var(--br);text-align:right;outline:none;transition:border-color .2s;background:#fff;cursor:none}
+.ci-in{width:100%;padding:10px 12px;border:1.5px solid var(--bd);border-radius:10px;font-size:20px;font-weight:800;color:var(--br);text-align:right;outline:none;transition:border-color .2s;background:#fff;cursor:text}
 .ci-in:focus{border-color:var(--gold)}
 .ci-prices{display:flex;gap:6px;margin-top:8px}
 .ci-pa{font-size:10px;background:var(--vdl);color:var(--vd);padding:2px 9px;border-radius:8px;font-weight:700}
@@ -311,7 +306,7 @@ tr:hover td{background:#FDFAF7}tr:last-child td{border-bottom:none}
 .pv-badge{position:absolute;top:12px;left:12px;background:linear-gradient(135deg,var(--gold),#E09B20);color:#fff;font-size:10px;font-weight:800;padding:5px 13px;border-radius:20px;letter-spacing:.5px;z-index:1;box-shadow:0 2px 8px rgba(196,131,26,.4)}
 .avail-badge{position:absolute;top:12px;left:12px;background:var(--vd);color:#fff;font-size:10px;font-weight:800;padding:5px 13px;border-radius:20px;letter-spacing:.5px;z-index:1}
 .pcard-status-row{margin-top:14px;padding-top:14px;border-top:1px solid var(--bd)}
-.btn-toggle-pv{width:100%;padding:10px 14px;border:none;border-radius:10px;font-size:12px;font-weight:700;cursor:none;transition:all .2s;text-align:center;display:flex;align-items:center;justify-content:center;gap:6px}
+.btn-toggle-pv{width:100%;padding:10px 14px;border:none;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;transition:all .2s;text-align:center;display:flex;align-items:center;justify-content:center;gap:6px}
 .btn-pv-on{background:var(--vdl);color:var(--vd)}
 .btn-pv-on:hover{background:var(--vd);color:#fff}
 .btn-pv-off{background:var(--vml);color:var(--vm)}
@@ -324,7 +319,7 @@ tr:hover td{background:#FDFAF7}tr:last-child td{border-bottom:none}
 .chbox-tall h3{font-size:11px;font-weight:700;color:var(--txt2);text-transform:uppercase;letter-spacing:.7px;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--bd)}
 
 /* VENDAS */
-.vend-select{width:100%;padding:9px 12px;border:1.5px solid var(--bd);border-radius:10px;font-size:13px;outline:none;transition:all .2s;background:#fff;color:var(--txt);cursor:none}
+.vend-select{width:100%;padding:9px 12px;border:1.5px solid var(--bd);border-radius:10px;font-size:13px;outline:none;transition:all .2s;background:#fff;color:var(--txt);cursor:pointer}
 .vend-select:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(196,131,26,.1)}
 .vend-stat-row{display:flex;align-items:center;gap:8px;padding:10px 14px;background:linear-gradient(135deg,var(--br),#5C2E0A);border-radius:14px;margin-bottom:18px}
 .vend-stat-item{flex:1;text-align:center}
@@ -333,8 +328,6 @@ tr:hover td{background:#FDFAF7}tr:last-child td{border-bottom:none}
 </style>
 </head>
 <body>
-
-<div id="cb1"></div><div id="cb2"></div>
 
 <!-- LOGIN -->
 <div id="ls">
@@ -542,10 +535,10 @@ tr:hover td{background:#FDFAF7}tr:last-child td{border-bottom:none}
       <div class="mp-section">
         <div class="mp-banner">
           <div>
-            <div class="mp-banner-t">🏆 Melhor Preço para Cada Produto</div>
+            <div class="mp-banner-t">Melhor Preço para Cada Produto</div>
             <div class="mp-banner-s">Custo real com Harald Fracionado + pesquisa de preços de mercado 2025</div>
           </div>
-          <span class="mp-banner-chip">📊 Dados verificados no Mercado Livre e lojas especializadas</span>
+          <span class="mp-banner-chip">Dados verificados no Mercado Livre e lojas especializadas</span>
         </div>
 
         <div class="mp-grid">
@@ -565,13 +558,13 @@ tr:hover td{background:#FDFAF7}tr:last-child td{border-bottom:none}
             </div>
             <div class="mp-body">
               <div class="mp-custo-rows">
-                <div class="mp-crow"><span>🍫 Mavalério ao leite (18g × R$26,99/kg)</span><strong>R$ 0,49</strong></div>
-                <div class="mp-crow"><span>🍭 Saquinho transparente 8x12cm</span><strong>R$ 0,034</strong></div>
-                <div class="mp-crow"><span>🗒️ Papel manteiga (rateado)</span><strong>R$ 0,03</strong></div>
+                <div class="mp-crow"><span>Mavalério ao leite (18g × R$26,99/kg)</span><strong>R$ 0,49</strong></div>
+                <div class="mp-crow"><span>Saquinho transparente 8x12cm</span><strong>R$ 0,034</strong></div>
+                <div class="mp-crow"><span>Papel manteiga (rateado)</span><strong>R$ 0,03</strong></div>
               </div>
-              <div class="mp-ctotal"><span>💸 Custo total por unidade</span><span>R$ 0,55</span></div>
+              <div class="mp-ctotal"><span>Custo total por unidade</span><span>R$ 0,55</span></div>
               <div class="mp-mercado-box">
-                <div class="mp-merc-t">🔎 O mercado vende por:</div>
+                <div class="mp-merc-t">O mercado vende por:</div>
                 <div class="mp-merc-vals">R$ 3,60 — R$ 7,20 / unidade</div>
                 <div class="mp-merc-src">Chocolates &amp; Cia · Fábrica de Alegrias · Serrano (2025)</div>
               </div>
@@ -579,7 +572,7 @@ tr:hover td{background:#FDFAF7}tr:last-child td{border-bottom:none}
                 <div class="mp-bar-lbl"><span>Margem de lucro</span><span>88%</span></div>
                 <div class="mp-bar"><div class="mp-fill" style="width:88%"></div></div>
               </div>
-              <div class="mp-verdict vd-best">🏆 Melhor margem — R$ 3,95 de lucro por un.!</div>
+              <div class="mp-verdict vd-best">Melhor margem — R$ 3,95 de lucro por unidade</div>
             </div>
           </div>
 
@@ -598,14 +591,14 @@ tr:hover td{background:#FDFAF7}tr:last-child td{border-bottom:none}
             </div>
             <div class="mp-body">
               <div class="mp-custo-rows">
-                <div class="mp-crow"><span>🍫 Mavalério ao leite (45g × R$26,99/kg)</span><strong>R$ 1,21</strong></div>
-                <div class="mp-crow"><span>⬜ Harald branco (5g × R$33,99/kg)</span><strong>R$ 0,17</strong></div>
-                <div class="mp-crow"><span>🐧 Saquinho Cromus 10x14cm</span><strong>R$ 0,049</strong></div>
-                <div class="mp-crow"><span>🗒️ Papel manteiga (rateado)</span><strong>R$ 0,05</strong></div>
+                <div class="mp-crow"><span>Mavalério ao leite (45g × R$26,99/kg)</span><strong>R$ 1,21</strong></div>
+                <div class="mp-crow"><span>Harald branco (5g × R$33,99/kg)</span><strong>R$ 0,17</strong></div>
+                <div class="mp-crow"><span>Saquinho Cromus 10x14cm</span><strong>R$ 0,049</strong></div>
+                <div class="mp-crow"><span>Papel manteiga (rateado)</span><strong>R$ 0,05</strong></div>
               </div>
-              <div class="mp-ctotal"><span>💸 Custo total por unidade</span><span>R$ 1,48</span></div>
+              <div class="mp-ctotal"><span>Custo total por unidade</span><span>R$ 1,48</span></div>
               <div class="mp-mercado-box">
-                <div class="mp-merc-t">🔎 O mercado vende por:</div>
+                <div class="mp-merc-t">O mercado vende por:</div>
                 <div class="mp-merc-vals">R$ 8,00 — R$ 35,00 / unidade</div>
                 <div class="mp-merc-src">Elo7 · Prawer Chocolates · lojas especializadas (2025)</div>
               </div>
@@ -613,7 +606,7 @@ tr:hover td{background:#FDFAF7}tr:last-child td{border-bottom:none}
                 <div class="mp-bar-lbl"><span>Margem de lucro</span><span>88%</span></div>
                 <div class="mp-bar"><div class="mp-fill" style="width:88%"></div></div>
               </div>
-              <div class="mp-verdict vd-good">⭐ Incrível — R$ 10,52 de lucro por un.!</div>
+              <div class="mp-verdict vd-good">Ótima margem — R$ 10,52 de lucro por unidade</div>
             </div>
           </div>
 
@@ -632,14 +625,14 @@ tr:hover td{background:#FDFAF7}tr:last-child td{border-bottom:none}
             </div>
             <div class="mp-body">
               <div class="mp-custo-rows">
-                <div class="mp-crow"><span>🍫 Mavalério ao leite (65g × R$26,99/kg)</span><strong>R$ 1,75</strong></div>
-                <div class="mp-crow"><span>🌾 Flocos de arroz Rice Boll (15g × R$21,70/kg)</span><strong>R$ 0,33</strong></div>
-                <div class="mp-crow"><span>📦 Embalagem barra flip</span><strong>R$ 0,35</strong></div>
-                <div class="mp-crow"><span>🗒️ Papel manteiga (rateado)</span><strong>R$ 0,05</strong></div>
+                <div class="mp-crow"><span>Mavalério ao leite (65g × R$26,99/kg)</span><strong>R$ 1,75</strong></div>
+                <div class="mp-crow"><span>Flocos de arroz Rice Boll (15g × R$21,70/kg)</span><strong>R$ 0,33</strong></div>
+                <div class="mp-crow"><span>Embalagem barra flip</span><strong>R$ 0,35</strong></div>
+                <div class="mp-crow"><span>Papel manteiga (rateado)</span><strong>R$ 0,05</strong></div>
               </div>
-              <div class="mp-ctotal"><span>💸 Custo total por unidade</span><span>R$ 2,48</span></div>
+              <div class="mp-ctotal"><span>Custo total por unidade</span><span>R$ 2,48</span></div>
               <div class="mp-mercado-box">
-                <div class="mp-merc-t">🔎 O mercado vende por:</div>
+                <div class="mp-merc-t">O mercado vende por:</div>
                 <div class="mp-merc-vals">R$ 5,50 — R$ 25,00 / unidade</div>
                 <div class="mp-merc-src">Serrano Chocolates · Garoto · Artesano Cozinha (2025)</div>
               </div>
@@ -647,21 +640,21 @@ tr:hover td{background:#FDFAF7}tr:last-child td{border-bottom:none}
                 <div class="mp-bar-lbl"><span>Margem de lucro</span><span>75%</span></div>
                 <div class="mp-bar"><div class="mp-fill" style="width:75%"></div></div>
               </div>
-              <div class="mp-verdict vd-ok">✅ Ótima — R$ 7,52 de lucro por un.!</div>
+              <div class="mp-verdict vd-ok">Boa margem — R$ 7,52 de lucro por unidade</div>
             </div>
           </div>
 
         </div>
 
         <div class="mp-nota">
-          <strong>🔍 Por que o ingrediente é mais barato?</strong> O chocolate ideal para chocolates artesanais é a <strong>Cobertura Fracionada</strong> (Mavalério ou Harald) — é o que confeiteiros profissionais usam. A Mavalério sai por <strong>R$26,99/kg</strong> na Vivian Festas, contra R$80–120/kg de chocolate em barra de supermercado. Busque por <em>"cobertura fracionada Mavalério ao leite 1kg"</em>.
+          <strong>Por que o ingrediente é mais barato?</strong> O chocolate ideal para chocolates artesanais é a <strong>Cobertura Fracionada</strong> (Mavalério ou Harald) — é o que confeiteiros profissionais usam. A Mavalério sai por <strong>R$26,99/kg</strong> na Vivian Festas, contra R$80–120/kg de chocolate em barra de supermercado. Busque por <em>"cobertura fracionada Mavalério ao leite 1kg"</em>.
         </div>
       </div>
 
       <!-- PREÇOS MAIS BARATOS VERIFICADOS -->
       <div class="tbox" style="margin-bottom:22px">
         <div class="thdr">
-          <h3>🛒 Preços Mais Baratos — Verificados em Junho 2025</h3>
+          <h3>Preços Mais Baratos — Verificados em Junho 2025</h3>
           <span style="font-size:11px;color:var(--txt2)">Lojas especializadas em confeitaria</span>
         </div>
         <table>
@@ -671,7 +664,7 @@ tr:hover td{background:#FDFAF7}tr:last-child td{border-bottom:none}
           </tr></thead>
           <tbody>
             <tr>
-              <td>🍫 Chocolate ao Leite</td>
+              <td>Chocolate ao Leite</td>
               <td><strong style="color:var(--vd);font-size:16px">R$ 26,99/kg</strong></td>
               <td><strong>Mavalério 1,01kg</strong><br><span style="font-size:10px;color:var(--txt2)">Vivian Festas</span></td>
               <td><code style="font-size:10px;background:#f5f5f5;padding:2px 6px;border-radius:4px">"cobertura fracionada mavalério ao leite"</code></td>
@@ -679,7 +672,7 @@ tr:hover td{background:#FDFAF7}tr:last-child td{border-bottom:none}
               <td><span class="eco-save">-46%</span></td>
             </tr>
             <tr>
-              <td>⬜ Chocolate Branco</td>
+              <td>Chocolate Branco</td>
               <td><strong style="color:var(--vd);font-size:16px">R$ 33,99/kg</strong></td>
               <td><strong>Harald Confeiteiro 1,01kg</strong><br><span style="font-size:10px;color:var(--txt2)">Vivian Festas</span></td>
               <td><code style="font-size:10px;background:#f5f5f5;padding:2px 6px;border-radius:4px">"cobertura fracionada Harald branco"</code></td>
@@ -687,7 +680,7 @@ tr:hover td{background:#FDFAF7}tr:last-child td{border-bottom:none}
               <td><span class="eco-save">-38%</span></td>
             </tr>
             <tr>
-              <td>🌾 Recheio Crocante</td>
+              <td>Recheio Crocante</td>
               <td><strong style="color:var(--vd);font-size:16px">R$ 21,70/kg</strong></td>
               <td><strong>Flocos de Arroz (Rice Boll) 1kg</strong><br><span style="font-size:10px;color:var(--txt2)">Tempero da Terra</span></td>
               <td><code style="font-size:10px;background:#f5f5f5;padding:2px 6px;border-radius:4px">"flocos arroz confeitaria 1kg"</code></td>
@@ -695,7 +688,7 @@ tr:hover td{background:#FDFAF7}tr:last-child td{border-bottom:none}
               <td><span class="eco-save">-46%</span></td>
             </tr>
             <tr>
-              <td>🍭 Embalagem Pirulito</td>
+              <td>Embalagem Pirulito</td>
               <td><strong style="color:var(--vd);font-size:16px">R$ 3,35/100un</strong><br><span style="font-size:10px;color:#888">= R$ 0,034/un</span></td>
               <td><strong>Saquinho transparente 8x12cm 100un</strong><br><span style="font-size:10px;color:var(--txt2)">Mercadoce</span></td>
               <td><code style="font-size:10px;background:#f5f5f5;padding:2px 6px;border-radius:4px">"saco plástico transparente pirulito 100un"</code></td>
@@ -703,7 +696,7 @@ tr:hover td{background:#FDFAF7}tr:last-child td{border-bottom:none}
               <td><span class="eco-save">-67%</span></td>
             </tr>
             <tr>
-              <td>🐧 Embalagem Bonequinho</td>
+              <td>Embalagem Bonequinho</td>
               <td><strong style="color:var(--vd);font-size:16px">R$ 4,90/100un</strong><br><span style="font-size:10px;color:#888">= R$ 0,049/un</span></td>
               <td><strong>Saquinho transparente 10x14cm 100un</strong><br><span style="font-size:10px;color:var(--txt2)">Rizzo Confeitaria — Cromus</span></td>
               <td><code style="font-size:10px;background:#f5f5f5;padding:2px 6px;border-radius:4px">"saco transparente 10x14 100 unidades"</code></td>
@@ -711,7 +704,7 @@ tr:hover td{background:#FDFAF7}tr:last-child td{border-bottom:none}
               <td><span class="eco-save">-67%</span></td>
             </tr>
             <tr>
-              <td>📦 Embalagem Barra</td>
+              <td>Embalagem Barra</td>
               <td><strong style="color:var(--vd);font-size:16px">R$ 0,35/un</strong></td>
               <td><strong>Caixinha barra chocolate</strong><br><span style="font-size:10px;color:var(--txt2)">Amazon / Mercado Livre</span></td>
               <td><code style="font-size:10px;background:#f5f5f5;padding:2px 6px;border-radius:4px">"embalagem barra chocolate flip"</code></td>
@@ -721,7 +714,7 @@ tr:hover td{background:#FDFAF7}tr:last-child td{border-bottom:none}
           </tbody>
         </table>
         <div style="padding:14px 0 0;font-size:11px;color:var(--txt2);line-height:1.7">
-          ⚠️ <strong>Atenção:</strong> Confirme o frete antes de comprar online. Para compras pequenas, compare se não compensa ir numa loja de confeitaria local (busque no Google Maps "loja de confeitaria" na sua cidade). Preços podem variar conforme estoque e data.
+          <strong>Atenção:</strong> confirme o frete antes de comprar online. Para pedidos pequenos, compare com o custo de uma loja de confeitaria local. Preços podem variar conforme estoque e período.
         </div>
       </div>
 
@@ -874,7 +867,7 @@ tr:hover td{background:#FDFAF7}tr:last-child td{border-bottom:none}
 
       <!-- MELHORES LUGARES PARA COMPRAR -->
       <div class="tbox" style="margin-bottom:22px">
-        <div class="thdr"><h3>🏪 Melhores Lugares para Comprar</h3><span style="font-size:11px;color:var(--txt2)">Pesquisa de preços 2025</span></div>
+        <div class="thdr"><h3>Melhores Lugares para Comprar</h3><span style="font-size:11px;color:var(--txt2)">Pesquisa de preços 2025</span></div>
 
         <div class="lojas-grid">
 
@@ -888,10 +881,10 @@ tr:hover td{background:#FDFAF7}tr:last-child td{border-bottom:none}
               <span class="loja-badge" style="background:#FFF9C4;color:#F57F17">Melhor geral</span>
             </div>
             <div class="loja-tags">
-              <span>🍫 Chocolate</span><span>📦 Embalagens</span><span>🌾 Recheio</span>
+              <span>Chocolate</span><span>Embalagens</span><span>Recheio</span>
             </div>
             <p class="loja-desc">Maior variedade, preços competitivos e entrega rápida. Ideal para comprar chocolate Harald, Garoto e Mavalério em barras de 1kg ou mais.</p>
-            <div class="loja-dica">💡 Busque "chocolate fracionado 1kg" ou "cobertura chocolate" para os melhores preços. Compre em kits para economizar mais.</div>
+            <div class="loja-dica">Busque "chocolate fracionado 1kg" ou "cobertura chocolate" para os melhores preços. Compre em kits para economizar mais.</div>
           </div>
 
           <div class="loja-card" style="--lc:#FFF3E0;--lb:#E64A19">
@@ -904,10 +897,10 @@ tr:hover td{background:#FDFAF7}tr:last-child td{border-bottom:none}
               <span class="loja-badge" style="background:#FFF3E0;color:#E64A19">Mais barato</span>
             </div>
             <div class="loja-tags">
-              <span>🌾 Recheio Crocante</span><span>📦 Embalagens</span>
+              <span>Recheio Crocante</span><span>Embalagens</span>
             </div>
             <p class="loja-desc">Preços muito baixos, especialmente para recheios e embalagens a granel. Recheio crocante por R$30–40/kg. Frete muitas vezes grátis.</p>
-            <div class="loja-dica">💡 Busque "flocos de arroz granulado" e "embalagem pirulito kit 100". Sempre veja a avaliação do vendedor antes de comprar.</div>
+            <div class="loja-dica">Busque "flocos de arroz granulado" e "embalagem pirulito kit 100". Sempre veja a avaliação do vendedor antes de comprar.</div>
           </div>
 
           <div class="loja-card" style="--lc:#E3F2FD;--lb:#1565C0">
@@ -920,10 +913,10 @@ tr:hover td{background:#FDFAF7}tr:last-child td{border-bottom:none}
               <span class="loja-badge" style="background:#E3F2FD;color:#1565C0">Entrega rápida</span>
             </div>
             <div class="loja-tags">
-              <span>🗒️ Papel Manteiga</span><span>📦 Emb. Barra</span>
+              <span>Papel Manteiga</span><span>Emb. Barra</span>
             </div>
             <p class="loja-desc">Melhor para papel manteiga e embalagens para barra. Entrega Prime em 1–2 dias. Rolo de papel manteiga por R$26–40.</p>
-            <div class="loja-dica">💡 Busque "papel manteiga rolo culinário" e "embalagem barra de chocolate transparente". Amazon Prime vale a pena se comprar bastante.</div>
+            <div class="loja-dica">Busque "papel manteiga rolo culinário" e "embalagem barra de chocolate transparente". Amazon Prime vale a pena se comprar bastante.</div>
           </div>
 
           <div class="loja-card" style="--lc:#FFEBEE;--lb:#B71C1C">
@@ -936,10 +929,10 @@ tr:hover td{background:#FDFAF7}tr:last-child td{border-bottom:none}
               <span class="loja-badge" style="background:#FFEBEE;color:#B71C1C">Kg mais barato</span>
             </div>
             <div class="loja-tags">
-              <span>🍫 Chocolate a granel</span><span>🌾 Recheio</span>
+              <span>Chocolate a granel</span><span>Recheio</span>
             </div>
             <p class="loja-desc">Para quem compra em quantidade. Chocolate ao leite pode chegar a R$70–75/kg comprando 5kg+. O melhor custo por kg do mercado.</p>
-            <div class="loja-dica">💡 Precisa de cartão de membro (gratuito). Compre junto com familiar para dividir quantidades grandes. Leve isopor para conservar o chocolate.</div>
+            <div class="loja-dica">Precisa de cartão de membro (gratuito). Compre junto com familiar para dividir quantidades grandes. Leve isopor para conservar o chocolate.</div>
           </div>
 
           <div class="loja-card" style="--lc:#FCE4EC;--lb:#880E4F">
@@ -952,10 +945,10 @@ tr:hover td{background:#FDFAF7}tr:last-child td{border-bottom:none}
               <span class="loja-badge" style="background:#FCE4EC;color:#880E4F">Tudo num lugar</span>
             </div>
             <div class="loja-tags">
-              <span>🍫 Chocolate</span><span>📦 Embalagens</span><span>🌾 Recheio</span><span>🎨 Corante</span>
+              <span>Chocolate</span><span>Embalagens</span><span>Recheio</span><span>Corante</span>
             </div>
             <p class="loja-desc">Lojas como Casa do Bolo, Rizzo Confeitaria ou lojas locais de confeitaria têm tudo em um só lugar. Ótimo para ver o produto antes de comprar.</p>
-            <div class="loja-dica">💡 Procure "loja de confeitaria" perto de você no Google Maps. Geralmente vendem chocolate Harald e têm variedade de moldes e embalagens.</div>
+            <div class="loja-dica">Procure "loja de confeitaria" perto de você. Geralmente vendem chocolate Harald e têm variedade de moldes e embalagens.</div>
           </div>
 
           <div class="loja-card" style="--lc:#E8F5E9;--lb:#1B5E20">
@@ -968,10 +961,10 @@ tr:hover td{background:#FDFAF7}tr:last-child td{border-bottom:none}
               <span class="loja-badge" style="background:#E8F5E9;color:#1B5E20">Emergência</span>
             </div>
             <div class="loja-tags">
-              <span>🍫 Chocolate (urgência)</span><span>🗒️ Papel Manteiga</span>
+              <span>Chocolate (urgência)</span><span>Papel Manteiga</span>
             </div>
             <p class="loja-desc">Use apenas em emergência — preços são 30–50% mais caros que atacado. Chocolate ao leite pode custar R$120+/kg. Para papel manteiga é razoável.</p>
-            <div class="loja-dica">💡 Só compre aqui se acabou o estoque na véspera de uma encomenda. Prefira sempre atacado ou online para planejar com antecedência.</div>
+            <div class="loja-dica">Só compre aqui se acabou o estoque na véspera de uma encomenda. Prefira sempre atacado ou online para planejar com antecedência.</div>
           </div>
 
         </div>
@@ -979,35 +972,35 @@ tr:hover td{background:#FDFAF7}tr:last-child td{border-bottom:none}
 
       <!-- Tabela comparativa por ingrediente -->
       <div class="tbox" style="margin-bottom:22px">
-        <div class="thdr"><h3>📊 Onde comprar cada ingrediente</h3></div>
+        <div class="thdr"><h3>Onde comprar cada ingrediente</h3></div>
         <table>
           <thead><tr>
             <th>Ingrediente</th>
-            <th>🥇 1º Melhor</th>
-            <th>🥈 2º Opção</th>
-            <th>🥉 3º Opção</th>
+            <th>1ª opção</th>
+            <th>2ª opção</th>
+            <th>3ª opção</th>
             <th>Preço médio atacado</th>
           </tr></thead>
           <tbody>
-            <tr><td>🍫 Chocolate ao Leite</td><td><span class="badge bpix">Atacadão/Makro</span></td><td><span class="badge bdin">Mercado Livre</span></td><td><span class="badge bcar">Shopee</span></td><td class="pos">R$ 70–81/kg</td></tr>
-            <tr><td>⬜ Chocolate Branco</td><td><span class="badge bpix">Mercado Livre</span></td><td><span class="badge bdin">Shopee</span></td><td><span class="badge bcar">Casa Confeitaria</span></td><td class="pos">R$ 90–100/kg</td></tr>
-            <tr><td>🌾 Recheio Crocante</td><td><span class="badge bpix">Shopee</span></td><td><span class="badge bdin">Mercado Livre</span></td><td><span class="badge bcar">Casa Confeitaria</span></td><td class="pos">R$ 30–40/kg</td></tr>
-            <tr><td>🍭 Emb. Pirulito (kit 100)</td><td><span class="badge bpix">Mercado Livre</span></td><td><span class="badge bdin">Shopee</span></td><td><span class="badge bcar">Elo7</span></td><td class="pos">R$ 8–12/kit</td></tr>
-            <tr><td>🐧 Emb. Bonequinho</td><td><span class="badge bpix">Mercado Livre</span></td><td><span class="badge bdin">Shopee</span></td><td><span class="badge bcar">Casa Confeitaria</span></td><td class="pos">R$ 0,80–1,00/un</td></tr>
-            <tr><td>📦 Emb. Barra</td><td><span class="badge bpix">Amazon</span></td><td><span class="badge bdin">Mercado Livre</span></td><td><span class="badge bcar">Shopee</span></td><td class="pos">R$ 0,30–0,40/un</td></tr>
-            <tr><td>🗒️ Papel Manteiga</td><td><span class="badge bpix">Amazon</span></td><td><span class="badge bdin">Mercado Livre</span></td><td><span class="badge bcar">Supermercado</span></td><td class="pos">R$ 26–35/rolo</td></tr>
-            <tr><td>🎨 Corante p/ Chocolate</td><td><span class="badge bpix">Mercado Livre</span></td><td><span class="badge bdin">Casa Confeitaria</span></td><td><span class="badge bcar">Shopee</span></td><td class="pos">R$ 12–25/frasco</td></tr>
+            <tr><td>Chocolate ao Leite</td><td><span class="badge bpix">Atacadão/Makro</span></td><td><span class="badge bdin">Mercado Livre</span></td><td><span class="badge bcar">Shopee</span></td><td class="pos">R$ 70–81/kg</td></tr>
+            <tr><td>Chocolate Branco</td><td><span class="badge bpix">Mercado Livre</span></td><td><span class="badge bdin">Shopee</span></td><td><span class="badge bcar">Casa Confeitaria</span></td><td class="pos">R$ 90–100/kg</td></tr>
+            <tr><td>Recheio Crocante</td><td><span class="badge bpix">Shopee</span></td><td><span class="badge bdin">Mercado Livre</span></td><td><span class="badge bcar">Casa Confeitaria</span></td><td class="pos">R$ 30–40/kg</td></tr>
+            <tr><td>Emb. Pirulito (kit 100)</td><td><span class="badge bpix">Mercado Livre</span></td><td><span class="badge bdin">Shopee</span></td><td><span class="badge bcar">Elo7</span></td><td class="pos">R$ 8–12/kit</td></tr>
+            <tr><td>Emb. Bonequinho</td><td><span class="badge bpix">Mercado Livre</span></td><td><span class="badge bdin">Shopee</span></td><td><span class="badge bcar">Casa Confeitaria</span></td><td class="pos">R$ 0,80–1,00/un</td></tr>
+            <tr><td>Emb. Barra</td><td><span class="badge bpix">Amazon</span></td><td><span class="badge bdin">Mercado Livre</span></td><td><span class="badge bcar">Shopee</span></td><td class="pos">R$ 0,30–0,40/un</td></tr>
+            <tr><td>Papel Manteiga</td><td><span class="badge bpix">Amazon</span></td><td><span class="badge bdin">Mercado Livre</span></td><td><span class="badge bcar">Supermercado</span></td><td class="pos">R$ 26–35/rolo</td></tr>
+            <tr><td>Corante p/ Chocolate</td><td><span class="badge bpix">Mercado Livre</span></td><td><span class="badge bdin">Casa Confeitaria</span></td><td><span class="badge bcar">Shopee</span></td><td class="pos">R$ 12–25/frasco</td></tr>
           </tbody>
         </table>
       </div>
 
       <!-- Dicas -->
       <div class="dicas-box">
-        <div class="dic-title">🏆 Dicas de Ouro para Economizar</div>
+        <div class="dic-title">Dicas para Economizar</div>
         <div class="dic-grid">
-          <div class="dic-card"><span class="dic-ic">🛒</span><strong>Compre no atacado</strong><p>2kg de chocolate ao leite no Mercado Livre sai ~R$81/kg, contra ~R$120/kg no supermercado. Economia de 32%!</p></div>
-          <div class="dic-card"><span class="dic-ic">📦</span><strong>Kit de 100 embalagens</strong><p>Embalagem de pirulito em kit de 100 unidades = R$0,10/un. Comprar avulso pode custar até R$0,40/un. Compre sempre em kit!</p></div>
-          <div class="dic-card"><span class="dic-ic">🍫</span><strong>Chocolate Harald ou Garoto</strong><p>Marcas como Harald e Garoto têm boa qualidade e preço mais acessível que marcas importadas. Ideal para o ChocoPingu!</p></div>
+          <div class="dic-card"><span class="dic-ic">🛒</span><strong>Compre no atacado</strong><p>2kg de chocolate ao leite no Mercado Livre sai ~R$81/kg, contra ~R$120/kg no supermercado. Economia de 32%.</p></div>
+          <div class="dic-card"><span class="dic-ic">📦</span><strong>Kit de 100 embalagens</strong><p>Embalagem de pirulito em kit de 100 unidades = R$0,10/un. Comprar avulso pode custar até R$0,40/un. Compre sempre em kit.</p></div>
+          <div class="dic-card"><span class="dic-ic">🍫</span><strong>Chocolate Harald ou Garoto</strong><p>Marcas como Harald e Garoto têm boa qualidade e preço mais acessível que marcas importadas. Ideal para o ChocoPingu.</p></div>
           <div class="dic-card"><span class="dic-ic">📊</span><strong>Margem mínima de 60%</strong><p>Se o Pirulito custa R$1,56 para fazer, venda no mínimo por R$3,90. Nunca venda abaixo do custo!</p></div>
           <div class="dic-card"><span class="dic-ic">🔄</span><strong>Reutilize moldes e papel</strong><p>O papel manteiga pode ser usado várias vezes. Um rolo de R$26 dura muitas produções. Mantenha limpo!</p></div>
           <div class="dic-card"><span class="dic-ic">💰</span><strong>Quanto guardar por mês</strong><p>Comece com um orçamento de R$60–R$100/mês em insumos. Isso dá para fazer ~30 pirulitos, ~10 boneguinhos e ~8 barras.</p></div>
@@ -1117,12 +1110,6 @@ tr:hover td{background:#FDFAF7}tr:last-child td{border-bottom:none}
 </div><!-- /ap -->
 
 <script>
-// ── CURSOR ──
-let mx=innerWidth/2,my=innerHeight/2,bx=mx,by=my;
-const c1=document.getElementById('cb1'),c2=document.getElementById('cb2');
-document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;c1.style.left=mx+'px';c1.style.top=my+'px';});
-(function L(){bx+=(mx-bx)*.11;by+=(my-by)*.11;c2.style.left=bx+'px';c2.style.top=by+'px';requestAnimationFrame(L);})();
-
 // ── DADOS ──
 const DEF={
   gastos:[],
@@ -1779,12 +1766,12 @@ function renderSim(){
     const luc=+(preco-p.custoAtac).toFixed(2);
     const pArredond=Math.ceil(preco/0.5)*0.5;
     return `<tr>
-      <td>${p.emoji} <strong>${p.nome}</strong></td>
+      <td><strong>${p.nome}</strong></td>
       <td>${f(p.custoAtac)}</td>
       <td>${f(p.custoVar)}</td>
       <td><strong style="color:var(--gold);font-size:15px">${f(pArredond)}</strong></td>
       <td class="pos">${f(luc)}</td>
-      <td>${luc>0?'<span style="color:var(--vd);font-weight:700">✅ Lucro garantido!</span>':'<span style="color:var(--vm)">❌</span>'}</td>
+      <td>${luc>0?'<span style="color:var(--vd);font-weight:700">Sim</span>':'<span style="color:var(--vm)">Não</span>'}</td>
     </tr>`;
   }).join('');
 }
