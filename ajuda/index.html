@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Central de Ajuda — Chocopingu</title>
+  <meta name="description" content="Tire suas dúvidas sobre como comprar, formas de pagamento, Chocopontos e entrega na Chocopingu." />
+  <link rel="icon" href="../imagens/logo2.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --ouro:        #C8941A;
+      --ouro-claro:  #E5B84A;
+      --ouro-escuro: #A07015;
+      --choco:       #0d0400;
+      --choco-mid:   #2a1000;
+      --choco-claro: #6b3300;
+      --creme:       #FFF8F2;
+      --bege:        #F5EDE0;
+      --texto:       #1a0800;
+      --cinza:       #777;
+      --branco:      #ffffff;
+      --radius:      18px;
+      --sombra:      0 8px 32px rgba(13,4,0,0.10);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Nunito', sans-serif; color: var(--texto); background: var(--creme); }
+    img { max-width: 100%; display: block; }
+    a { text-decoration: none; color: inherit; }
+    h1, h2, h3 { font-family: 'Playfair Display', serif; font-weight: 900; color: var(--texto); }
+    h2 span, h1 span { color: var(--ouro-escuro); }
+
+    /* NAVBAR */
+    .ajuda-navbar {
+      position: sticky; top: 0; z-index: 50;
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 1rem; flex-wrap: wrap;
+      padding: .9rem 5%;
+      background: rgba(255,248,242,.92);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid rgba(107,51,0,.1);
+    }
+    .ajuda-logo { display: flex; align-items: center; gap: .6rem; }
+    .ajuda-logo img { height: 42px; }
+    .ajuda-logo strong { display: block; font-family: 'Playfair Display', serif; font-size: 1.05rem; }
+    .ajuda-logo small { display: block; color: var(--cinza); font-size: .72rem; }
+    .ajuda-nav-links { display: flex; align-items: center; gap: .6rem; flex-wrap: wrap; }
+    .btn-voltar-loja {
+      font-weight: 800; font-size: .9rem; color: var(--choco-claro);
+      padding: .55rem 1.1rem; border-radius: 50px;
+      border: 2px solid var(--ouro-escuro);
+      transition: background .2s, color .2s;
+    }
+    .btn-voltar-loja:hover { background: var(--bege); }
+    .btn-ouro {
+      display: inline-block;
+      background: linear-gradient(135deg, var(--ouro-claro), var(--ouro));
+      color: var(--choco);
+      font-weight: 900; font-size: .9rem;
+      padding: .7rem 1.4rem;
+      border-radius: 50px; border: none; cursor: pointer;
+      box-shadow: 0 6px 20px rgba(200,148,26,.35);
+      transition: transform .2s, box-shadow .2s;
+    }
+    .btn-ouro:hover { transform: translateY(-2px); box-shadow: 0 10px 26px rgba(200,148,26,.45); }
+
+    /* HERO */
+    .ajuda-hero { text-align: center; padding: 3.5rem 5% 2.5rem; max-width: 720px; margin: 0 auto; }
+    .section-tag {
+      display: inline-block; background: var(--bege); color: var(--choco-claro);
+      font-weight: 800; font-size: .8rem; letter-spacing: 1.5px; text-transform: uppercase;
+      padding: .35rem 1rem; border-radius: 50px; margin-bottom: 1rem;
+    }
+    .ajuda-hero h1 { font-size: clamp(1.9rem, 4.5vw, 2.9rem); line-height: 1.15; margin-bottom: .8rem; }
+    .ajuda-hero p { color: var(--cinza); font-size: 1.05rem; line-height: 1.6; }
+
+    /* PASSOS */
+    .como-pedir { padding: 3rem 5% 4rem; background: var(--choco-mid); text-align: center; }
+    .como-pedir h2 { color: var(--branco); font-size: clamp(1.6rem, 3.5vw, 2.2rem); margin-bottom: .5rem; }
+    .como-pedir h2 span { color: var(--ouro-claro); }
+    .como-pedir .section-tag { background: rgba(200,148,26,.15); color: var(--ouro-claro); }
+    .como-pedir .sub { color: rgba(255,255,255,.6); max-width: 520px; margin: 0 auto; }
+    .passos-grid {
+      display: flex; align-items: center; justify-content: center; gap: 1.2rem;
+      flex-wrap: wrap; max-width: 980px; margin: 2.5rem auto 0;
+    }
+    .passo {
+      background: rgba(255,255,255,.06); border: 1px solid rgba(200,148,26,.2);
+      border-radius: 16px; padding: 1.8rem 1.4rem 1.4rem; width: 240px;
+      position: relative; transition: transform .2s, border-color .2s;
+    }
+    .passo:hover { transform: translateY(-5px); border-color: var(--ouro); }
+    .passo-num {
+      position: absolute; top: -14px; left: 50%; transform: translateX(-50%);
+      background: var(--ouro); color: var(--choco); font-weight: 900; font-size: .85rem;
+      width: 28px; height: 28px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .passo-icone { font-size: 2.2rem; margin-bottom: .7rem; }
+    .passo h3 { color: var(--branco); font-size: 1.05rem; margin-bottom: .4rem; }
+    .passo p { color: rgba(255,255,255,.6); font-size: .87rem; line-height: 1.5; }
+    .passo-seta { font-size: 1.5rem; color: var(--ouro); opacity: .6; }
+
+    /* FAQ */
+    .faq-section { padding: 4rem 5%; max-width: 760px; margin: 0 auto; }
+    .faq-grupo { margin-bottom: 2.5rem; }
+    .faq-grupo-titulo {
+      display: flex; align-items: center; gap: .6rem;
+      font-size: 1.25rem; margin-bottom: 1rem; color: var(--choco-claro);
+    }
+    .faq-grupo-titulo .emoji { font-size: 1.3rem; }
+    details.faq-item {
+      background: var(--branco); border: 1px solid rgba(107,51,0,.12);
+      border-radius: 14px; margin-bottom: .7rem; overflow: hidden;
+      box-shadow: var(--sombra);
+    }
+    details.faq-item summary {
+      list-style: none; cursor: pointer; padding: 1.1rem 1.4rem;
+      font-weight: 800; font-size: 1rem; display: flex;
+      align-items: center; justify-content: space-between; gap: 1rem;
+    }
+    details.faq-item summary::-webkit-details-marker { display: none; }
+    details.faq-item summary::after {
+      content: '+'; font-size: 1.4rem; color: var(--ouro-escuro); font-weight: 900;
+      flex-shrink: 0; transition: transform .2s;
+    }
+    details.faq-item[open] summary::after { content: '−'; }
+    details.faq-item p {
+      padding: 0 1.4rem 1.2rem; color: var(--cinza); font-size: .95rem; line-height: 1.65;
+    }
+    details.faq-item p a { color: var(--ouro-escuro); font-weight: 700; }
+
+    /* CTA FINAL */
+    .ajuda-cta {
+      text-align: center; padding: 3rem 5% 4rem; max-width: 600px; margin: 0 auto;
+    }
+    .ajuda-cta h2 { font-size: clamp(1.4rem, 3vw, 1.8rem); margin-bottom: .6rem; }
+    .ajuda-cta p { color: var(--cinza); margin-bottom: 1.6rem; }
+
+    /* FOOTER */
+    .footer { background: var(--choco); color: rgba(255,255,255,.75); }
+    .footer-top {
+      padding: 3rem 5% 2rem; display: flex; flex-direction: column;
+      align-items: center; gap: 1rem; border-bottom: 1px solid rgba(255,255,255,.08);
+      text-align: center;
+    }
+    .footer-logo { height: 55px; filter: brightness(1.1); }
+    .footer-social { display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; }
+    .social-btn {
+      display: inline-flex; align-items: center; gap: .4rem;
+      padding: .55rem 1.2rem; border-radius: 50px; font-weight: 700; font-size: .9rem;
+      background: rgba(255,255,255,.08); color: rgba(255,255,255,.85);
+      border: 1px solid rgba(255,255,255,.15); transition: background .2s, transform .2s;
+    }
+    .social-btn:hover { background: var(--ouro); color: var(--choco); transform: translateY(-2px); }
+    .footer-bottom { padding: 1.3rem 5%; text-align: center; font-size: .85rem; color: rgba(255,255,255,.4); }
+
+    @media (max-width: 640px) {
+      .passos-grid { flex-direction: column; }
+      .passo-seta { transform: rotate(90deg); }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="ajuda-navbar">
+    <a href="../index.html" class="ajuda-logo">
+      <img src="../imagens/logo2.png" alt="Chocopingu" />
+      <span>
+        <strong>Chocopingu</strong>
+        <small>Central de Ajuda</small>
+      </span>
+    </a>
+    <div class="ajuda-nav-links">
+      <a href="../index.html" class="btn-voltar-loja">&larr; Voltar à loja</a>
+      <a href="https://wa.me/5581981553632" target="_blank" rel="noopener" class="btn-ouro">Falar no WhatsApp</a>
+    </div>
+  </header>
+
+  <section class="ajuda-hero">
+    <span class="section-tag">Estamos aqui pra ajudar</span>
+    <h1>Central de <span>Ajuda</span></h1>
+    <p>Tudo o que você precisa saber pra comprar na Chocopingu: como fazer o pedido, formas de pagamento, Chocopontos e entrega.</p>
+  </section>
+
+  <section class="como-pedir">
+    <span class="section-tag">Passo a passo</span>
+    <h2>Como comprar em <span>3 passos</span></h2>
+    <p class="sub">Do clique na loja até o chocolate na sua casa.</p>
+    <div class="passos-grid">
+      <div class="passo">
+        <span class="passo-num">1</span>
+        <div class="passo-icone">🛒</div>
+        <h3>Escolha os produtos</h3>
+        <p>Navegue pela loja, adicione seus favoritos ao carrinho e clique em "Finalizar pedido".</p>
+      </div>
+      <span class="passo-seta">→</span>
+      <div class="passo">
+        <span class="passo-num">2</span>
+        <div class="passo-icone">💳</div>
+        <h3>Pague do seu jeito</h3>
+        <p>Preencha nome e endereço e escolha Pix, boleto, cartão ou Chocopontos.</p>
+      </div>
+      <span class="passo-seta">→</span>
+      <div class="passo">
+        <span class="passo-num">3</span>
+        <div class="passo-icone">📦</div>
+        <h3>Receba em casa</h3>
+        <p>Confirmamos seu pedido e cuidamos da entrega até a sua porta.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="faq-section">
+
+    <div class="faq-grupo">
+      <h2 class="faq-grupo-titulo"><span class="emoji">🛍️</span> Pedidos</h2>
+      <details class="faq-item">
+        <summary>Como faço um pedido no Chocopingu?</summary>
+        <p>Escolha os produtos na página inicial, clique em "Adicionar ao carrinho" e depois em "Finalizar pedido". Você vai preencher nome e endereço de entrega e escolher a forma de pagamento.</p>
+      </details>
+      <details class="faq-item">
+        <summary>Preciso criar uma conta para comprar?</summary>
+        <p>Não é obrigatório. Você pode entrar com sua conta Google pra salvar seus dados, mas também dá pra concluir o pedido preenchendo nome e endereço na hora do checkout.</p>
+      </details>
+      <details class="faq-item">
+        <summary>Posso alterar um pedido depois de enviado?</summary>
+        <p>Depois de confirmado, o ideal é falar direto com a gente pelo <a href="https://wa.me/5581981553632" target="_blank" rel="noopener">WhatsApp</a> o quanto antes pra ver o que ainda dá pra ajustar.</p>
+      </details>
+    </div>
+
+    <div class="faq-grupo">
+      <h2 class="faq-grupo-titulo"><span class="emoji">💳</span> Pagamento</h2>
+      <details class="faq-item">
+        <summary>Quais formas de pagamento são aceitas?</summary>
+        <p>Pix, boleto, cartão de crédito e Chocopontos (nosso programa de fidelidade).</p>
+      </details>
+      <details class="faq-item">
+        <summary>Como funciona o pagamento por Pix?</summary>
+        <p>Ao escolher Pix no checkout, geramos na hora um QR Code — é só escanear pelo app do seu banco ou copiar o código "copia e cola" e colar lá.</p>
+      </details>
+      <details class="faq-item">
+        <summary>Como funciona o boleto?</summary>
+        <p>Ao escolher boleto, você recebe a linha digitável e o PDF pra pagar em qualquer banco, app ou lotérica.</p>
+      </details>
+      <details class="faq-item">
+        <summary>É seguro colocar os dados do meu cartão?</summary>
+        <p>Sim. O pagamento por cartão é processado por um gateway de pagamentos seguro — a Chocopingu não armazena os dados do seu cartão.</p>
+      </details>
+    </div>
+
+    <div class="faq-grupo">
+      <h2 class="faq-grupo-titulo"><span class="emoji">⭐</span> Chocopontos</h2>
+      <details class="faq-item">
+        <summary>O que são Chocopontos?</summary>
+        <p>É o nosso programa de fidelidade! A cada compra paga em dinheiro (Pix, boleto ou cartão) você ganha pontos que podem ser trocados por produtos.</p>
+      </details>
+      <details class="faq-item">
+        <summary>Como consulto meu saldo de pontos?</summary>
+        <p>No site, abra o menu "Chocopontos" e digite seu CPF no campo "Ver meus chocopontos" — o saldo aparece na hora.</p>
+      </details>
+      <details class="faq-item">
+        <summary>Como resgato um produto com Chocopontos?</summary>
+        <p>Abra o menu "Chocopontos", escolha o produto e clique em "Pagar com Chocopontos". Você será levado ao checkout e só precisa confirmar nome, endereço e CPF — sem custo em dinheiro.</p>
+      </details>
+    </div>
+
+    <div class="faq-grupo">
+      <h2 class="faq-grupo-titulo"><span class="emoji">📦</span> Entrega</h2>
+      <details class="faq-item">
+        <summary>Como informo meu endereço de entrega?</summary>
+        <p>No menu "Endereço", digite seu CEP pra preencher automaticamente rua, bairro e cidade, e complete número e complemento. O endereço fica salvo pros próximos pedidos.</p>
+      </details>
+      <details class="faq-item">
+        <summary>Qual o prazo de entrega?</summary>
+        <p>O prazo varia de acordo com a sua região. Fale com a gente no <a href="https://wa.me/5581981553632" target="_blank" rel="noopener">WhatsApp</a> pra confirmar o prazo do seu endereço.</p>
+      </details>
+    </div>
+
+    <div class="faq-grupo">
+      <h2 class="faq-grupo-titulo"><span class="emoji">💬</span> Contato</h2>
+      <details class="faq-item">
+        <summary>Meu pedido não chegou ou tive algum problema, o que faço?</summary>
+        <p>Fale direto no nosso <a href="https://wa.me/5581981553632" target="_blank" rel="noopener">WhatsApp (81) 98155-3632</a> — é o canal mais rápido pra resolver qualquer questão do seu pedido.</p>
+      </details>
+      <details class="faq-item">
+        <summary>Onde acompanho as novidades da Chocopingu?</summary>
+        <p>No Instagram <a href="https://www.instagram.com/lojadopingu" target="_blank" rel="noopener">@lojadopingu</a> — postamos lançamentos, bastidores e promoções por lá.</p>
+      </details>
+    </div>
+
+  </section>
+
+  <section class="ajuda-cta">
+    <h2>Não encontrou sua resposta?</h2>
+    <p>Fale direto com a gente, respondemos rapidinho.</p>
+    <a class="btn-ouro" href="https://wa.me/5581981553632" target="_blank" rel="noopener">Falar no WhatsApp &#128172;</a>
+  </section>
+
+  <footer class="footer">
+    <div class="footer-top">
+      <img src="../imagens/logo2.png" alt="Chocopingu" class="footer-logo" />
+      <div class="footer-social">
+        <a href="https://www.instagram.com/lojadopingu" target="_blank" rel="noopener" class="social-btn">&#128247; @lojadopingu</a>
+        <a href="https://wa.me/5581981553632" target="_blank" rel="noopener" class="social-btn">&#128172; (81) 98155-3632</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 Chocopingu. Todos os direitos reservados.</p>
+    </div>
+  </footer>
+
+</body>
+</html>
