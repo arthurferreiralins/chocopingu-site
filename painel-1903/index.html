@@ -51,9 +51,9 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 .sb-logo{font-size:28px;line-height:1}
 .sb-name{font-size:16px;font-weight:800;color:#fff;letter-spacing:-.2px}
 .sb-tag{font-size:10.5px;color:rgba(255,255,255,.4);font-style:italic;margin-top:1px}
-.sb-nav{display:flex;flex-direction:column;gap:2px;flex:1;min-height:0}
-.sb-spacer{flex:1}
-.sb-contact{display:flex;flex-direction:column;gap:6px;padding:14px 8px 4px;margin-top:8px;border-top:1px solid rgba(255,255,255,.08)}
+.sb-nav{display:flex;flex-direction:column;gap:2px;flex-shrink:0}
+.sb-spacer{flex:1 1 24px;min-height:24px}
+.sb-contact{display:flex;flex-direction:column;gap:6px;padding:14px 8px 4px;margin-top:8px;border-top:1px solid rgba(255,255,255,.08);flex-shrink:0}
 .cbadge{display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:20px;font-size:11.5px;font-weight:600}
 .cwa{background:rgba(76,175,80,.12);color:#81C784;border:1px solid rgba(76,175,80,.18)}
 .cig{background:rgba(233,30,99,.10);color:#F48FB1;border:1px solid rgba(233,30,99,.18)}
@@ -360,9 +360,9 @@ tr:hover td{background:#FDFAF7}tr:last-child td{border-bottom:none}
       <button class="tab"     onclick="go(this,'ped');carregarPedidos()"><span class="ti">📋</span> Pedidos</button>
       <button class="tab"     onclick="go(this,'copaprod')"><span class="ti">⚽</span> Produtos Copa</button>
       <button class="tab"     onclick="go(this,'insta');carregarInstagramAdmin()"><span class="ti">📸</span> Instagram</button>
-      <div class="sb-spacer"></div>
-      <button class="tab" style="color:#F1948A" onclick="logout()"><span class="ti">🚪</span> Sair</button>
     </nav>
+    <div class="sb-spacer"></div>
+    <button class="tab" style="color:#F1948A" onclick="logout()"><span class="ti">🚪</span> Sair</button>
     <div class="sb-contact">
       <span class="cbadge cwa">📱 (81) 98155-3632</span>
       <span class="cbadge cig">📸 @lojadopingu</span>
