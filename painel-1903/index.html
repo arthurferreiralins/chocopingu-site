@@ -1045,6 +1045,7 @@ tr:hover td{background:#FDFAF7}tr:last-child td{border-bottom:none}
               <th>Status</th>
               <th>Total</th>
               <th>Itens</th>
+              <th>Ações</th>
             </tr></thead>
             <tbody id="ped-tbody"></tbody>
           </table>
@@ -2003,10 +2004,11 @@ async function carregarPedidos(){
     loading.style.display='none';
     if(!Array.isArray(data)||data.length===0){vazio.style.display='block';return;}
     // stats
+    const statusPago=['paid','processing','pago','entregue'];
     const total=data.length;
-    const pagos=data.filter(p=>p.status==='paid'||p.status==='processing').length;
+    const pagos=data.filter(p=>statusPago.includes(p.status)).length;
     const pend=total-pagos;
-    const receita=data.filter(p=>p.status==='paid'||p.status==='processing').reduce((s,p)=>s+(p.total_centavos||0),0);
+    const receita=data.filter(p=>statusPago.includes(p.status)).reduce((s,p)=>s+(p.total_centavos||0),0);
     document.getElementById('ped-total').textContent=total;
     document.getElementById('ped-pagos').textContent=pagos;
     document.getElementById('ped-pend').textContent=pend;
@@ -2017,24 +2019,51 @@ async function carregarPedidos(){
     document.getElementById('ped-choco-pts').textContent=ptsChoco+' pts';
     // tabela
     const metodoLabel={pix:'PIX',boleto:'Boleto',cartao:'Cartão',chocopontos:'⭐ Chocopontos'};
-    const statusLabel={paid:'✅ Pago',processing:'🔄 Processando',pending:'⏳ Pendente',pendente:'⏳ Pendente',failed:'❌ Falhou',canceled:'🚫 Cancelado'};
+    const statusPagoMap={paid:'pago',processing:'pago',pago:'pago',entregue:'entregue',pending:'pendente',pendente:'pendente',failed:'pendente',canceled:'pendente'};
+    const statusOpcoes={pendente:'⏳ Pendente',pago:'✅ Pago',entregue:'📦 Entregue'};
     tbody.innerHTML=data.map(p=>{
       const dt=p.created_at?new Date(p.created_at).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',year:'2-digit',hour:'2-digit',minute:'2-digit'}):'—';
       const itens=Array.isArray(p.itens)?p.itens.map(i=>`${i.qtd||1}x ${i.nome||'?'}${i.pontos?' ('+i.pontos+' pts)':''}`).join(', '):'—';
       const total=p.total_centavos?'R$ '+(p.total_centavos/100).toFixed(2).replace('.',','):'—';
+      const statusAtual=statusPagoMap[p.status]||'pendente';
+      const opcoesHtml=Object.keys(statusOpcoes).map(k=>`<option value="${k}"${k===statusAtual?' selected':''}>${statusOpcoes[k]}</option>`).join('');
       return `<tr>
         <td style="font-size:12px;white-space:nowrap">${dt}</td>
         <td style="font-size:11px;color:#888">${(p.order_id||'').slice(-8)}</td>
         <td>${p.nome_cliente||'—'}<br><span style="font-size:11px;color:#888">${p.metodo==='chocopontos'?('CPF '+(p.cpf_cliente||'—')):(p.email_cliente||'')}</span></td>
         <td>${metodoLabel[p.metodo]||p.metodo||'—'}</td>
-        <td>${statusLabel[p.status]||p.status||'—'}</td>
+        <td>
+          <select onchange="atualizarStatusPedido('${p.id}',this.value)" style="padding:4px 8px;border-radius:6px;border:1px solid #ccc;font-size:12px;font-weight:700;cursor:pointer">
+            ${opcoesHtml}
+          </select>
+        </td>
         <td><strong>${total}</strong></td>
         <td style="font-size:12px">${itens}</td>
+        <td style="white-space:nowrap"><button class="btn-sm" onclick="excluirPedido('${p.id}')" style="background:#A93226;color:#fff;border:none;padding:4px 10px;border-radius:6px;cursor:pointer">Excluir</button></td>
       </tr>`;
     }).join('');
     tabela.style.display='block';
   }catch(e){
     loading.style.display='none';erro.style.display='block';erro.textContent='Erro: '+e.message;
+  }
+}
+async function atualizarStatusPedido(id,status){
+  try{
+    const resp=await fetch('/api/admin-orders',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({id,status})});
+    if(!resp.ok){const data=await resp.json();throw new Error(data.error||'Erro ao atualizar status');}
+    carregarPedidos();
+  }catch(e){
+    alert('Erro ao atualizar status: '+e.message);
+  }
+}
+async function excluirPedido(id){
+  if(!confirm('Excluir este pedido definitivamente? Essa ação não pode ser desfeita.'))return;
+  try{
+    const resp=await fetch('/api/admin-orders?id='+encodeURIComponent(id),{method:'DELETE'});
+    if(!resp.ok){const data=await resp.json();throw new Error(data.error||'Erro ao excluir pedido');}
+    carregarPedidos();
+  }catch(e){
+    alert('Erro ao excluir pedido: '+e.message);
   }
 }
 
