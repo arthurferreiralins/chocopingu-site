@@ -27,6 +27,14 @@ module.exports = async (req, res) => {
       return res.status(400).json({ error: 'URL de post/reel do Instagram inválida' });
 
     try {
+      const cleanUrl = String(url).trim();
+      const dupResp = await fetch(`${SB_URL}/rest/v1/instagram_posts?url=eq.${encodeURIComponent(cleanUrl)}&select=id`, {
+        headers: { apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY }
+      });
+      const dupData = await dupResp.json();
+      if (dupResp.ok && Array.isArray(dupData) && dupData.length > 0)
+        return res.status(409).json({ error: 'Esse post já foi adicionado' });
+
       const resp = await fetch(`${SB_URL}/rest/v1/instagram_posts`, {
         method: 'POST',
         headers: {
@@ -35,7 +43,7 @@ module.exports = async (req, res) => {
           'Content-Type': 'application/json',
           Prefer: 'return=minimal'
         },
-        body: JSON.stringify({ url: String(url).trim() })
+        body: JSON.stringify({ url: cleanUrl })
       });
       if (!resp.ok) {
         const detail = await resp.text();

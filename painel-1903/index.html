@@ -2080,10 +2080,13 @@ async function carregarInstagramAdmin(){
   }
 }
 async function addInstagramPost(){
+  const btn=event.target;
+  if(btn.disabled)return;
   const input=document.getElementById('ig-url');
   const msg=document.getElementById('ig-msg');
   const url=input.value.trim();
   msg.textContent='';
+  btn.disabled=true;
   try{
     const resp=await fetch('/api/instagram-posts',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({url})});
     const data=await resp.json();
@@ -2092,6 +2095,8 @@ async function addInstagramPost(){
     carregarInstagramAdmin();
   }catch(e){
     msg.textContent='Erro ao adicionar post';
+  }finally{
+    btn.disabled=false;
   }
 }
 async function excluirInstagramPost(id){
