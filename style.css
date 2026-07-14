@@ -1328,6 +1328,38 @@ section[id], footer[id] { scroll-margin-top: 90px; }
   border-color: var(--ouro);
   box-shadow: 0 4px 16px rgba(200,148,26,.35);
 }
+
+/* ===== FILTROS DE CATEGORIA ===== */
+.categoria-filtros {
+  display: flex;
+  gap: .6rem;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 2.5rem;
+  flex-wrap: wrap;
+}
+.categoria-filtro {
+  padding: .45rem 1.3rem;
+  border-radius: 50px;
+  border: 1.5px solid rgba(200,148,26,.4);
+  background: transparent;
+  color: var(--choco-claro);
+  font-family: 'Nunito', sans-serif;
+  font-weight: 700;
+  font-size: .85rem;
+  cursor: pointer;
+  transition: all .2s;
+}
+.categoria-filtro:hover {
+  border-color: var(--ouro);
+  color: var(--texto);
+  background: var(--bege);
+}
+.categoria-filtro.ativo {
+  background: var(--choco);
+  color: #fff;
+  border-color: var(--choco);
+}
 /* ===== MODAL TIPO CHOCOLATE ===== */
 .tipo-choco-box {
   max-width: 480px;

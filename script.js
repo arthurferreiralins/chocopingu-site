@@ -396,8 +396,10 @@ function mudarAba(aba) {
   const gridCopa  = document.getElementById('gridCopa');
   const tabTodos  = document.getElementById('tabTodos');
   const tabCopa   = document.getElementById('tabCopa');
+  const filtrosCat = document.getElementById('categoriaFiltros');
   if (aba === 'copa') {
     gridTodos.classList.add('hidden');
+    if (filtrosCat) filtrosCat.classList.add('hidden');
     gridCopa.classList.remove('hidden');
     tabTodos.classList.remove('ativo');
     tabCopa.classList.add('ativo');
@@ -405,6 +407,7 @@ function mudarAba(aba) {
   } else {
     gridCopa.classList.add('hidden');
     gridTodos.classList.remove('hidden');
+    if (filtrosCat) filtrosCat.classList.remove('hidden');
     tabCopa.classList.remove('ativo');
     tabTodos.classList.add('ativo');
   }
