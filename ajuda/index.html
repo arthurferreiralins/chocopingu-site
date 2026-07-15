@@ -77,6 +77,51 @@
     .ajuda-hero h1 { font-size: clamp(1.9rem, 4.5vw, 2.9rem); line-height: 1.15; margin-bottom: .8rem; }
     .ajuda-hero p { color: var(--cinza); font-size: 1.05rem; line-height: 1.6; }
 
+    /* BUSCA */
+    .busca-ajuda {
+      max-width: 480px; margin: 1.8rem auto 0;
+      position: relative;
+    }
+    .busca-ajuda input {
+      width: 100%; font-family: 'Nunito', sans-serif;
+      font-size: 1rem; font-weight: 600; color: var(--texto);
+      padding: .95rem 1.4rem .95rem 3rem;
+      border-radius: 50px; border: 2px solid rgba(107,51,0,.15);
+      background: var(--branco); box-shadow: var(--sombra);
+      transition: border-color .2s, box-shadow .2s;
+    }
+    .busca-ajuda input:focus {
+      outline: none; border-color: var(--ouro);
+      box-shadow: 0 8px 28px rgba(200,148,26,.25);
+    }
+    .busca-ajuda input::placeholder { color: var(--cinza); font-weight: 600; }
+    .busca-icone {
+      position: absolute; left: 1.3rem; top: 50%; transform: translateY(-50%);
+      font-size: 1.05rem; pointer-events: none; opacity: .55;
+    }
+    .busca-limpar {
+      position: absolute; right: .6rem; top: 50%; transform: translateY(-50%);
+      width: 30px; height: 30px; border-radius: 50%; border: none; cursor: pointer;
+      background: var(--bege); color: var(--choco-claro); font-size: 1rem; font-weight: 800;
+      display: none; align-items: center; justify-content: center;
+      transition: background .2s;
+    }
+    .busca-limpar:hover { background: var(--ouro-claro); color: var(--choco); }
+    .busca-limpar.mostrar { display: flex; }
+    .busca-contador {
+      margin-top: .6rem; font-size: .85rem; color: var(--cinza); font-weight: 700;
+      min-height: 1.1em;
+    }
+    .faq-sem-resultado {
+      display: none; text-align: center; padding: 2.5rem 1.5rem;
+      background: var(--branco); border: 1px dashed rgba(107,51,0,.25);
+      border-radius: 16px; color: var(--cinza);
+    }
+    .faq-sem-resultado.mostrar { display: block; }
+    .faq-sem-resultado strong { display: block; color: var(--texto); font-size: 1.05rem; margin-bottom: .4rem; }
+    .faq-sem-resultado a { color: var(--ouro-escuro); font-weight: 800; }
+    mark.busca-marca { background: rgba(200,148,26,.35); color: inherit; border-radius: 3px; padding: 0 .1em; }
+
     /* PASSOS */
     .como-pedir { padding: 3rem 5% 4rem; background: var(--choco-mid); text-align: center; }
     .como-pedir h2 { color: var(--branco); font-size: clamp(1.6rem, 3.5vw, 2.2rem); margin-bottom: .5rem; }
@@ -184,6 +229,12 @@
     <span class="section-tag">Estamos aqui pra ajudar</span>
     <h1>Central de <span>Ajuda</span></h1>
     <p>Tudo o que você precisa saber pra comprar na Chocopingu: como fazer o pedido, formas de pagamento, Chocopontos e entrega.</p>
+    <div class="busca-ajuda">
+      <span class="busca-icone">🔍</span>
+      <input type="search" id="buscaFaqInput" placeholder="Pesquise sua dúvida... ex: pix, entrega, chocopontos" autocomplete="off" aria-label="Pesquisar na Central de Ajuda" />
+      <button type="button" class="busca-limpar" id="buscaFaqLimpar" aria-label="Limpar busca">&times;</button>
+    </div>
+    <p class="busca-contador" id="buscaFaqContador"></p>
   </section>
 
   <section class="como-pedir">
@@ -215,6 +266,11 @@
   </section>
 
   <section class="faq-section">
+
+    <div class="faq-sem-resultado" id="faqSemResultado">
+      <strong>Nenhuma resposta encontrada 🍫</strong>
+      <p>Tenta buscar com outra palavra ou fale direto com a gente no <a href="https://wa.me/5581981553632" target="_blank" rel="noopener">WhatsApp</a>.</p>
+    </div>
 
     <div class="faq-grupo">
       <h2 class="faq-grupo-titulo"><span class="emoji">🛍️</span> Pedidos</h2>
@@ -312,6 +368,64 @@
       <p>&copy; 2026 Chocopingu. Todos os direitos reservados.</p>
     </div>
   </footer>
+
+  <script>
+    (function () {
+      var input = document.getElementById('buscaFaqInput');
+      var limparBtn = document.getElementById('buscaFaqLimpar');
+      var contador = document.getElementById('buscaFaqContador');
+      var semResultado = document.getElementById('faqSemResultado');
+      var grupos = Array.prototype.slice.call(document.querySelectorAll('.faq-grupo'));
+
+      function normalizar(txt) {
+        return (txt || '')
+          .toString()
+          .normalize('NFD')
+          .replace(/[̀-ͯ]/g, '')
+          .toLowerCase()
+          .trim();
+      }
+
+      function filtrar() {
+        var termo = normalizar(input.value);
+        limparBtn.classList.toggle('mostrar', termo.length > 0);
+
+        var totalVisiveis = 0;
+
+        grupos.forEach(function (grupo) {
+          var itens = Array.prototype.slice.call(grupo.querySelectorAll('.faq-item'));
+          var visiveisNoGrupo = 0;
+
+          itens.forEach(function (item) {
+            var texto = normalizar(item.textContent);
+            var bate = termo === '' || texto.indexOf(termo) !== -1;
+            item.style.display = bate ? '' : 'none';
+            if (bate) visiveisNoGrupo++;
+          });
+
+          grupo.style.display = visiveisNoGrupo > 0 ? '' : 'none';
+          totalVisiveis += visiveisNoGrupo;
+        });
+
+        semResultado.classList.toggle('mostrar', termo !== '' && totalVisiveis === 0);
+
+        if (termo === '') {
+          contador.textContent = '';
+        } else {
+          contador.textContent = totalVisiveis === 0
+            ? ''
+            : totalVisiveis + (totalVisiveis === 1 ? ' resposta encontrada' : ' respostas encontradas');
+        }
+      }
+
+      input.addEventListener('input', filtrar);
+      limparBtn.addEventListener('click', function () {
+        input.value = '';
+        filtrar();
+        input.focus();
+      });
+    })();
+  </script>
 
 </body>
 </html>
