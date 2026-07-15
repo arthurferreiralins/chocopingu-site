@@ -196,11 +196,17 @@
         <div class="pilar-icone">&#9829;</div>
         <h3>Feito com Amor</h3>
         <p>Cada embalagem é criada com cuidado especial para trazer alegria a cada mordida.</p>
+        <button class="btn-play-video" id="btnAbrirVideoAmor" aria-label="Ver vídeo feito com amor">
+          <span class="play-icon">&#9654;</span> Ver vídeo
+        </button>
       </div>
       <div class="pilar reveal">
         <div class="pilar-icone">&#9733;</div>
         <h3>Qualidade Premium</h3>
         <p>Padrão de excelência do sabor à apresentação, em toda a nossa linha de chocolates.</p>
+        <button class="btn-play-video" id="btnAbrirVideoPremium" aria-label="Ver vídeo qualidade premium">
+          <span class="play-icon">&#9654;</span> Ver vídeo
+        </button>
       </div>
     </div>
   </section>
@@ -437,6 +443,28 @@
       <h2 class="video-titulo">&#9670; Cacau Puro</h2>
       <video id="playerCacau" autoplay muted loop playsinline style="width:100%;border-radius:12px;margin-top:.8rem;pointer-events:none;">
         <source src="imagens/videu cacau.mp4" type="video/mp4" />
+      </video>
+    </div>
+  </div>
+
+  <!-- ===== MODAL VÍDEO FEITO COM AMOR ===== -->
+  <div class="modal-overlay" id="modalVideoAmor">
+    <div class="modal-box video-box">
+      <button class="modal-fechar" id="fecharVideoAmor">&#10005;</button>
+      <h2 class="video-titulo">&#9829; Feito com Amor</h2>
+      <video id="playerAmor" autoplay muted loop playsinline style="width:100%;border-radius:12px;margin-top:.8rem;pointer-events:none;">
+        <source src="imagens/video-feito-com-amor.mp4" type="video/mp4" />
+      </video>
+    </div>
+  </div>
+
+  <!-- ===== MODAL VÍDEO QUALIDADE PREMIUM ===== -->
+  <div class="modal-overlay" id="modalVideoPremium">
+    <div class="modal-box video-box">
+      <button class="modal-fechar" id="fecharVideoPremium">&#10005;</button>
+      <h2 class="video-titulo">&#9733; Qualidade Premium</h2>
+      <video id="playerPremium" autoplay muted loop playsinline style="width:100%;border-radius:12px;margin-top:.8rem;pointer-events:none;">
+        <source src="imagens/video-qualidade-premium.mp4" type="video/mp4" />
       </video>
     </div>
   </div>

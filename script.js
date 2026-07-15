@@ -675,6 +675,46 @@ document.getElementById('btnAbrirVideo').addEventListener('click', abrirVideo);
 document.getElementById('fecharVideo').addEventListener('click', fecharVideo);
 modalVideo.addEventListener('click', e => { if (e.target === modalVideo) fecharVideo(); });
 
+/* ===== MODAL VÍDEO FEITO COM AMOR ===== */
+const modalVideoAmor = document.getElementById('modalVideoAmor');
+const playerAmor = document.getElementById('playerAmor');
+
+function abrirVideoAmor() {
+  modalVideoAmor.classList.add('aberto');
+  document.body.style.overflow = 'hidden';
+  playerAmor.currentTime = 0;
+  playerAmor.play();
+}
+function fecharVideoAmor() {
+  modalVideoAmor.classList.remove('aberto');
+  playerAmor.pause();
+  document.body.style.overflow = '';
+}
+
+document.getElementById('btnAbrirVideoAmor').addEventListener('click', abrirVideoAmor);
+document.getElementById('fecharVideoAmor').addEventListener('click', fecharVideoAmor);
+modalVideoAmor.addEventListener('click', e => { if (e.target === modalVideoAmor) fecharVideoAmor(); });
+
+/* ===== MODAL VÍDEO QUALIDADE PREMIUM ===== */
+const modalVideoPremium = document.getElementById('modalVideoPremium');
+const playerPremium = document.getElementById('playerPremium');
+
+function abrirVideoPremium() {
+  modalVideoPremium.classList.add('aberto');
+  document.body.style.overflow = 'hidden';
+  playerPremium.currentTime = 0;
+  playerPremium.play();
+}
+function fecharVideoPremium() {
+  modalVideoPremium.classList.remove('aberto');
+  playerPremium.pause();
+  document.body.style.overflow = '';
+}
+
+document.getElementById('btnAbrirVideoPremium').addEventListener('click', abrirVideoPremium);
+document.getElementById('fecharVideoPremium').addEventListener('click', fecharVideoPremium);
+modalVideoPremium.addEventListener('click', e => { if (e.target === modalVideoPremium) fecharVideoPremium(); });
+
 /* ===== INSTAGRAM: feed de posts (embed oficial via embed.js, sem scraping/API) ===== */
 function processarEmbedsInstagram(tentativas) {
   if (window.instgrm && window.instgrm.Embeds) {
