@@ -61,6 +61,30 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 .cwa{background:rgba(76,175,80,.12);color:#81C784;border:1px solid rgba(76,175,80,.18)}
 .cig{background:rgba(233,30,99,.10);color:#F48FB1;border:1px solid rgba(233,30,99,.18)}
 
+/* GLOBAL SEARCH (sidebar) */
+.sb-search{position:relative;padding:0 4px 14px}
+.sb-search input{
+  width:100%;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);
+  border-radius:10px;padding:9px 12px;color:#fff;font-size:12.5px;font-family:inherit
+}
+.sb-search input::placeholder{color:rgba(255,255,255,.4)}
+.sb-search input:focus{outline:none;border-color:var(--gold);background:rgba(255,255,255,.13)}
+.gs-results{
+  position:absolute;top:calc(100% - 6px);left:4px;right:4px;
+  background:var(--card);border-radius:12px;box-shadow:var(--sh2);
+  padding:8px;max-height:70vh;overflow-y:auto;z-index:200;display:none
+}
+.gs-results.on{display:block}
+.gs-group{margin-bottom:4px}
+.gs-group:last-child{margin-bottom:0}
+.gs-glabel{font-size:10px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:.5px;padding:6px 8px 4px}
+.gs-item{display:block;width:100%;text-align:left;background:none;border:none;padding:8px 10px;border-radius:8px;cursor:pointer;font-size:12.5px;color:var(--br);font-family:inherit}
+.gs-item:hover{background:#FDFAF7}
+.gs-item small{display:block;color:#999;font-size:11px;margin-top:1px;font-weight:400}
+.gs-empty{padding:10px 8px;font-size:12px;color:#aaa;text-align:center}
+.row-highlight{animation:rowFlash 1.8s ease}
+@keyframes rowFlash{0%,15%{background:#FFF3CD !important}100%{background:transparent}}
+
 /* NAV ITEMS (sidebar) */
 .tab{
   display:flex;align-items:center;gap:10px;
@@ -358,16 +382,22 @@ tr:hover td{background:#FDFAF7}tr:last-child td{border-bottom:none}
         <div class="sb-tag">"Chocolate que diverte!"</div>
       </div>
     </div>
+    <div class="sb-search">
+      <input type="text" id="global-search" placeholder="🔎 Buscar produto, pedido, cliente..." autocomplete="off"
+        oninput="buscarGlobal()" onfocus="buscarGlobal()"
+        onkeydown="if(event.key==='Escape'){this.value='';fecharBuscaGlobal();this.blur();}">
+      <div class="gs-results" id="gs-results"></div>
+    </div>
     <nav class="sb-nav">
-      <button class="tab on"  onclick="go(this,'cat')"><span class="ti">🏪</span> Catálogo</button>
-      <button class="tab"     onclick="go(this,'vend')"><span class="ti">🛒</span> Vendas</button>
-      <button class="tab"     onclick="go(this,'dash')"><span class="ti">📊</span> Dashboard</button>
-      <button class="tab"     onclick="go(this,'graf')"><span class="ti">📈</span> Gráficos</button>
-      <button class="tab"     onclick="go(this,'gast')"><span class="ti">💸</span> Gastos</button>
-      <button class="tab"     onclick="go(this,'econ')"><span class="ti">💡</span> Economia</button>
-      <button class="tab"     onclick="go(this,'ped');carregarPedidos()"><span class="ti">📋</span> Pedidos</button>
-      <button class="tab"     onclick="go(this,'copaprod')"><span class="ti">⚽</span> Produtos Copa</button>
-      <button class="tab"     onclick="go(this,'insta');carregarInstagramAdmin()"><span class="ti">📸</span> Instagram</button>
+      <button class="tab on"  data-tab="cat"      onclick="go(this,'cat')"><span class="ti">🏪</span> Catálogo</button>
+      <button class="tab"     data-tab="vend"     onclick="go(this,'vend')"><span class="ti">🛒</span> Vendas</button>
+      <button class="tab"     data-tab="dash"     onclick="go(this,'dash')"><span class="ti">📊</span> Dashboard</button>
+      <button class="tab"     data-tab="graf"     onclick="go(this,'graf')"><span class="ti">📈</span> Gráficos</button>
+      <button class="tab"     data-tab="gast"     onclick="go(this,'gast')"><span class="ti">💸</span> Gastos</button>
+      <button class="tab"     data-tab="econ"     onclick="go(this,'econ')"><span class="ti">💡</span> Economia</button>
+      <button class="tab"     data-tab="ped"      onclick="go(this,'ped');carregarPedidos()"><span class="ti">📋</span> Pedidos</button>
+      <button class="tab"     data-tab="copaprod" onclick="go(this,'copaprod')"><span class="ti">⚽</span> Produtos Copa</button>
+      <button class="tab"     data-tab="insta"    onclick="go(this,'insta');carregarInstagramAdmin()"><span class="ti">📸</span> Instagram</button>
     </nav>
     <div class="sb-spacer"></div>
     <button class="tab" style="color:#F1948A" onclick="logout()"><span class="ti">🚪</span> Sair</button>
@@ -1149,6 +1179,8 @@ const DEF={
 const DBKEY='chocopingu_db_v2';
 let ch={};
 let nid={g:100,v:200,p:20};
+let PEDIDOS_CACHE=null;
+let GS_PRODUTOS=[],GS_PEDIDOS=[],GS_CLIENTES=[];
 
 function loadDB(){
   try{
@@ -1404,6 +1436,7 @@ async function carregarStatsRapidas(){
     const resp=await fetch('/api/admin-orders');
     const data=await resp.json();
     if(!resp.ok||!Array.isArray(data))throw new Error('resposta inválida');
+    PEDIDOS_CACHE=data;
     const statusPago=['paid','processing','pago','entregue'];
     const pagos=data.filter(p=>statusPago.includes(p.status));
     const fat=pagos.reduce((s,p)=>s+(p.total_centavos||0),0);
@@ -2070,6 +2103,126 @@ function buildVDist(vendPorProd){
   });
 }
 
+// ── BUSCA GLOBAL ──
+async function fetchPedidosCache(){
+  if(PEDIDOS_CACHE)return PEDIDOS_CACHE;
+  const resp=await fetch('/api/admin-orders');
+  const data=await resp.json();
+  if(!resp.ok||!Array.isArray(data))throw new Error('Erro ao buscar pedidos');
+  PEDIDOS_CACHE=data;
+  return data;
+}
+function goToTab(name){
+  const btn=document.querySelector('.tab[data-tab="'+name+'"]');
+  if(btn)go(btn,name);
+}
+function normBusca(s){return (s||'').toString().toLowerCase();}
+let buscaGlobalTimer=null;
+function buscarGlobal(){
+  clearTimeout(buscaGlobalTimer);
+  buscaGlobalTimer=setTimeout(renderBuscaGlobal,150);
+}
+function fecharBuscaGlobal(){
+  document.getElementById('gs-results').classList.remove('on');
+}
+async function renderBuscaGlobal(){
+  const q=normBusca(document.getElementById('global-search').value.trim());
+  const cont=document.getElementById('gs-results');
+  if(!q){cont.classList.remove('on');cont.innerHTML='';return;}
+
+  GS_PRODUTOS=[
+    ...db.produtos.filter(p=>normBusca(p.nome).includes(q)).map(p=>({nome:p.nome,sub:'Catálogo',tab:'cat'})),
+    ...(db.produtosCopa||[]).filter(p=>normBusca(p.nome).includes(q)).map(p=>({nome:p.nome,sub:'Produtos Copa',tab:'copaprod'}))
+  ].slice(0,6);
+
+  GS_PEDIDOS=[];GS_CLIENTES=[];
+  try{
+    const data=await fetchPedidosCache();
+    GS_PEDIDOS=data.filter(p=>
+      normBusca(p.nome_cliente).includes(q)||
+      normBusca(p.order_id).includes(q)||
+      normBusca(p.email_cliente).includes(q)||
+      normBusca(p.cpf_cliente).includes(q)
+    ).slice(0,6);
+
+    const mapaClientes=new Map();
+    data.forEach(p=>{
+      const chave=p.cpf_cliente||p.email_cliente||p.nome_cliente;
+      if(!chave||mapaClientes.has(chave))return;
+      mapaClientes.set(chave,{nome:p.nome_cliente||'Cliente',identificador:chave,email:p.email_cliente,cpf:p.cpf_cliente});
+    });
+    GS_CLIENTES=[...mapaClientes.values()].filter(c=>
+      normBusca(c.nome).includes(q)||normBusca(c.email).includes(q)||normBusca(c.cpf).includes(q)
+    ).slice(0,6);
+  }catch(e){/* API de pedidos indisponível: mantém só resultados de produtos */}
+
+  // se a busca demorou e o campo já mudou/esvaziou, não sobrescreve
+  if(normBusca(document.getElementById('global-search').value.trim())!==q)return;
+
+  if(!GS_PRODUTOS.length&&!GS_PEDIDOS.length&&!GS_CLIENTES.length){
+    cont.innerHTML='<div class="gs-empty">Nenhum resultado encontrado.</div>';
+    cont.classList.add('on');
+    return;
+  }
+
+  const metodoLabel={pix:'PIX',boleto:'Boleto',cartao:'Cartão',chocopontos:'⭐ Chocopontos'};
+  let html='';
+  if(GS_PRODUTOS.length){
+    html+='<div class="gs-group"><div class="gs-glabel">Produtos</div>'+
+      GS_PRODUTOS.map((p,i)=>`<button class="gs-item" onclick="selecionarBusca('produto',${i})">${p.nome}<small>${p.sub}</small></button>`).join('')+
+      '</div>';
+  }
+  if(GS_PEDIDOS.length){
+    html+='<div class="gs-group"><div class="gs-glabel">Pedidos</div>'+
+      GS_PEDIDOS.map((p,i)=>`<button class="gs-item" onclick="selecionarBusca('pedido',${i})">${p.nome_cliente||'Cliente'}<small>${metodoLabel[p.metodo]||p.metodo||'—'} · ${p.total_centavos?f(p.total_centavos/100):'—'}</small></button>`).join('')+
+      '</div>';
+  }
+  if(GS_CLIENTES.length){
+    html+='<div class="gs-group"><div class="gs-glabel">Clientes</div>'+
+      GS_CLIENTES.map((c,i)=>`<button class="gs-item" onclick="selecionarBusca('cliente',${i})">${c.nome}<small>${c.email||('CPF '+(c.cpf||'—'))}</small></button>`).join('')+
+      '</div>';
+  }
+  cont.innerHTML=html;
+  cont.classList.add('on');
+}
+async function selecionarBusca(tipo,i){
+  document.getElementById('global-search').value='';
+  fecharBuscaGlobal();
+  if(tipo==='produto'){
+    const p=GS_PRODUTOS[i];
+    if(p)goToTab(p.tab);
+    return;
+  }
+  if(tipo==='pedido'){
+    const p=GS_PEDIDOS[i];
+    if(!p)return;
+    goToTab('ped');
+    await carregarPedidos();
+    destacarLinhaPedido(p.id);
+    return;
+  }
+  if(tipo==='cliente'){
+    const c=GS_CLIENTES[i];
+    if(!c)return;
+    goToTab('ped');
+    await carregarPedidos();
+    destacarLinhaPedido(null,c.identificador);
+  }
+}
+function destacarLinhaPedido(id,clienteId){
+  const tbody=document.getElementById('ped-tbody');
+  if(!tbody)return;
+  const linhas=[...tbody.querySelectorAll('tr[data-oid]')];
+  const alvo=id?linhas.filter(tr=>tr.dataset.oid===id):linhas.filter(tr=>tr.dataset.cliente===clienteId);
+  if(!alvo.length)return;
+  alvo[0].scrollIntoView({behavior:'smooth',block:'center'});
+  alvo.forEach(tr=>{tr.classList.remove('row-highlight');void tr.offsetWidth;tr.classList.add('row-highlight');});
+}
+document.addEventListener('click',e=>{
+  const wrap=document.querySelector('.sb-search');
+  if(wrap&&!wrap.contains(e.target))fecharBuscaGlobal();
+});
+
 // ── PEDIDOS ONLINE ──
 async function carregarPedidos(){
   const loading=document.getElementById('ped-loading');
@@ -2082,6 +2235,7 @@ async function carregarPedidos(){
     const resp=await fetch('/api/admin-orders');
     const data=await resp.json();
     if(!resp.ok){throw new Error(data.error||'Erro ao buscar pedidos');}
+    PEDIDOS_CACHE=Array.isArray(data)?data:[];
     loading.style.display='none';
     if(!Array.isArray(data)||data.length===0){vazio.style.display='block';return;}
     // stats
@@ -2108,7 +2262,8 @@ async function carregarPedidos(){
       const total=p.total_centavos?'R$ '+(p.total_centavos/100).toFixed(2).replace('.',','):'—';
       const statusAtual=statusPagoMap[p.status]||'pendente';
       const opcoesHtml=Object.keys(statusOpcoes).map(k=>`<option value="${k}"${k===statusAtual?' selected':''}>${statusOpcoes[k]}</option>`).join('');
-      return `<tr>
+      const clienteId=p.cpf_cliente||p.email_cliente||p.nome_cliente||'';
+      return `<tr data-oid="${p.id}" data-cliente="${clienteId}">
         <td style="font-size:12px;white-space:nowrap">${dt}</td>
         <td style="font-size:11px;color:#888">${(p.order_id||'').slice(-8)}</td>
         <td>${p.nome_cliente||'—'}<br><span style="font-size:11px;color:#888">${p.metodo==='chocopontos'?('CPF '+(p.cpf_cliente||'—')):(p.email_cliente||'')}</span></td>
