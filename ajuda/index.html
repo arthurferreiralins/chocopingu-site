@@ -121,6 +121,41 @@
     .faq-sem-resultado strong { display: block; color: var(--texto); font-size: 1.05rem; margin-bottom: .4rem; }
     .faq-sem-resultado a { color: var(--ouro-escuro); font-weight: 800; }
     mark.busca-marca { background: rgba(200,148,26,.35); color: inherit; border-radius: 3px; padding: 0 .1em; }
+    .link-perguntar {
+      background: none; border: none; padding: 0; font: inherit;
+      color: var(--ouro-escuro); font-weight: 800; text-decoration: underline; cursor: pointer;
+    }
+
+    /* PERGUNTE DIRETO */
+    .duvida-section { padding: 1rem 5% 4rem; max-width: 700px; margin: 0 auto; text-align: center; }
+    .duvida-section .sub { color: var(--cinza); max-width: 520px; margin: 0 auto 2rem; line-height: 1.6; }
+    .form-duvida {
+      display: flex; flex-direction: column; gap: .9rem; text-align: left;
+      background: var(--branco); border: 1px solid rgba(107,51,0,.12);
+      border-radius: var(--radius); padding: 1.6rem; box-shadow: var(--sombra);
+    }
+    .form-duvida input, .form-duvida textarea {
+      font-family: 'Nunito', sans-serif; font-size: .95rem; color: var(--texto);
+      padding: .8rem 1rem; border-radius: 12px; border: 2px solid rgba(107,51,0,.15); resize: vertical;
+    }
+    .form-duvida input:focus, .form-duvida textarea:focus { outline: none; border-color: var(--ouro); }
+    .form-duvida .btn-ouro { align-self: flex-end; border: none; }
+    .duvida-status { min-height: 1.3em; margin-top: .9rem; font-weight: 700; font-size: .9rem; }
+    .duvida-status.ok { color: #2e7d32; }
+    .duvida-status.erro { color: #c0392b; }
+    .duvida-status.info { color: var(--ouro-escuro); }
+    .duvidas-publicas { margin-top: 2.6rem; text-align: left; }
+    .duvidas-publicas h3 { font-family: 'Playfair Display', serif; font-size: 1.2rem; margin-bottom: 1rem; color: var(--choco-claro); }
+    .duvida-card {
+      background: var(--bege); border-left: 4px solid var(--ouro);
+      border-radius: 12px; padding: 1rem 1.3rem; margin-bottom: .8rem;
+    }
+    .duvida-card .dq { font-weight: 800; margin-bottom: .4rem; }
+    .duvida-card .da { color: var(--cinza); font-size: .92rem; line-height: 1.55; }
+    .duvida-card .db {
+      display: block; margin-top: .5rem; font-size: .74rem; color: var(--ouro-escuro);
+      font-weight: 800; text-transform: uppercase; letter-spacing: .5px;
+    }
 
     /* PASSOS */
     .como-pedir { padding: 3rem 5% 4rem; background: var(--choco-mid); text-align: center; }
@@ -269,7 +304,7 @@
 
     <div class="faq-sem-resultado" id="faqSemResultado">
       <strong>Nenhuma resposta encontrada 🍫</strong>
-      <p>Tenta buscar com outra palavra ou fale direto com a gente no <a href="https://wa.me/5581981553632" target="_blank" rel="noopener">WhatsApp</a>.</p>
+      <p>Tenta buscar com outra palavra, <button type="button" id="btnPerguntarAgora" class="link-perguntar">pergunte direto pra gente aqui embaixo</button> ou fale no <a href="https://wa.me/5581981553632" target="_blank" rel="noopener">WhatsApp</a>.</p>
     </div>
 
     <div class="faq-grupo">
@@ -350,6 +385,21 @@
 
   </section>
 
+  <section class="duvida-section" id="duvidaSection">
+    <span class="section-tag">Não encontrou sua resposta?</span>
+    <h2>Pergunte <span>direto pra gente</span></h2>
+    <p class="sub">Se já tiver resposta pronta, mostramos na hora. Senão, nossa equipe responde em breve e sua pergunta ajuda outros clientes também.</p>
+
+    <form id="formDuvida" class="form-duvida" autocomplete="off">
+      <input type="text" id="duvidaNome" placeholder="Seu nome (opcional)" maxlength="80" />
+      <textarea id="duvidaTexto" placeholder="Escreva sua pergunta aqui..." maxlength="500" rows="3" required></textarea>
+      <button type="submit" class="btn-ouro" id="btnEnviarDuvida">Enviar pergunta</button>
+    </form>
+    <p class="duvida-status" id="duvidaStatus"></p>
+
+    <div class="duvidas-publicas" id="duvidasPublicas"></div>
+  </section>
+
   <section class="ajuda-cta">
     <h2>Não encontrou sua resposta?</h2>
     <p>Fale direto com a gente, respondemos rapidinho.</p>
@@ -424,6 +474,135 @@
         filtrar();
         input.focus();
       });
+
+      window.limparBuscaFaq = function () {
+        input.value = '';
+        filtrar();
+      };
+    })();
+
+    (function () {
+      var form = document.getElementById('formDuvida');
+      var nomeInput = document.getElementById('duvidaNome');
+      var textoInput = document.getElementById('duvidaTexto');
+      var statusEl = document.getElementById('duvidaStatus');
+      var listaEl = document.getElementById('duvidasPublicas');
+      var btnEnviar = document.getElementById('btnEnviarDuvida');
+      var btnPerguntar = document.getElementById('btnPerguntarAgora');
+      var buscaInput = document.getElementById('buscaFaqInput');
+
+      var STOPWORDS = ['a','o','os','as','de','da','do','das','dos','e','é','pra','para','com','sem','um','uma','uns','umas','no','na','nos','nas','que','qual','quais','tem','têm','como','onde','quando','meu','minha','seu','sua','vou','vai','ou','se','por','em','ao','aos','esse','essa','isso','voces','vocês'];
+
+      function normalizar(txt) {
+        return (txt || '')
+          .toString()
+          .normalize('NFD')
+          .replace(/[̀-ͯ]/g, '')
+          .toLowerCase()
+          .trim();
+      }
+
+      function tokenizar(txt) {
+        return normalizar(txt).split(/[^a-z0-9]+/).filter(function (w) {
+          return w.length > 2 && STOPWORDS.indexOf(w) === -1;
+        });
+      }
+
+      function escapeHtml(txt) {
+        var div = document.createElement('div');
+        div.textContent = txt || '';
+        return div.innerHTML;
+      }
+
+      function encontrarFaqCorrespondente(pergunta) {
+        var tokensPergunta = tokenizar(pergunta);
+        if (tokensPergunta.length === 0) return null;
+        var itens = Array.prototype.slice.call(document.querySelectorAll('.faq-item'));
+        var melhor = null, melhorScore = 0;
+        itens.forEach(function (item) {
+          var summary = item.querySelector('summary');
+          var tokensItem = tokenizar(summary ? summary.textContent : '');
+          var comuns = tokensPergunta.filter(function (t) { return tokensItem.indexOf(t) !== -1; });
+          var score = comuns.length / tokensPergunta.length;
+          if (comuns.length >= 2 && score > melhorScore) {
+            melhorScore = score;
+            melhor = item;
+          }
+        });
+        return melhorScore >= 0.5 ? melhor : null;
+      }
+
+      async function carregarDuvidasPublicas() {
+        try {
+          var resp = await fetch('/api/perguntas');
+          var data = await resp.json();
+          if (!resp.ok || !Array.isArray(data) || data.length === 0) { listaEl.innerHTML = ''; return; }
+          var html = '<h3>Perguntas de outros clientes</h3>';
+          data.forEach(function (d) {
+            html += '<div class="duvida-card"><div class="dq">' + escapeHtml(d.pergunta) + '</div>'
+              + '<div class="da">' + escapeHtml(d.resposta) + '</div>'
+              + '<span class="db">Respondido pela equipe Chocopingu</span></div>';
+          });
+          listaEl.innerHTML = html;
+        } catch (e) {
+          listaEl.innerHTML = '';
+        }
+      }
+
+      form.addEventListener('submit', async function (e) {
+        e.preventDefault();
+        var pergunta = textoInput.value.trim();
+        if (pergunta.length < 5) {
+          statusEl.textContent = 'Escreva a pergunta completa, com pelo menos 5 letras.';
+          statusEl.className = 'duvida-status erro';
+          return;
+        }
+
+        var faqMatch = encontrarFaqCorrespondente(pergunta);
+        if (faqMatch) {
+          if (window.limparBuscaFaq) window.limparBuscaFaq();
+          faqMatch.open = true;
+          faqMatch.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          faqMatch.style.transition = 'box-shadow .3s';
+          faqMatch.style.boxShadow = '0 0 0 3px var(--ouro)';
+          setTimeout(function () { faqMatch.style.boxShadow = ''; }, 1600);
+          statusEl.textContent = 'Boa notícia! Já temos essa resposta ali em cima ↑';
+          statusEl.className = 'duvida-status info';
+          return;
+        }
+
+        btnEnviar.disabled = true;
+        statusEl.textContent = 'Enviando...';
+        statusEl.className = 'duvida-status info';
+        try {
+          var resp = await fetch('/api/perguntas', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ pergunta: pergunta, nome: nomeInput.value.trim() })
+          });
+          var data = await resp.json();
+          if (!resp.ok) throw new Error(data.error || 'Erro ao enviar pergunta');
+          statusEl.textContent = 'Pergunta enviada! Assim que a equipe responder, ela aparece aqui embaixo.';
+          statusEl.className = 'duvida-status ok';
+          form.reset();
+        } catch (err) {
+          statusEl.textContent = err.message || 'Erro ao enviar pergunta, tenta de novo.';
+          statusEl.className = 'duvida-status erro';
+        } finally {
+          btnEnviar.disabled = false;
+        }
+      });
+
+      if (btnPerguntar) {
+        btnPerguntar.addEventListener('click', function () {
+          var termo = buscaInput ? buscaInput.value.trim() : '';
+          textoInput.value = termo;
+          document.getElementById('duvidaSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
+          textoInput.focus();
+        });
+      }
+
+      carregarDuvidasPublicas();
     })();
   </script>
 

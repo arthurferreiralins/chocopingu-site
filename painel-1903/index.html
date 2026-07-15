@@ -396,6 +396,7 @@ tr:hover td{background:#FDFAF7}tr:last-child td{border-bottom:none}
       <button class="tab"     data-tab="gast"     onclick="go(this,'gast')"><span class="ti">💸</span> Gastos</button>
       <button class="tab"     data-tab="econ"     onclick="go(this,'econ')"><span class="ti">💡</span> Economia</button>
       <button class="tab"     data-tab="ped"      onclick="go(this,'ped');carregarPedidos()"><span class="ti">📋</span> Pedidos</button>
+      <button class="tab"     data-tab="duv"      onclick="go(this,'duv');carregarDuvidas()"><span class="ti">❓</span> Dúvidas</button>
       <button class="tab"     data-tab="copaprod" onclick="go(this,'copaprod')"><span class="ti">⚽</span> Produtos Copa</button>
       <button class="tab"     data-tab="insta"    onclick="go(this,'insta');carregarInstagramAdmin()"><span class="ti">📸</span> Instagram</button>
     </nav>
@@ -1097,6 +1098,38 @@ tr:hover td{background:#FDFAF7}tr:last-child td{border-bottom:none}
           </table>
         </div>
         <div id="ped-vazio" style="display:none;padding:32px;text-align:center;color:#aaa">Nenhum pedido encontrado.</div>
+      </div>
+    </div>
+
+    <!-- ── DÚVIDAS ── -->
+    <div id="s-duv" class="sec">
+      <div class="ptitle">❓ Dúvidas de Clientes</div>
+      <div class="psub">Perguntas enviadas direto pela página de Ajuda. Ao responder, a pergunta some publicamente na lista "Perguntas de clientes" da /ajuda.</div>
+      <div class="crow">
+        <div class="card cv"><span class="cic">💬</span><span class="clb">Total</span><span class="cval" id="duv-total">—</span></div>
+        <div class="card cr"><span class="cic">⏳</span><span class="clb">Pendentes</span><span class="cval" id="duv-pend">—</span></div>
+        <div class="card ca"><span class="cic">✅</span><span class="clb">Respondidas</span><span class="cval pos" id="duv-resp">—</span></div>
+      </div>
+      <div class="tbox">
+        <div class="thdr">
+          <h3>Perguntas Recebidas</h3>
+          <button class="btn-sm" onclick="carregarDuvidas()" style="background:var(--gold);color:#000;border:none;padding:6px 14px;border-radius:8px;cursor:pointer;font-weight:700">↺ Atualizar</button>
+        </div>
+        <div id="duv-loading" style="padding:24px;text-align:center;color:#888">Carregando dúvidas...</div>
+        <div id="duv-erro" style="display:none;padding:16px;color:#c0392b;background:#fdf;border-radius:8px;margin:12px 0"></div>
+        <div id="duv-tabela" style="display:none">
+          <table>
+            <thead><tr>
+              <th>Data</th>
+              <th>Cliente</th>
+              <th>Pergunta</th>
+              <th style="width:280px">Resposta</th>
+              <th>Ações</th>
+            </tr></thead>
+            <tbody id="duv-tbody"></tbody>
+          </table>
+        </div>
+        <div id="duv-vazio" style="display:none;padding:32px;text-align:center;color:#aaa">Nenhuma pergunta recebida ainda.</div>
       </div>
     </div>
 
@@ -2302,6 +2335,72 @@ async function excluirPedido(id){
     carregarPedidos();
   }catch(e){
     alert('Erro ao excluir pedido: '+e.message);
+  }
+}
+
+// ── DÚVIDAS ──
+async function carregarDuvidas(){
+  const loading=document.getElementById('duv-loading');
+  const tabela=document.getElementById('duv-tabela');
+  const vazio=document.getElementById('duv-vazio');
+  const erro=document.getElementById('duv-erro');
+  const tbody=document.getElementById('duv-tbody');
+  loading.style.display='block';tabela.style.display='none';vazio.style.display='none';erro.style.display='none';
+  try{
+    const resp=await fetch('/api/admin-perguntas');
+    const data=await resp.json();
+    if(!resp.ok){throw new Error(data.error||'Erro ao buscar dúvidas');}
+    loading.style.display='none';
+    if(!Array.isArray(data)||data.length===0){vazio.style.display='block';return;}
+    const total=data.length;
+    const pend=data.filter(d=>d.status!=='respondida').length;
+    document.getElementById('duv-total').textContent=total;
+    document.getElementById('duv-pend').textContent=pend;
+    document.getElementById('duv-resp').textContent=total-pend;
+    tbody.innerHTML=data.map(d=>{
+      const dt=d.created_at?new Date(d.created_at).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',year:'2-digit',hour:'2-digit',minute:'2-digit'}):'—';
+      const respostaCol=d.status==='respondida'
+        ? `<div style="font-size:12px;color:#333;white-space:pre-wrap">${d.resposta}</div>`
+        : `<textarea id="dv-resp-${d.id}" rows="2" placeholder="Escreva a resposta..." style="width:100%;padding:6px 8px;border-radius:6px;border:1px solid #ccc;font-family:inherit;font-size:12px"></textarea>`;
+      const acoesCol=d.status==='respondida'
+        ? `<button class="btn-sm" onclick="excluirDuvida('${d.id}')" style="background:#A93226;color:#fff;border:none;padding:4px 10px;border-radius:6px;cursor:pointer">Excluir</button>`
+        : `<button class="btn-sm" onclick="responderDuvida('${d.id}')" style="background:var(--gold);color:#000;border:none;padding:4px 10px;border-radius:6px;cursor:pointer;font-weight:700">Responder</button>
+           <button class="btn-sm" onclick="excluirDuvida('${d.id}')" style="background:#A93226;color:#fff;border:none;padding:4px 10px;border-radius:6px;cursor:pointer;margin-top:4px">Excluir</button>`;
+      return `<tr data-did="${d.id}">
+        <td style="font-size:12px;white-space:nowrap">${dt}</td>
+        <td style="font-size:12px">${d.nome_cliente||'—'}</td>
+        <td style="font-size:13px;max-width:260px">${d.pergunta}</td>
+        <td>${respostaCol}</td>
+        <td style="white-space:nowrap">${acoesCol}</td>
+      </tr>`;
+    }).join('');
+    tabela.style.display='block';
+  }catch(e){
+    loading.style.display='none';erro.style.display='block';erro.textContent='Erro: '+e.message;
+  }
+}
+async function responderDuvida(id){
+  const textarea=document.getElementById('dv-resp-'+id);
+  const resposta=textarea.value.trim();
+  if(!resposta){alert('Escreva a resposta antes de enviar.');return;}
+  try{
+    const resp=await fetch('/api/admin-perguntas',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({id,resposta})});
+    if(!resp.ok){const data=await resp.json();throw new Error(data.error||'Erro ao salvar resposta');}
+    logAtividade('Pergunta de cliente respondida');
+    carregarDuvidas();
+  }catch(e){
+    alert('Erro ao responder: '+e.message);
+  }
+}
+async function excluirDuvida(id){
+  if(!confirm('Excluir esta pergunta definitivamente?'))return;
+  try{
+    const resp=await fetch('/api/admin-perguntas?id='+encodeURIComponent(id),{method:'DELETE'});
+    if(!resp.ok){const data=await resp.json();throw new Error(data.error||'Erro ao excluir');}
+    logAtividade('Pergunta de cliente excluída');
+    carregarDuvidas();
+  }catch(e){
+    alert('Erro ao excluir: '+e.message);
   }
 }
 
