@@ -434,6 +434,15 @@ tr:hover td{background:#FDFAF7}tr:last-child td{border-bottom:none}
     <div id="s-dash" class="sec">
       <div class="ptitle">📊 Dashboard</div>
       <div class="psub">Visão geral de vendas, gastos e lucro do negócio</div>
+
+      <div class="psub" style="margin-top:-6px">Estatísticas rápidas (pedidos reais do site)</div>
+      <div class="crow">
+        <div class="card cv"><span class="cic">📦</span><span class="clb">Total de Pedidos</span><span class="cval" id="qs-pedidos">—</span></div>
+        <div class="card cg"><span class="cic">💰</span><span class="clb">Faturamento</span><span class="cval" id="qs-fat">—</span></div>
+        <div class="card ca"><span class="cic">👥</span><span class="clb">Clientes</span><span class="cval" id="qs-clientes">—</span></div>
+        <div class="card cr"><span class="cic">🍫</span><span class="clb">Produtos</span><span class="cval" id="qs-produtos">—</span></div>
+      </div>
+
       <div class="crow">
         <div class="card cv"><span class="cic">💰</span><span class="clb">Total Vendido</span><span class="cval" id="c-v">R$ 0,00</span></div>
         <div class="card cr"><span class="cic">💸</span><span class="clb">Total de Gastos</span><span class="cval" id="c-g">R$ 0,00</span></div>
@@ -1332,7 +1341,27 @@ function renderCopaProd(){
 }
 
 // ── DASHBOARD ──
+async function carregarStatsRapidas(){
+  document.getElementById('qs-produtos').textContent=db.produtos.length;
+  try{
+    const resp=await fetch('/api/admin-orders');
+    const data=await resp.json();
+    if(!resp.ok||!Array.isArray(data))throw new Error('resposta inválida');
+    const statusPago=['paid','processing','pago','entregue'];
+    const pagos=data.filter(p=>statusPago.includes(p.status));
+    const fat=pagos.reduce((s,p)=>s+(p.total_centavos||0),0);
+    const clientes=new Set(data.map(p=>p.cpf_cliente||p.email_cliente||p.nome_cliente).filter(Boolean));
+    document.getElementById('qs-pedidos').textContent=data.length;
+    document.getElementById('qs-fat').textContent='R$ '+(fat/100).toFixed(2).replace('.',',');
+    document.getElementById('qs-clientes').textContent=clientes.size;
+  }catch(e){
+    document.getElementById('qs-pedidos').textContent='—';
+    document.getElementById('qs-fat').textContent='—';
+    document.getElementById('qs-clientes').textContent='—';
+  }
+}
 function dashUpdate(){
+  carregarStatsRapidas();
   const tve=tv(),tge=tg(),luc=tve-tge,tick=db.vendas.length?tve/db.vendas.length:0;
   document.getElementById('c-v').textContent=f(tve);
   document.getElementById('c-g').textContent=f(tge);
