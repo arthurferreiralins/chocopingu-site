@@ -2631,7 +2631,7 @@ async function cpAdminCarregarMissoes(){
   const tbody=document.getElementById('cpm-tbody');
   loading.style.display='block';tabela.style.display='none';vazio.style.display='none';
   try{
-    const resp=await fetch('/api/admin-chocopontos-missoes');
+    const resp=await fetch('/api/admin-chocopontos-config?tipo=missoes');
     const data=await resp.json();
     loading.style.display='none';
     if(!resp.ok||!Array.isArray(data)||data.length===0){vazio.style.display='block';return;}
@@ -2666,7 +2666,7 @@ async function cpAdminAddMissao(){
   msg.textContent='';
   if(!titulo){msg.textContent='Título é obrigatório';return;}
   try{
-    const resp=await fetch('/api/admin-chocopontos-missoes',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({titulo,descricao,icone,pontos,criterio_tipo,criterio_valor})});
+    const resp=await fetch('/api/admin-chocopontos-config?tipo=missoes',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({titulo,descricao,icone,pontos,criterio_tipo,criterio_valor})});
     const data=await resp.json();
     if(!resp.ok){msg.textContent=data.error||'Erro ao criar missão';return;}
     document.getElementById('cpm-titulo').value='';
@@ -2681,13 +2681,13 @@ async function cpAdminAddMissao(){
   }
 }
 async function cpAdminToggleMissao(id,novoValor){
-  await fetch('/api/admin-chocopontos-missoes',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({id,ativa:novoValor})});
+  await fetch('/api/admin-chocopontos-config?tipo=missoes',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({id,ativa:novoValor})});
   logAtividade('Status de missão de chocopontos alterado');
   cpAdminCarregarMissoes();
 }
 async function cpAdminExcluirMissao(id){
   if(!confirm('Excluir esta missão definitivamente?'))return;
-  await fetch('/api/admin-chocopontos-missoes?id='+encodeURIComponent(id),{method:'DELETE'});
+  await fetch('/api/admin-chocopontos-config?tipo=missoes&id='+encodeURIComponent(id),{method:'DELETE'});
   logAtividade('Missão de chocopontos excluída');
   cpAdminCarregarMissoes();
 }
@@ -2699,7 +2699,7 @@ async function cpAdminCarregarConquistas(){
   const tbody=document.getElementById('cpc-tbody');
   loading.style.display='block';tabela.style.display='none';vazio.style.display='none';
   try{
-    const resp=await fetch('/api/admin-chocopontos-conquistas');
+    const resp=await fetch('/api/admin-chocopontos-config?tipo=conquistas');
     const data=await resp.json();
     loading.style.display='none';
     if(!resp.ok||!Array.isArray(data)||data.length===0){vazio.style.display='block';return;}
@@ -2735,7 +2735,7 @@ async function cpAdminAddConquista(){
   msg.textContent='';
   if(!titulo){msg.textContent='Título é obrigatório';return;}
   try{
-    const resp=await fetch('/api/admin-chocopontos-conquistas',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({titulo,descricao,icone,criterio_tipo,criterio_valor,pontos_bonus})});
+    const resp=await fetch('/api/admin-chocopontos-config?tipo=conquistas',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({titulo,descricao,icone,criterio_tipo,criterio_valor,pontos_bonus})});
     const data=await resp.json();
     if(!resp.ok){msg.textContent=data.error||'Erro ao criar conquista';return;}
     document.getElementById('cpc-titulo').value='';
@@ -2750,13 +2750,13 @@ async function cpAdminAddConquista(){
   }
 }
 async function cpAdminToggleConquista(id,novoValor){
-  await fetch('/api/admin-chocopontos-conquistas',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({id,ativa:novoValor})});
+  await fetch('/api/admin-chocopontos-config?tipo=conquistas',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({id,ativa:novoValor})});
   logAtividade('Status de conquista de chocopontos alterado');
   cpAdminCarregarConquistas();
 }
 async function cpAdminExcluirConquista(id){
   if(!confirm('Excluir esta conquista definitivamente?'))return;
-  await fetch('/api/admin-chocopontos-conquistas?id='+encodeURIComponent(id),{method:'DELETE'});
+  await fetch('/api/admin-chocopontos-config?tipo=conquistas&id='+encodeURIComponent(id),{method:'DELETE'});
   logAtividade('Conquista de chocopontos excluída');
   cpAdminCarregarConquistas();
 }
@@ -2768,7 +2768,7 @@ async function cpAdminCarregarEventos(){
   const tbody=document.getElementById('cpe-tbody');
   loading.style.display='block';tabela.style.display='none';vazio.style.display='none';
   try{
-    const resp=await fetch('/api/admin-chocopontos-eventos');
+    const resp=await fetch('/api/admin-chocopontos-config?tipo=eventos');
     const data=await resp.json();
     loading.style.display='none';
     if(!resp.ok||!Array.isArray(data)||data.length===0){vazio.style.display='block';return;}
@@ -2809,7 +2809,7 @@ async function cpAdminAddEvento(){
   if(!titulo){msg.textContent='Título é obrigatório';return;}
   if(!data_inicio||!data_fim){msg.textContent='Datas de início e fim são obrigatórias';return;}
   try{
-    const resp=await fetch('/api/admin-chocopontos-eventos',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({titulo,descricao,pontos_bonus,data_inicio,data_fim})});
+    const resp=await fetch('/api/admin-chocopontos-config?tipo=eventos',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({titulo,descricao,pontos_bonus,data_inicio,data_fim})});
     const data=await resp.json();
     if(!resp.ok){msg.textContent=data.error||'Erro ao criar evento';return;}
     document.getElementById('cpe-titulo').value='';
@@ -2824,13 +2824,13 @@ async function cpAdminAddEvento(){
   }
 }
 async function cpAdminToggleEvento(id,novoValor){
-  await fetch('/api/admin-chocopontos-eventos',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({id,ativo:novoValor})});
+  await fetch('/api/admin-chocopontos-config?tipo=eventos',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({id,ativo:novoValor})});
   logAtividade('Status de evento de chocopontos alterado');
   cpAdminCarregarEventos();
 }
 async function cpAdminExcluirEvento(id){
   if(!confirm('Excluir este evento definitivamente?'))return;
-  await fetch('/api/admin-chocopontos-eventos?id='+encodeURIComponent(id),{method:'DELETE'});
+  await fetch('/api/admin-chocopontos-config?tipo=eventos&id='+encodeURIComponent(id),{method:'DELETE'});
   logAtividade('Evento de chocopontos excluído');
   cpAdminCarregarEventos();
 }
@@ -2843,7 +2843,7 @@ async function cpAdminCarregarHistorico(){
   const cpfFiltro=document.getElementById('cph-filtro-cpf').value.replace(/\D/g,'');
   loading.style.display='block';tabela.style.display='none';vazio.style.display='none';
   try{
-    const resp=await fetch('/api/admin-chocopontos-historico'+(cpfFiltro?('?cpf='+cpfFiltro):''));
+    const resp=await fetch('/api/admin-chocopontos-config?tipo=historico'+(cpfFiltro?('&cpf='+cpfFiltro):''));
     const data=await resp.json();
     loading.style.display='none';
     if(!resp.ok||!Array.isArray(data)||data.length===0){vazio.style.display='block';return;}
@@ -2873,7 +2873,7 @@ async function cpAdminAjusteManual(){
   if(cpf.length!==11){msg.textContent='CPF inválido (11 dígitos)';return;}
   if(!pontos){msg.textContent='Informe a quantidade de pontos (positivo ou negativo)';return;}
   try{
-    const resp=await fetch('/api/admin-chocopontos-historico',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({cpf,pontos,motivo})});
+    const resp=await fetch('/api/admin-chocopontos-config?tipo=historico',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({cpf,pontos,motivo})});
     const data=await resp.json();
     if(!resp.ok){msg.textContent=data.error||'Erro ao aplicar ajuste';return;}
     document.getElementById('cph-cpf').value='';

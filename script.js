@@ -649,7 +649,7 @@ function cpFocarCpf() {
 async function cpCarregarMissoesPublicas() {
   const lista = document.getElementById('cpMissoesLista');
   try {
-    const resp = await fetch('/api/chocopontos-missoes');
+    const resp = await fetch('/api/chocopontos-config?tipo=missoes');
     const data = await resp.json();
     cpMissoesCache = resp.ok && Array.isArray(data) ? data : [];
   } catch (e) {
@@ -662,7 +662,7 @@ async function cpCarregarMissoesPublicas() {
 async function cpCarregarEventosPublicos() {
   const area = document.getElementById('cpEventosArea');
   try {
-    const resp = await fetch('/api/chocopontos-eventos');
+    const resp = await fetch('/api/chocopontos-config?tipo=eventos');
     const data = await resp.json();
     const eventos = resp.ok && Array.isArray(data) ? data : [];
     if (eventos.length === 0) { area.innerHTML = ''; return; }
@@ -690,7 +690,7 @@ async function cpCarregarEventosPublicos() {
 
 async function cpCarregarConquistasPublicas() {
   try {
-    const resp = await fetch('/api/chocopontos-conquistas');
+    const resp = await fetch('/api/chocopontos-config?tipo=conquistas');
     const data = await resp.json();
     cpConquistasCache = resp.ok && Array.isArray(data) ? data : [];
   } catch (e) {
@@ -787,9 +787,9 @@ function cpRenderHistorico() {
 async function cpResgatarMissao(missaoId) {
   if (!cpAtualCpf) { cpFocarCpf(); return; }
   try {
-    const resp = await fetch('/api/chocopontos-missao-resgatar', {
+    const resp = await fetch('/api/chocopontos-resgatar-bonus', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ cpf: cpAtualCpf, missaoId })
+      body: JSON.stringify({ tipo: 'missao', cpf: cpAtualCpf, id: missaoId })
     });
     const data = await resp.json();
     if (!resp.ok) { alert(data.error || 'Não foi possível resgatar essa missão.'); return; }
@@ -803,9 +803,9 @@ async function cpResgatarMissao(missaoId) {
 async function cpResgatarEvento(eventoId) {
   if (!cpAtualCpf) { cpFocarCpf(); return; }
   try {
-    const resp = await fetch('/api/chocopontos-evento-resgatar', {
+    const resp = await fetch('/api/chocopontos-resgatar-bonus', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ cpf: cpAtualCpf, eventoId })
+      body: JSON.stringify({ tipo: 'evento', cpf: cpAtualCpf, id: eventoId })
     });
     const data = await resp.json();
     if (!resp.ok) { alert(data.error || 'Não foi possível resgatar esse evento.'); return; }
