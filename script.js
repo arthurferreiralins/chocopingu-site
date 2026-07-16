@@ -564,13 +564,16 @@ navLinks.querySelectorAll('a').forEach(a => a.addEventListener('click', () => na
 // Modal Chocopontos
 const modal        = document.getElementById('modalChocopontos');
 const fecharModal  = document.getElementById('fecharModal');
+const CP_EXTRAS_ATIVO = false; // Missões/Conquistas/Histórico ocultos a pedido do Arthur; reativar só quando ele avisar.
 
 function abrirModal() {
   modal.classList.add('aberto');
   document.body.style.overflow = 'hidden';
   navLinks.classList.remove('aberto');
-  cpCarregarMissoesPublicas();
-  cpCarregarConquistasPublicas();
+  if (CP_EXTRAS_ATIVO) {
+    cpCarregarMissoesPublicas();
+    cpCarregarConquistasPublicas();
+  }
 }
 function fechar() {
   modal.classList.remove('aberto');
@@ -618,7 +621,7 @@ async function verSaldoChocopontos() {
     saldoResultEl.style.color = '#1a7a3a';
     saldoResultEl.textContent = 'Você tem ' + data.saldo + ' chocoponto(s)!';
     cpAtualCpf = cpf;
-    cpCarregarStatus(cpf);
+    if (CP_EXTRAS_ATIVO) cpCarregarStatus(cpf);
   } catch (e) {
     saldoResultEl.style.display = 'block';
     saldoResultEl.style.background = '#fff0f0';
