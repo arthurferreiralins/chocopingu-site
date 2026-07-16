@@ -345,6 +345,22 @@ tr:hover td{background:#FDFAF7}tr:last-child td{border-bottom:none}
 .btn-pv-off{background:var(--vml);color:var(--vm)}
 .btn-pv-off:hover{background:var(--vm);color:#fff}
 
+/* PROMOÇÃO (card de produto) */
+.promo-row{margin-top:10px}
+.btn-toggle-promo{width:100%;padding:9px 14px;border:1.5px solid var(--gold);border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;text-align:center;background:#FFF8EC;color:var(--gold);transition:all .2s}
+.btn-toggle-promo:hover{background:var(--gold);color:#fff}
+.promo-ativa-badge{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:9px 12px;border-radius:10px;background:linear-gradient(135deg,#FDECEA,#FFF3E0);color:#B5651D;font-size:11.5px;font-weight:700;margin-bottom:8px}
+.promo-agendada-badge{background:linear-gradient(135deg,var(--azl),#EAF2FC);color:var(--az)}
+.promo-form{display:none;margin-top:8px;padding:14px;background:#FDFAF7;border-radius:12px;border:1px solid var(--bd);gap:10px;flex-direction:column}
+.promo-form.on{display:flex}
+.promo-form label{font-size:10px;color:var(--txt2);font-weight:700;text-transform:uppercase;letter-spacing:.4px;display:block;margin-bottom:4px}
+.promo-form input{width:100%;padding:8px 10px;border:1.5px solid var(--bd);border-radius:8px;font-size:13px;outline:none;font-family:inherit}
+.promo-form input:focus{border-color:var(--gold)}
+.promo-form-actions{display:flex;gap:8px}
+.promo-form-actions button{flex:1;padding:8px;border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer}
+.promo-btn-salvar{background:var(--vd);color:#fff}
+.promo-btn-remover{background:var(--vm);color:#fff}
+
 /* GRÁFICOS — altura aumentada */
 .chbox canvas{max-height:280px}
 .chbox-tall canvas{max-height:340px}
@@ -1427,7 +1443,7 @@ function go(btn,name){
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
   document.getElementById('s-'+name).classList.add('on');
   btn.classList.add('on');
-  if(name==='cat')  renderCat();
+  if(name==='cat')  carregarPromocoes();
   if(name==='vend') renderVend();
   if(name==='dash') dashUpdate();
   if(name==='graf') renderGraf();
@@ -1457,6 +1473,10 @@ const CAT_BG=[
   'linear-gradient(135deg,#F0FFF4,#D8F5E1)',
   'linear-gradient(135deg,#EEF2FF,#E0E7FF)'
 ];
+let PROMO_CACHE=[];
+function dtLocal(iso){ if(!iso)return''; const d=new Date(iso); const pad=n=>String(n).padStart(2,'0'); return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`; }
+function promoDoProduto(id){ return PROMO_CACHE.find(pr=>pr.produto_id===id); }
+
 function renderCat(){
   document.getElementById('pgrid-cat').innerHTML=db.produtos.map((p,i)=>{
     const luc=p.venda-p.custo,m=p.venda>0?((luc/p.venda)*100):0;
@@ -1464,6 +1484,16 @@ function renderCat(){
     const imgContent=p.img
       ?`<img src="${p.img}" alt="${p.nome}" style="max-height:140px;max-width:85%;object-fit:contain;">`
       :`<span style="font-size:84px">${p.emoji||'🍫'}</span>`;
+    const promo=promoDoProduto(p.id);
+    const agora=new Date();
+    let promoBadge='';
+    if(promo){
+      const ini=new Date(promo.data_inicio),fim=new Date(promo.data_fim);
+      const dtFmt=d=>d.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'});
+      if(agora<ini) promoBadge=`<div class="promo-ativa-badge promo-agendada-badge">⏰ Agendada: ${f(promo.preco_promocional)} de ${dtFmt(ini)} a ${dtFmt(fim)}</div>`;
+      else if(agora>fim) promoBadge=`<div class="promo-ativa-badge">⌛ Encerrada em ${dtFmt(fim)}</div>`;
+      else promoBadge=`<div class="promo-ativa-badge">🔥 Em promoção: ${f(promo.preco_promocional)} até ${dtFmt(fim)}</div>`;
+    }
     return `<div class="pcard">
       <div class="pcard-img" style="background:${CAT_BG[i%CAT_BG.length]};position:relative">
         ${imgContent}
@@ -1489,9 +1519,84 @@ function renderCat(){
             ${pv?'🔓 Marcar como Disponível':'🔒 Voltar para Pré-venda'}
           </button>
         </div>
+        <div class="promo-row">
+          ${promoBadge}
+          <button class="btn-toggle-promo" onclick="togglePromoForm(${p.id})">🏷️ ${promo?'Editar promoção':'Adicionar promoção'}</button>
+          <div class="promo-form" id="promo-form-${p.id}">
+            <div>
+              <label>Preço promocional (R$)</label>
+              <input type="number" id="promo-preco-${p.id}" min="0" step="0.5" value="${promo?promo.preco_promocional:''}">
+            </div>
+            <div>
+              <label>Começa em</label>
+              <input type="datetime-local" id="promo-inicio-${p.id}" value="${promo?dtLocal(promo.data_inicio):''}">
+            </div>
+            <div>
+              <label>Termina em</label>
+              <input type="datetime-local" id="promo-fim-${p.id}" value="${promo?dtLocal(promo.data_fim):''}">
+            </div>
+            <p id="promo-msg-${p.id}" style="color:#c0392b;font-size:12px;margin:0"></p>
+            <div class="promo-form-actions">
+              <button class="promo-btn-salvar" onclick="salvarPromocao(${p.id})">Salvar</button>
+              ${promo?`<button class="promo-btn-remover" onclick="removerPromocao(${p.id},'${promo.id}')">Remover</button>`:''}
+            </div>
+          </div>
+        </div>
       </div>
     </div>`;
   }).join('');
+}
+
+function togglePromoForm(id){
+  const el=document.getElementById('promo-form-'+id);
+  if(el) el.classList.toggle('on');
+}
+
+async function carregarPromocoes(){
+  try{
+    const resp=await fetch('/api/promocoes');
+    const data=await resp.json();
+    PROMO_CACHE=resp.ok&&Array.isArray(data)?data:[];
+  }catch(e){
+    PROMO_CACHE=[];
+  }
+  renderCat();
+}
+
+async function salvarPromocao(id){
+  const preco=Number(document.getElementById('promo-preco-'+id).value);
+  const inicio=document.getElementById('promo-inicio-'+id).value;
+  const fim=document.getElementById('promo-fim-'+id).value;
+  const msg=document.getElementById('promo-msg-'+id);
+  msg.textContent='';
+  if(!preco||preco<=0){msg.textContent='Informe um preço promocional válido';return;}
+  if(!inicio||!fim){msg.textContent='Informe as datas de início e fim';return;}
+  const promo=promoDoProduto(id);
+  try{
+    const body={produto_id:id,preco_promocional:preco,data_inicio:inicio,data_fim:fim};
+    const resp=promo
+      ?await fetch('/api/promocoes',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:promo.id,...body})})
+      :await fetch('/api/promocoes',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+    const data=await resp.json();
+    if(!resp.ok){msg.textContent=data.error||'Erro ao salvar promoção';return;}
+    const p=db.produtos.find(x=>x.id===id);
+    logAtividade(`Promoção de "${p?p.nome:'produto'}" salva`);
+    await carregarPromocoes();
+  }catch(e){
+    msg.textContent='Erro ao salvar promoção';
+  }
+}
+
+async function removerPromocao(id,promoId){
+  if(!confirm('Remover esta promoção?'))return;
+  try{
+    await fetch('/api/promocoes?id='+encodeURIComponent(promoId),{method:'DELETE'});
+    const p=db.produtos.find(x=>x.id===id);
+    logAtividade(`Promoção de "${p?p.nome:'produto'}" removida`);
+    await carregarPromocoes();
+  }catch(e){
+    alert('Erro ao remover promoção');
+  }
 }
 
 function togglePV(id){
@@ -2873,7 +2978,7 @@ async function cpAdminAjusteManual(){
 }
 
 // ── INIT ──
-function init(){ renderCat(); renderG(); fillVendaProd(); }
+function init(){ carregarPromocoes(); renderG(); fillVendaProd(); }
 document.getElementById('si').addEventListener('keydown',e=>{if(e.key==='Enter')login();});
 </script>
 </body>

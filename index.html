@@ -530,6 +530,8 @@
       renderGridProdutos();
     }
 
+    var PROMOCOES_ATIVAS = [];
+
     function renderGridProdutos() {
       var DBKEY = 'chocopingu_db_v2';
       var dbProds = null;
@@ -544,15 +546,23 @@
       var svg = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>';
 
       var prods = categoriaAtual === 'todos' ? PRODS_DEF : PRODS_DEF.filter(function(p){ return p.categoria === categoriaAtual; });
+      var agora = new Date();
 
       var html = prods.map(function(p) {
         var dbP = dbProds ? dbProds.find(function(x){return x.id===p.id;}) : null;
         var isPrev = dbP ? (dbP.preVenda !== false) : true;
-        var preco = (dbP && Number(dbP.venda) > 0) ? Number(dbP.venda) : p.preco;
+        var precoBase = (dbP && Number(dbP.venda) > 0) ? Number(dbP.venda) : p.preco;
+        var promo = PROMOCOES_ATIVAS.filter(function(pr){ return pr.produto_id === p.id; })
+          .find(function(pr){ return new Date(pr.data_inicio) <= agora && agora <= new Date(pr.data_fim); });
+        var preco = promo ? Number(promo.preco_promocional) : precoBase;
         var precoFmt = 'R$ ' + preco.toFixed(2).replace('.', ',');
+        var precoBaseFmt = 'R$ ' + precoBase.toFixed(2).replace('.', ',');
         var badgeClass = isPrev ? 'badge badge-prevenda' : 'badge badge-disponivel';
         var badgeText  = isPrev ? '&#9203; Pré-venda' : '&#10003; Disponível';
         var cardClass  = isPrev ? 'produto-card destaque produto-card-novo' : 'produto-card destaque';
+        var precoHtml = promo
+          ? '<span class="produto-preco-de">' + precoBaseFmt + '</span> <span class="produto-preco produto-preco-promo">' + precoFmt + '</span> <span class="tag-promo">&#128293; Promoção</span>'
+          : '<span class="produto-preco">' + precoFmt + '</span>';
         return '<div class="' + cardClass + '" data-prod-id="' + p.id + '">' +
           '<span class="' + badgeClass + '" id="badge-prod-' + p.id + '">' + badgeText + '</span>' +
           '<div class="produto-img-wrap"><img src="' + p.img + '" alt="' + p.nome + ' Chocopingu" /></div>' +
@@ -561,7 +571,7 @@
             '<p>' + p.desc + '</p>' +
             '<span class="tag tag-novo">' + p.tag + '</span>' +
             '<div class="produto-preco-row">' +
-              '<span class="produto-preco">' + precoFmt + '</span>' +
+              precoHtml +
               '<button class="btn-add-carrinho" onclick="adicionarAoCarrinho(\'' + p.nome + '\',\'' + p.img + '\',' + preco + ')">' +
                 svg + ' Adicionar ao carrinho' +
               '</button>' +
@@ -573,7 +583,15 @@
       document.getElementById('gridTodos').innerHTML = html;
     }
 
+    function carregarPromocoesAtivas() {
+      fetch('/api/promocoes').then(function(r){ return r.json(); }).then(function(data) {
+        PROMOCOES_ATIVAS = Array.isArray(data) ? data : [];
+        renderGridProdutos();
+      }).catch(function(){});
+    }
+
     renderGridProdutos();
+    carregarPromocoesAtivas();
   </script>
 </body>
 </html>

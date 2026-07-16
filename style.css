@@ -855,6 +855,19 @@ section[id], footer[id] { scroll-margin-top: 90px; }
   letter-spacing: -.5px;
   white-space: nowrap;
 }
+.produto-preco-de {
+  font-size: .95rem; color: var(--cinza);
+  text-decoration: line-through;
+  white-space: nowrap;
+}
+.produto-preco-promo { color: #c0392b; }
+.tag-promo {
+  display: inline-block;
+  background: linear-gradient(135deg, #e74c3c, #c0392b);
+  color: #fff; font-weight: 800; font-size: .72rem;
+  padding: .25rem .7rem; border-radius: 50px;
+  white-space: nowrap;
+}
 
 /* ===== BOTÃO ADICIONAR — produto card ===== */
 .btn-add-carrinho {
