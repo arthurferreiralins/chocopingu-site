@@ -564,7 +564,7 @@ navLinks.querySelectorAll('a').forEach(a => a.addEventListener('click', () => na
 // Modal Chocopontos
 const modal        = document.getElementById('modalChocopontos');
 const fecharModal  = document.getElementById('fecharModal');
-const CP_EXTRAS_ATIVO = false; // Missões/Conquistas/Histórico ocultos a pedido do Arthur; reativar só quando ele avisar.
+const CP_EXTRAS_ATIVO = true; // Missões/Conquistas/Histórico reativados a pedido do Arthur (2026-07-16).
 
 function abrirModal() {
   modal.classList.add('aberto');
