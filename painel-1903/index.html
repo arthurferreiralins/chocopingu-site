@@ -1554,7 +1554,7 @@ function togglePromoForm(id){
 
 async function carregarPromocoes(){
   try{
-    const resp=await fetch('/api/promocoes');
+    const resp=await fetch('/api/admin-chocopontos-config?tipo=promocoes');
     const data=await resp.json();
     PROMO_CACHE=resp.ok&&Array.isArray(data)?data:[];
   }catch(e){
@@ -1575,8 +1575,8 @@ async function salvarPromocao(id){
   try{
     const body={produto_id:id,preco_promocional:preco,data_inicio:inicio,data_fim:fim};
     const resp=promo
-      ?await fetch('/api/promocoes',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:promo.id,...body})})
-      :await fetch('/api/promocoes',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+      ?await fetch('/api/admin-chocopontos-config?tipo=promocoes',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:promo.id,...body})})
+      :await fetch('/api/admin-chocopontos-config?tipo=promocoes',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
     const data=await resp.json();
     if(!resp.ok){msg.textContent=data.error||'Erro ao salvar promoção';return;}
     const p=db.produtos.find(x=>x.id===id);
@@ -1590,7 +1590,7 @@ async function salvarPromocao(id){
 async function removerPromocao(id,promoId){
   if(!confirm('Remover esta promoção?'))return;
   try{
-    await fetch('/api/promocoes?id='+encodeURIComponent(promoId),{method:'DELETE'});
+    await fetch('/api/admin-chocopontos-config?tipo=promocoes&id='+encodeURIComponent(promoId),{method:'DELETE'});
     const p=db.produtos.find(x=>x.id===id);
     logAtividade(`Promoção de "${p?p.nome:'produto'}" removida`);
     await carregarPromocoes();

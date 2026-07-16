@@ -584,7 +584,7 @@
     }
 
     function carregarPromocoesAtivas() {
-      fetch('/api/promocoes').then(function(r){ return r.json(); }).then(function(data) {
+      fetch('/api/admin-chocopontos-config?tipo=promocoes').then(function(r){ return r.json(); }).then(function(data) {
         PROMOCOES_ATIVAS = Array.isArray(data) ? data : [];
         renderGridProdutos();
       }).catch(function(){});
