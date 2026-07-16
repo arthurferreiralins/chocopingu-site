@@ -1264,8 +1264,7 @@ tr:hover td{background:#FDFAF7}tr:last-child td{border-bottom:none}
               <input type="text" id="cpc-desc" placeholder="Descrição curta da conquista"></div>
             <div class="fg" style="width:70px"><label>Ícone</label>
               <input type="text" id="cpc-icone" placeholder="🏅" maxlength="4"></div>
-            <div class="fg"><label>Pontos necessários</label><input type="number" id="cpc-valor" placeholder="0" min="0"></div>
-            <div class="fg"><label>Bônus (pts)</label><input type="number" id="cpc-bonus" placeholder="0" min="0"></div>
+            <div class="fg"><label>Quantos pontos a pessoa ganha</label><input type="number" id="cpc-valor" placeholder="0" min="0"></div>
             <button class="btn badd" onclick="cpAdminAddConquista()">+ Adicionar</button>
           </div>
           <p id="cpc-msg" style="padding:8px 4px 0;color:#c0392b;font-size:13px"></p>
@@ -1275,7 +1274,7 @@ tr:hover td{background:#FDFAF7}tr:last-child td{border-bottom:none}
           <div id="cpc-loading" style="padding:24px;text-align:center;color:#888">Carregando...</div>
           <div id="cpc-vazio" style="display:none;padding:32px;text-align:center;color:#aaa">Nenhuma conquista cadastrada ainda.</div>
           <table id="cpc-tabela" style="display:none">
-            <thead><tr><th></th><th>Título</th><th>Descrição</th><th>Pontos necessários</th><th>Bônus</th><th>Status</th><th>Ações</th></tr></thead>
+            <thead><tr><th></th><th>Título</th><th>Descrição</th><th>Pontos</th><th>Status</th><th>Ações</th></tr></thead>
             <tbody id="cpc-tbody"></tbody>
           </table>
         </div>
@@ -2701,7 +2700,6 @@ async function cpAdminCarregarConquistas(){
         <td style="font-size:20px">${c.icone||'🏅'}</td>
         <td><strong>${c.titulo}</strong></td>
         <td style="font-size:12px;max-width:200px">${c.descricao||'—'}</td>
-        <td style="font-size:12px">${c.criterio_valor} pts</td>
         <td><strong>${c.pontos_bonus}</strong> pts</td>
         <td><span class="badge ${c.ativa?'bdin':'boff'}">${c.ativa?'Ativa':'Inativa'}</span></td>
         <td style="white-space:nowrap">
@@ -2719,20 +2717,18 @@ async function cpAdminAddConquista(){
   const titulo=document.getElementById('cpc-titulo').value.trim();
   const descricao=document.getElementById('cpc-desc').value.trim();
   const icone=document.getElementById('cpc-icone').value.trim()||'🏅';
-  const criterio_valor=Number(document.getElementById('cpc-valor').value)||0;
-  const pontos_bonus=Number(document.getElementById('cpc-bonus').value)||0;
+  const valor=Number(document.getElementById('cpc-valor').value)||0;
   const msg=document.getElementById('cpc-msg');
   msg.textContent='';
   if(!titulo){msg.textContent='Título é obrigatório';return;}
   try{
-    const resp=await fetch('/api/admin-chocopontos-config?tipo=conquistas',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({titulo,descricao,icone,criterio_tipo:'pontos_acumulados',criterio_valor,pontos_bonus})});
+    const resp=await fetch('/api/admin-chocopontos-config?tipo=conquistas',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({titulo,descricao,icone,criterio_tipo:'pontos_acumulados',criterio_valor:valor,pontos_bonus:valor})});
     const data=await resp.json();
     if(!resp.ok){msg.textContent=data.error||'Erro ao criar conquista';return;}
     document.getElementById('cpc-titulo').value='';
     document.getElementById('cpc-desc').value='';
     document.getElementById('cpc-icone').value='';
     document.getElementById('cpc-valor').value='';
-    document.getElementById('cpc-bonus').value='';
     logAtividade('Conquista de chocopontos criada: '+titulo);
     cpAdminCarregarConquistas();
   }catch(e){
