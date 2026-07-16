@@ -1264,14 +1264,7 @@ tr:hover td{background:#FDFAF7}tr:last-child td{border-bottom:none}
               <input type="text" id="cpc-desc" placeholder="Descrição curta da conquista"></div>
             <div class="fg" style="width:70px"><label>Ícone</label>
               <input type="text" id="cpc-icone" placeholder="🏅" maxlength="4"></div>
-            <div class="fg"><label>Critério</label>
-              <select id="cpc-criterio">
-                <option value="pontos_acumulados">Pontos acumulados (total ganho)</option>
-                <option value="pedidos_realizados">Nº de pedidos realizados</option>
-                <option value="missoes_completas">Nº de missões concluídas</option>
-              </select>
-            </div>
-            <div class="fg"><label>Valor do critério</label><input type="number" id="cpc-valor" placeholder="0" min="0"></div>
+            <div class="fg"><label>Pontos necessários</label><input type="number" id="cpc-valor" placeholder="0" min="0"></div>
             <div class="fg"><label>Bônus (pts)</label><input type="number" id="cpc-bonus" placeholder="0" min="0"></div>
             <button class="btn badd" onclick="cpAdminAddConquista()">+ Adicionar</button>
           </div>
@@ -1282,7 +1275,7 @@ tr:hover td{background:#FDFAF7}tr:last-child td{border-bottom:none}
           <div id="cpc-loading" style="padding:24px;text-align:center;color:#888">Carregando...</div>
           <div id="cpc-vazio" style="display:none;padding:32px;text-align:center;color:#aaa">Nenhuma conquista cadastrada ainda.</div>
           <table id="cpc-tabela" style="display:none">
-            <thead><tr><th></th><th>Título</th><th>Descrição</th><th>Critério</th><th>Bônus</th><th>Status</th><th>Ações</th></tr></thead>
+            <thead><tr><th></th><th>Título</th><th>Descrição</th><th>Pontos necessários</th><th>Bônus</th><th>Status</th><th>Ações</th></tr></thead>
             <tbody id="cpc-tbody"></tbody>
           </table>
         </div>
@@ -2703,14 +2696,12 @@ async function cpAdminCarregarConquistas(){
     const data=await resp.json();
     loading.style.display='none';
     if(!resp.ok||!Array.isArray(data)||data.length===0){vazio.style.display='block';return;}
-    const rotuloCriterio={pontos_acumulados:'Pontos ganhos ≥ ',pedidos_realizados:'Pedidos ≥ ',missoes_completas:'Missões ≥ '};
     tbody.innerHTML=data.map(c=>{
-      const req=(rotuloCriterio[c.criterio_tipo]||c.criterio_tipo+' ')+c.criterio_valor;
       return `<tr>
         <td style="font-size:20px">${c.icone||'🏅'}</td>
         <td><strong>${c.titulo}</strong></td>
         <td style="font-size:12px;max-width:200px">${c.descricao||'—'}</td>
-        <td style="font-size:12px">${req}</td>
+        <td style="font-size:12px">${c.criterio_valor} pts</td>
         <td><strong>${c.pontos_bonus}</strong> pts</td>
         <td><span class="badge ${c.ativa?'bdin':'boff'}">${c.ativa?'Ativa':'Inativa'}</span></td>
         <td style="white-space:nowrap">
@@ -2728,14 +2719,13 @@ async function cpAdminAddConquista(){
   const titulo=document.getElementById('cpc-titulo').value.trim();
   const descricao=document.getElementById('cpc-desc').value.trim();
   const icone=document.getElementById('cpc-icone').value.trim()||'🏅';
-  const criterio_tipo=document.getElementById('cpc-criterio').value;
   const criterio_valor=Number(document.getElementById('cpc-valor').value)||0;
   const pontos_bonus=Number(document.getElementById('cpc-bonus').value)||0;
   const msg=document.getElementById('cpc-msg');
   msg.textContent='';
   if(!titulo){msg.textContent='Título é obrigatório';return;}
   try{
-    const resp=await fetch('/api/admin-chocopontos-config?tipo=conquistas',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({titulo,descricao,icone,criterio_tipo,criterio_valor,pontos_bonus})});
+    const resp=await fetch('/api/admin-chocopontos-config?tipo=conquistas',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({titulo,descricao,icone,criterio_tipo:'pontos_acumulados',criterio_valor,pontos_bonus})});
     const data=await resp.json();
     if(!resp.ok){msg.textContent=data.error||'Erro ao criar conquista';return;}
     document.getElementById('cpc-titulo').value='';
