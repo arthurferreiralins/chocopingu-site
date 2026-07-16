@@ -569,6 +569,8 @@ function abrirModal() {
   modal.classList.add('aberto');
   document.body.style.overflow = 'hidden';
   navLinks.classList.remove('aberto');
+  cpCarregarMissoesPublicas();
+  cpCarregarConquistasPublicas();
 }
 function fechar() {
   modal.classList.remove('aberto');
@@ -615,6 +617,8 @@ async function verSaldoChocopontos() {
     saldoResultEl.style.background = '#e6f4ec';
     saldoResultEl.style.color = '#1a7a3a';
     saldoResultEl.textContent = 'Você tem ' + data.saldo + ' chocoponto(s)!';
+    cpAtualCpf = cpf;
+    cpCarregarStatus(cpf);
   } catch (e) {
     saldoResultEl.style.display = 'block';
     saldoResultEl.style.background = '#fff0f0';
@@ -624,6 +628,193 @@ async function verSaldoChocopontos() {
 }
 document.getElementById('btnVerSaldoChocopontos').addEventListener('click', verSaldoChocopontos);
 cpfSaldoInput.addEventListener('keydown', e => { if (e.key === 'Enter') verSaldoChocopontos(); });
+
+/* ===== CHOCOPONTOS: abas Resgatar / Missões / Conquistas / Histórico ===== */
+let cpAtualCpf = null;
+let cpMissoesCache = [];
+let cpConquistasCache = [];
+let cpStatusCache = null;
+
+function cpMudarAba(nome) {
+  document.querySelectorAll('.cp-tab').forEach(b => b.classList.toggle('ativo', b.dataset.cptab === nome));
+  document.querySelectorAll('.cp-tab-content').forEach(c => c.classList.remove('ativo'));
+  document.getElementById('cpTab-' + nome).classList.add('ativo');
+}
+
+function cpFocarCpf() {
+  cpfSaldoInput.focus();
+  cpfSaldoInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+async function cpCarregarMissoesPublicas() {
+  const lista = document.getElementById('cpMissoesLista');
+  try {
+    const resp = await fetch('/api/chocopontos-missoes');
+    const data = await resp.json();
+    cpMissoesCache = resp.ok && Array.isArray(data) ? data : [];
+  } catch (e) {
+    cpMissoesCache = [];
+  }
+  cpRenderMissoes();
+  cpCarregarEventosPublicos();
+}
+
+async function cpCarregarEventosPublicos() {
+  const area = document.getElementById('cpEventosArea');
+  try {
+    const resp = await fetch('/api/chocopontos-eventos');
+    const data = await resp.json();
+    const eventos = resp.ok && Array.isArray(data) ? data : [];
+    if (eventos.length === 0) { area.innerHTML = ''; return; }
+    const eventosClaimed = (cpStatusCache && cpStatusCache.eventosClaimed) || [];
+    area.innerHTML = eventos.map(ev => {
+      const jaResgatou = eventosClaimed.includes(ev.id);
+      const podeResgatar = !!cpAtualCpf;
+      const btn = jaResgatou
+        ? `<button class="cp-missao-btn" disabled>✅ Resgatado</button>`
+        : podeResgatar
+          ? `<button class="cp-missao-btn" onclick="cpResgatarEvento('${ev.id}')">Resgatar +${ev.pontos_bonus} pts</button>`
+          : `<button class="cp-missao-btn" onclick="cpFocarCpf()">Informe seu CPF</button>`;
+      return `<div class="cp-evento-banner">
+        <div class="cp-evento-info">
+          <h4>🎉 ${ev.titulo}</h4>
+          <p>${ev.descricao || ''}</p>
+        </div>
+        ${btn}
+      </div>`;
+    }).join('');
+  } catch (e) {
+    area.innerHTML = '';
+  }
+}
+
+async function cpCarregarConquistasPublicas() {
+  try {
+    const resp = await fetch('/api/chocopontos-conquistas');
+    const data = await resp.json();
+    cpConquistasCache = resp.ok && Array.isArray(data) ? data : [];
+  } catch (e) {
+    cpConquistasCache = [];
+  }
+  cpRenderConquistas();
+}
+
+async function cpCarregarStatus(cpf) {
+  document.getElementById('cpMissoesHint').style.display = 'none';
+  document.getElementById('cpHistoricoHint').style.display = 'none';
+  try {
+    const resp = await fetch('/api/chocopontos-status?cpf=' + cpf);
+    const data = await resp.json();
+    if (resp.ok) cpStatusCache = data;
+  } catch (e) { /* mantém cache anterior */ }
+  cpRenderMissoes();
+  cpCarregarEventosPublicos();
+  cpRenderConquistas();
+  cpRenderHistorico();
+}
+
+function cpRenderMissoes() {
+  const lista = document.getElementById('cpMissoesLista');
+  document.getElementById('cpMissoesHint').style.display = 'none';
+  if (cpMissoesCache.length === 0) {
+    lista.innerHTML = '<p class="cp-vazio">Nenhuma missão disponível no momento.</p>';
+    return;
+  }
+  const claimed = (cpStatusCache && cpStatusCache.missoesClaimed) || [];
+  lista.innerHTML = cpMissoesCache.map(m => {
+    const jaResgatou = claimed.includes(m.id);
+    const podeResgatar = !!cpAtualCpf;
+    const btn = jaResgatou
+      ? `<button class="cp-missao-btn" disabled>✅ Concluída</button>`
+      : podeResgatar
+        ? `<button class="cp-missao-btn" onclick="cpResgatarMissao('${m.id}')">Resgatar</button>`
+        : `<button class="cp-missao-btn" onclick="cpFocarCpf()">Informe seu CPF</button>`;
+    return `<div class="cp-missao-card${jaResgatou ? ' concluida' : ''}">
+      <span class="cp-missao-icone">${m.icone || '🎯'}</span>
+      <div class="cp-missao-info">
+        <h4>${m.titulo}</h4>
+        <p>${m.descricao || ''}</p>
+      </div>
+      <span class="cp-missao-pts">+${m.pontos} pts</span>
+      ${btn}
+    </div>`;
+  }).join('');
+}
+
+function cpRenderConquistas() {
+  const grid = document.getElementById('cpConquistasGrid');
+  if (cpConquistasCache.length === 0) {
+    grid.innerHTML = '<p class="cp-vazio">Nenhuma conquista cadastrada no momento.</p>';
+    return;
+  }
+  const desbloqueadas = (cpStatusCache && cpStatusCache.conquistasUnlocked) || [];
+  grid.innerHTML = cpConquistasCache.map(c => {
+    const on = desbloqueadas.includes(c.id);
+    return `<div class="cp-conquista-card${on ? ' desbloqueada' : ''}">
+      <div class="cp-conquista-icone">${c.icone || '🏅'}</div>
+      <h4>${c.titulo}</h4>
+      <p>${c.descricao || ''}</p>
+    </div>`;
+  }).join('');
+}
+
+function cpRenderHistorico() {
+  const lista = document.getElementById('cpHistoricoLista');
+  if (!cpAtualCpf) {
+    lista.innerHTML = '';
+    document.getElementById('cpHistoricoHint').style.display = 'block';
+    return;
+  }
+  const historico = (cpStatusCache && cpStatusCache.historico) || [];
+  if (historico.length === 0) {
+    lista.innerHTML = '<p class="cp-vazio">Você ainda não tem movimentações de chocopontos.</p>';
+    return;
+  }
+  const rotulos = { compra: '🛒 Compra', resgate: '🎁 Resgate de produto', missao: '🎯 Missão', conquista: '🏅 Conquista', evento: '🎉 Evento', ajuste_manual: '🛠️ Ajuste' };
+  lista.innerHTML = historico.map(h => {
+    const dt = h.data ? new Date(h.data).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: '2-digit' }) : '';
+    const pos = h.pontos >= 0;
+    return `<div class="cp-historico-item">
+      <div class="cp-historico-info">
+        <strong>${rotulos[h.tipo] || h.tipo}${h.titulo ? ' — ' + h.titulo : ''}</strong>
+        <span>${dt}</span>
+      </div>
+      <span class="cp-historico-pts ${pos ? 'pos' : 'neg'}">${pos ? '+' : ''}${h.pontos} pts</span>
+    </div>`;
+  }).join('');
+}
+
+async function cpResgatarMissao(missaoId) {
+  if (!cpAtualCpf) { cpFocarCpf(); return; }
+  try {
+    const resp = await fetch('/api/chocopontos-missao-resgatar', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ cpf: cpAtualCpf, missaoId })
+    });
+    const data = await resp.json();
+    if (!resp.ok) { alert(data.error || 'Não foi possível resgatar essa missão.'); return; }
+    alert('Missão concluída! Você ganhou +' + data.pontosGanhos + ' chocopontos.');
+    cpCarregarStatus(cpAtualCpf);
+  } catch (e) {
+    alert('Erro ao resgatar missão.');
+  }
+}
+
+async function cpResgatarEvento(eventoId) {
+  if (!cpAtualCpf) { cpFocarCpf(); return; }
+  try {
+    const resp = await fetch('/api/chocopontos-evento-resgatar', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ cpf: cpAtualCpf, eventoId })
+    });
+    const data = await resp.json();
+    if (!resp.ok) { alert(data.error || 'Não foi possível resgatar esse evento.'); return; }
+    alert('Bônus resgatado! Você ganhou +' + data.pontosGanhos + ' chocopontos.');
+    cpCarregarStatus(cpAtualCpf);
+  } catch (e) {
+    alert('Erro ao resgatar bônus do evento.');
+  }
+}
 
 /* ===== CHOCOPONTOS: leva pro carrinho normal, pagamento vira uma aba no checkout ===== */
 function comprarChocopontos(id, pontos) {

@@ -1149,6 +1149,85 @@ section[id], footer[id] { scroll-margin-top: 90px; }
   transform: translateY(-2px);
 }
 
+/* ===== CHOCOPONTOS: abas Resgatar / Missões / Conquistas / Histórico ===== */
+.cp-tabs {
+  display: flex; gap: .6rem; flex-wrap: wrap;
+  justify-content: center; margin-bottom: 1.6rem;
+}
+.cp-tab {
+  padding: .6rem 1.2rem; border: 1.5px solid var(--bege); border-radius: 50px;
+  background: var(--creme); color: var(--cinza);
+  font-family: inherit; font-weight: 700; font-size: .85rem; cursor: pointer;
+  transition: all .2s;
+}
+.cp-tab:hover { border-color: var(--ouro); color: var(--texto); }
+.cp-tab.ativo {
+  background: linear-gradient(135deg, var(--choco-mid), var(--choco-claro));
+  color: var(--ouro-claro); border-color: var(--ouro-escuro);
+}
+.cp-tab-content { display: none; }
+.cp-tab-content.ativo { display: block; }
+.cp-hint { text-align: center; color: var(--cinza); font-size: .88rem; padding: 1rem; }
+
+.cp-lista { display: flex; flex-direction: column; gap: .9rem; }
+.cp-missao-card {
+  display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;
+  border: 2px solid var(--bege); border-radius: 16px; padding: 1rem 1.2rem;
+  transition: border-color .2s;
+}
+.cp-missao-card.concluida { border-color: var(--ouro); background: rgba(200,148,26,.06); }
+.cp-missao-icone { font-size: 1.6rem; flex-shrink: 0; }
+.cp-missao-info { flex: 1; min-width: 160px; }
+.cp-missao-info h4 { font-family: 'Playfair Display', serif; font-size: 1rem; margin-bottom: .2rem; }
+.cp-missao-info p { font-size: .82rem; color: var(--cinza); }
+.cp-missao-pts { font-weight: 800; color: var(--ouro-escuro); font-size: .85rem; white-space: nowrap; }
+.cp-missao-btn {
+  padding: .55rem 1.1rem; border: none; border-radius: 50px;
+  background: var(--choco-mid); color: var(--ouro-claro);
+  font-weight: 700; font-size: .82rem; cursor: pointer; white-space: nowrap;
+  transition: background .2s, transform .15s; font-family: inherit;
+}
+.cp-missao-btn:hover { background: var(--ouro); color: var(--branco); transform: translateY(-2px); }
+.cp-missao-btn:disabled { opacity: .55; cursor: not-allowed; transform: none; }
+
+.cp-grid-conquistas {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1.1rem;
+}
+.cp-conquista-card {
+  text-align: center; padding: 1.2rem .8rem; border-radius: 16px;
+  border: 2px solid var(--bege); filter: grayscale(1); opacity: .55;
+  transition: all .25s;
+}
+.cp-conquista-card.desbloqueada {
+  filter: none; opacity: 1; border-color: var(--ouro);
+  background: linear-gradient(135deg, rgba(229,184,74,.12), rgba(200,148,26,.06));
+}
+.cp-conquista-icone { font-size: 2.2rem; margin-bottom: .5rem; }
+.cp-conquista-card h4 { font-family: 'Playfair Display', serif; font-size: .92rem; margin-bottom: .3rem; }
+.cp-conquista-card p { font-size: .76rem; color: var(--cinza); }
+
+.cp-historico-lista { display: flex; flex-direction: column; gap: .5rem; max-height: 360px; overflow-y: auto; }
+.cp-historico-item {
+  display: flex; justify-content: space-between; align-items: center; gap: 1rem;
+  padding: .7rem 1rem; border-radius: 12px; background: var(--creme);
+}
+.cp-historico-info { display: flex; flex-direction: column; }
+.cp-historico-info strong { font-size: .86rem; }
+.cp-historico-info span { font-size: .74rem; color: var(--cinza); }
+.cp-historico-pts { font-weight: 800; font-size: .9rem; white-space: nowrap; }
+.cp-historico-pts.pos { color: #1a7a3a; }
+.cp-historico-pts.neg { color: #c62828; }
+.cp-vazio { text-align: center; color: var(--cinza); padding: 1.5rem; font-size: .88rem; }
+.cp-evento-banner {
+  display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;
+  background: linear-gradient(135deg, rgba(229,184,74,.16), rgba(200,148,26,.08));
+  border: 1.5px solid rgba(200,148,26,.35); border-radius: 16px;
+  padding: 1rem 1.2rem; margin-bottom: 1rem;
+}
+.cp-evento-banner .cp-evento-info { flex: 1; min-width: 160px; }
+.cp-evento-banner h4 { font-family: 'Playfair Display', serif; font-size: 1rem; color: var(--ouro-escuro); }
+.cp-evento-banner p { font-size: .82rem; color: var(--cinza); }
+
 /* ===== FOOTER ===== */
 .footer {
   background: var(--choco);

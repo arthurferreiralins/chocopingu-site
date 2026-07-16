@@ -199,6 +199,13 @@ tr:hover td{background:#FDFAF7}tr:last-child td{border-bottom:none}
 .badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700}
 .bpix{background:#E3F2FD;color:#1565C0}.bdin{background:#E8F5E9;color:#2E7D32}
 .bcar{background:#F3E5F5;color:#7B1FA2}.bfia{background:#FFF8E1;color:#F57F17}
+.boff{background:#F5F0EB;color:#999}
+
+/* CHOCOPONTOS ADMIN: sub-navegação */
+.cp-subnav{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
+.cp-subtab{padding:9px 18px;border:1.5px solid var(--bd);border-radius:20px;background:var(--card);color:var(--txt2);font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;font-family:inherit}
+.cp-subtab:hover{border-color:var(--gold);color:var(--br)}
+.cp-subtab.on{background:linear-gradient(135deg,var(--br),var(--gold));color:#fff;border-color:transparent}
 
 /* ESTATE */
 .estate{text-align:center;padding:44px;color:#ccc}
@@ -399,6 +406,7 @@ tr:hover td{background:#FDFAF7}tr:last-child td{border-bottom:none}
       <button class="tab"     data-tab="duv"      onclick="go(this,'duv');carregarDuvidas()"><span class="ti">❓</span> Dúvidas</button>
       <button class="tab"     data-tab="copaprod" onclick="go(this,'copaprod')"><span class="ti">⚽</span> Produtos Copa</button>
       <button class="tab"     data-tab="insta"    onclick="go(this,'insta');carregarInstagramAdmin()"><span class="ti">📸</span> Instagram</button>
+      <button class="tab"     data-tab="cpadm"    onclick="go(this,'cpadm');cpAdminCarregarTudo()"><span class="ti">⭐</span> Chocopontos</button>
     </nav>
     <div class="sb-spacer"></div>
     <button class="tab" style="color:#F1948A" onclick="logout()"><span class="ti">🚪</span> Sair</button>
@@ -1189,6 +1197,153 @@ tr:hover td{background:#FDFAF7}tr:last-child td{border-bottom:none}
           <thead><tr><th>URL</th><th>Adicionado em</th><th>Ações</th></tr></thead>
           <tbody id="ig-tbody"></tbody>
         </table>
+      </div>
+    </div>
+
+    <!-- ── CHOCOPONTOS ADMIN ── -->
+    <div id="s-cpadm" class="sec">
+      <div class="ptitle">⭐ Chocopontos</div>
+      <div class="cat-banner">
+        <div>
+          <h2>Missões, conquistas e eventos</h2>
+          <p>Gerencie as missões e conquistas que dão chocopontos extras aos clientes, crie eventos especiais por tempo limitado e acompanhe o histórico completo de pontos ganhos e usados.</p>
+          <span class="cb-tag">🔒 Área restrita ao admin</span>
+        </div>
+      </div>
+
+      <div class="cp-subnav">
+        <button class="cp-subtab on" data-cpsub="missoes" onclick="cpAdminGo('missoes')">🎯 Missões</button>
+        <button class="cp-subtab" data-cpsub="conquistas" onclick="cpAdminGo('conquistas')">🏅 Conquistas</button>
+        <button class="cp-subtab" data-cpsub="eventos" onclick="cpAdminGo('eventos')">🎉 Eventos</button>
+        <button class="cp-subtab" data-cpsub="historico" onclick="cpAdminGo('historico')">📜 Histórico</button>
+      </div>
+
+      <!-- MISSÕES -->
+      <div class="cpsub" id="cpsub-missoes">
+        <div class="tbox">
+          <div class="thdr"><h3>Nova missão</h3></div>
+          <div class="frow">
+            <div class="fg" style="flex:1;min-width:160px"><label>Título</label>
+              <input type="text" id="cpm-titulo" placeholder="Ex: Siga no Instagram"></div>
+            <div class="fg" style="flex:2;min-width:220px"><label>Descrição</label>
+              <input type="text" id="cpm-desc" placeholder="Descrição curta da missão"></div>
+            <div class="fg" style="width:70px"><label>Ícone</label>
+              <input type="text" id="cpm-icone" placeholder="🎯" maxlength="4"></div>
+            <div class="fg"><label>Pontos</label><input type="number" id="cpm-pontos" placeholder="0" min="0"></div>
+            <div class="fg"><label>Requisito</label>
+              <select id="cpm-criterio" onchange="document.getElementById('cpm-valor-wrap').style.display=this.value==='manual'?'none':'flex'">
+                <option value="manual">Manual (resgate livre)</option>
+                <option value="pedidos_realizados">Nº de pedidos realizados</option>
+              </select>
+            </div>
+            <div class="fg" id="cpm-valor-wrap" style="display:none"><label>Valor requisito</label>
+              <input type="number" id="cpm-valor" placeholder="0" min="0"></div>
+            <button class="btn badd" onclick="cpAdminAddMissao()">+ Adicionar</button>
+          </div>
+          <p id="cpm-msg" style="padding:8px 4px 0;color:#c0392b;font-size:13px"></p>
+        </div>
+        <div class="tbox">
+          <div class="thdr"><h3>Missões cadastradas</h3></div>
+          <div id="cpm-loading" style="padding:24px;text-align:center;color:#888">Carregando...</div>
+          <div id="cpm-vazio" style="display:none;padding:32px;text-align:center;color:#aaa">Nenhuma missão cadastrada ainda.</div>
+          <table id="cpm-tabela" style="display:none">
+            <thead><tr><th></th><th>Título</th><th>Descrição</th><th>Pontos</th><th>Requisito</th><th>Status</th><th>Ações</th></tr></thead>
+            <tbody id="cpm-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- CONQUISTAS -->
+      <div class="cpsub" id="cpsub-conquistas" style="display:none">
+        <div class="tbox">
+          <div class="thdr"><h3>Nova conquista</h3></div>
+          <div class="frow">
+            <div class="fg" style="flex:1;min-width:160px"><label>Título</label>
+              <input type="text" id="cpc-titulo" placeholder="Ex: Cliente Fiel"></div>
+            <div class="fg" style="flex:2;min-width:220px"><label>Descrição</label>
+              <input type="text" id="cpc-desc" placeholder="Descrição curta da conquista"></div>
+            <div class="fg" style="width:70px"><label>Ícone</label>
+              <input type="text" id="cpc-icone" placeholder="🏅" maxlength="4"></div>
+            <div class="fg"><label>Critério</label>
+              <select id="cpc-criterio">
+                <option value="pontos_acumulados">Pontos acumulados (total ganho)</option>
+                <option value="pedidos_realizados">Nº de pedidos realizados</option>
+                <option value="missoes_completas">Nº de missões concluídas</option>
+              </select>
+            </div>
+            <div class="fg"><label>Valor do critério</label><input type="number" id="cpc-valor" placeholder="0" min="0"></div>
+            <div class="fg"><label>Bônus (pts)</label><input type="number" id="cpc-bonus" placeholder="0" min="0"></div>
+            <button class="btn badd" onclick="cpAdminAddConquista()">+ Adicionar</button>
+          </div>
+          <p id="cpc-msg" style="padding:8px 4px 0;color:#c0392b;font-size:13px"></p>
+        </div>
+        <div class="tbox">
+          <div class="thdr"><h3>Conquistas cadastradas</h3></div>
+          <div id="cpc-loading" style="padding:24px;text-align:center;color:#888">Carregando...</div>
+          <div id="cpc-vazio" style="display:none;padding:32px;text-align:center;color:#aaa">Nenhuma conquista cadastrada ainda.</div>
+          <table id="cpc-tabela" style="display:none">
+            <thead><tr><th></th><th>Título</th><th>Descrição</th><th>Critério</th><th>Bônus</th><th>Status</th><th>Ações</th></tr></thead>
+            <tbody id="cpc-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- EVENTOS -->
+      <div class="cpsub" id="cpsub-eventos" style="display:none">
+        <div class="tbox">
+          <div class="thdr"><h3>Novo evento</h3></div>
+          <div class="frow">
+            <div class="fg" style="flex:1;min-width:160px"><label>Título</label>
+              <input type="text" id="cpe-titulo" placeholder="Ex: Semana Chocopingu"></div>
+            <div class="fg" style="flex:2;min-width:220px"><label>Descrição</label>
+              <input type="text" id="cpe-desc" placeholder="Descrição curta do evento"></div>
+            <div class="fg"><label>Bônus (pts)</label><input type="number" id="cpe-bonus" placeholder="0" min="0"></div>
+            <div class="fg"><label>Início</label><input type="datetime-local" id="cpe-inicio"></div>
+            <div class="fg"><label>Fim</label><input type="datetime-local" id="cpe-fim"></div>
+            <button class="btn badd" onclick="cpAdminAddEvento()">+ Adicionar</button>
+          </div>
+          <p id="cpe-msg" style="padding:8px 4px 0;color:#c0392b;font-size:13px"></p>
+        </div>
+        <div class="tbox">
+          <div class="thdr"><h3>Eventos cadastrados</h3></div>
+          <div id="cpe-loading" style="padding:24px;text-align:center;color:#888">Carregando...</div>
+          <div id="cpe-vazio" style="display:none;padding:32px;text-align:center;color:#aaa">Nenhum evento cadastrado ainda.</div>
+          <table id="cpe-tabela" style="display:none">
+            <thead><tr><th>Título</th><th>Descrição</th><th>Bônus</th><th>Início</th><th>Fim</th><th>Status</th><th>Ações</th></tr></thead>
+            <tbody id="cpe-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- HISTÓRICO -->
+      <div class="cpsub" id="cpsub-historico" style="display:none">
+        <div class="tbox">
+          <div class="thdr"><h3>Ajuste manual de pontos</h3></div>
+          <div class="frow">
+            <div class="fg" style="min-width:160px"><label>CPF do cliente</label>
+              <input type="text" id="cph-cpf" placeholder="Somente números" maxlength="11"></div>
+            <div class="fg"><label>Pontos (+/-)</label><input type="number" id="cph-pontos" placeholder="Ex: 5 ou -5"></div>
+            <div class="fg" style="flex:1;min-width:200px"><label>Motivo</label>
+              <input type="text" id="cph-motivo" placeholder="Ex: cortesia por atraso na entrega"></div>
+            <button class="btn badd" onclick="cpAdminAjusteManual()">+ Aplicar ajuste</button>
+          </div>
+          <p id="cph-msg" style="padding:8px 4px 0;color:#c0392b;font-size:13px"></p>
+        </div>
+        <div class="tbox">
+          <div class="thdr">
+            <h3>Histórico de pontos</h3>
+            <div style="display:flex;gap:8px;align-items:center">
+              <input type="text" id="cph-filtro-cpf" placeholder="Filtrar por CPF..." maxlength="11" style="padding:7px 10px;border:1.5px solid var(--bd);border-radius:8px;font-size:12px">
+              <button class="btn-sm" onclick="cpAdminCarregarHistorico()" style="background:var(--gold);color:#000;border:none;padding:6px 14px;border-radius:8px;cursor:pointer;font-weight:700">↺ Buscar</button>
+            </div>
+          </div>
+          <div id="cph-loading" style="padding:24px;text-align:center;color:#888">Carregando...</div>
+          <div id="cph-vazio" style="display:none;padding:32px;text-align:center;color:#aaa">Nenhuma movimentação encontrada.</div>
+          <table id="cph-tabela" style="display:none">
+            <thead><tr><th>Data</th><th>CPF</th><th>Tipo</th><th>Descrição</th><th>Pontos</th></tr></thead>
+            <tbody id="cph-tbody"></tbody>
+          </table>
+        </div>
       </div>
     </div>
 
@@ -2455,6 +2610,280 @@ async function excluirInstagramPost(id){
   await fetch('/api/instagram-posts?id='+encodeURIComponent(id),{method:'DELETE'});
   logAtividade('Post do Instagram removido');
   carregarInstagramAdmin();
+}
+
+// ── CHOCOPONTOS ADMIN ──
+function cpAdminGo(name){
+  document.querySelectorAll('.cp-subtab').forEach(b=>b.classList.toggle('on', b.dataset.cpsub===name));
+  document.querySelectorAll('.cpsub').forEach(s=>s.style.display='none');
+  document.getElementById('cpsub-'+name).style.display='block';
+  if(name==='missoes') cpAdminCarregarMissoes();
+  if(name==='conquistas') cpAdminCarregarConquistas();
+  if(name==='eventos') cpAdminCarregarEventos();
+  if(name==='historico') cpAdminCarregarHistorico();
+}
+function cpAdminCarregarTudo(){ cpAdminCarregarMissoes(); }
+
+async function cpAdminCarregarMissoes(){
+  const loading=document.getElementById('cpm-loading');
+  const tabela=document.getElementById('cpm-tabela');
+  const vazio=document.getElementById('cpm-vazio');
+  const tbody=document.getElementById('cpm-tbody');
+  loading.style.display='block';tabela.style.display='none';vazio.style.display='none';
+  try{
+    const resp=await fetch('/api/admin-chocopontos-missoes');
+    const data=await resp.json();
+    loading.style.display='none';
+    if(!resp.ok||!Array.isArray(data)||data.length===0){vazio.style.display='block';return;}
+    tbody.innerHTML=data.map(m=>{
+      const req = m.criterio_tipo==='manual' ? 'Livre' : `Pedidos ≥ ${m.criterio_valor}`;
+      return `<tr>
+        <td style="font-size:20px">${m.icone||'🎯'}</td>
+        <td><strong>${m.titulo}</strong></td>
+        <td style="font-size:12px;max-width:220px">${m.descricao||'—'}</td>
+        <td><strong>${m.pontos}</strong> pts</td>
+        <td style="font-size:12px">${req}</td>
+        <td><span class="badge ${m.ativa?'bdin':'boff'}">${m.ativa?'Ativa':'Inativa'}</span></td>
+        <td style="white-space:nowrap">
+          <button class="btn-sm" onclick="cpAdminToggleMissao('${m.id}',${!m.ativa})" style="background:${m.ativa?'#999':'var(--vd)'};color:#fff;border:none;padding:4px 10px;border-radius:6px;cursor:pointer;font-size:11px">${m.ativa?'Desativar':'Ativar'}</button>
+          <button class="btn-sm" onclick="cpAdminExcluirMissao('${m.id}')" style="background:#A93226;color:#fff;border:none;padding:4px 10px;border-radius:6px;cursor:pointer;font-size:11px;margin-left:4px">Excluir</button>
+        </td>
+      </tr>`;
+    }).join('');
+    tabela.style.display='block';
+  }catch(e){
+    loading.style.display='none';vazio.style.display='block';
+  }
+}
+async function cpAdminAddMissao(){
+  const titulo=document.getElementById('cpm-titulo').value.trim();
+  const descricao=document.getElementById('cpm-desc').value.trim();
+  const icone=document.getElementById('cpm-icone').value.trim()||'🎯';
+  const pontos=Number(document.getElementById('cpm-pontos').value)||0;
+  const criterio_tipo=document.getElementById('cpm-criterio').value;
+  const criterio_valor=Number(document.getElementById('cpm-valor').value)||0;
+  const msg=document.getElementById('cpm-msg');
+  msg.textContent='';
+  if(!titulo){msg.textContent='Título é obrigatório';return;}
+  try{
+    const resp=await fetch('/api/admin-chocopontos-missoes',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({titulo,descricao,icone,pontos,criterio_tipo,criterio_valor})});
+    const data=await resp.json();
+    if(!resp.ok){msg.textContent=data.error||'Erro ao criar missão';return;}
+    document.getElementById('cpm-titulo').value='';
+    document.getElementById('cpm-desc').value='';
+    document.getElementById('cpm-icone').value='';
+    document.getElementById('cpm-pontos').value='';
+    document.getElementById('cpm-valor').value='';
+    logAtividade('Missão de chocopontos criada: '+titulo);
+    cpAdminCarregarMissoes();
+  }catch(e){
+    msg.textContent='Erro ao criar missão';
+  }
+}
+async function cpAdminToggleMissao(id,novoValor){
+  await fetch('/api/admin-chocopontos-missoes',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({id,ativa:novoValor})});
+  logAtividade('Status de missão de chocopontos alterado');
+  cpAdminCarregarMissoes();
+}
+async function cpAdminExcluirMissao(id){
+  if(!confirm('Excluir esta missão definitivamente?'))return;
+  await fetch('/api/admin-chocopontos-missoes?id='+encodeURIComponent(id),{method:'DELETE'});
+  logAtividade('Missão de chocopontos excluída');
+  cpAdminCarregarMissoes();
+}
+
+async function cpAdminCarregarConquistas(){
+  const loading=document.getElementById('cpc-loading');
+  const tabela=document.getElementById('cpc-tabela');
+  const vazio=document.getElementById('cpc-vazio');
+  const tbody=document.getElementById('cpc-tbody');
+  loading.style.display='block';tabela.style.display='none';vazio.style.display='none';
+  try{
+    const resp=await fetch('/api/admin-chocopontos-conquistas');
+    const data=await resp.json();
+    loading.style.display='none';
+    if(!resp.ok||!Array.isArray(data)||data.length===0){vazio.style.display='block';return;}
+    const rotuloCriterio={pontos_acumulados:'Pontos ganhos ≥ ',pedidos_realizados:'Pedidos ≥ ',missoes_completas:'Missões ≥ '};
+    tbody.innerHTML=data.map(c=>{
+      const req=(rotuloCriterio[c.criterio_tipo]||c.criterio_tipo+' ')+c.criterio_valor;
+      return `<tr>
+        <td style="font-size:20px">${c.icone||'🏅'}</td>
+        <td><strong>${c.titulo}</strong></td>
+        <td style="font-size:12px;max-width:200px">${c.descricao||'—'}</td>
+        <td style="font-size:12px">${req}</td>
+        <td><strong>${c.pontos_bonus}</strong> pts</td>
+        <td><span class="badge ${c.ativa?'bdin':'boff'}">${c.ativa?'Ativa':'Inativa'}</span></td>
+        <td style="white-space:nowrap">
+          <button class="btn-sm" onclick="cpAdminToggleConquista('${c.id}',${!c.ativa})" style="background:${c.ativa?'#999':'var(--vd)'};color:#fff;border:none;padding:4px 10px;border-radius:6px;cursor:pointer;font-size:11px">${c.ativa?'Desativar':'Ativar'}</button>
+          <button class="btn-sm" onclick="cpAdminExcluirConquista('${c.id}')" style="background:#A93226;color:#fff;border:none;padding:4px 10px;border-radius:6px;cursor:pointer;font-size:11px;margin-left:4px">Excluir</button>
+        </td>
+      </tr>`;
+    }).join('');
+    tabela.style.display='block';
+  }catch(e){
+    loading.style.display='none';vazio.style.display='block';
+  }
+}
+async function cpAdminAddConquista(){
+  const titulo=document.getElementById('cpc-titulo').value.trim();
+  const descricao=document.getElementById('cpc-desc').value.trim();
+  const icone=document.getElementById('cpc-icone').value.trim()||'🏅';
+  const criterio_tipo=document.getElementById('cpc-criterio').value;
+  const criterio_valor=Number(document.getElementById('cpc-valor').value)||0;
+  const pontos_bonus=Number(document.getElementById('cpc-bonus').value)||0;
+  const msg=document.getElementById('cpc-msg');
+  msg.textContent='';
+  if(!titulo){msg.textContent='Título é obrigatório';return;}
+  try{
+    const resp=await fetch('/api/admin-chocopontos-conquistas',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({titulo,descricao,icone,criterio_tipo,criterio_valor,pontos_bonus})});
+    const data=await resp.json();
+    if(!resp.ok){msg.textContent=data.error||'Erro ao criar conquista';return;}
+    document.getElementById('cpc-titulo').value='';
+    document.getElementById('cpc-desc').value='';
+    document.getElementById('cpc-icone').value='';
+    document.getElementById('cpc-valor').value='';
+    document.getElementById('cpc-bonus').value='';
+    logAtividade('Conquista de chocopontos criada: '+titulo);
+    cpAdminCarregarConquistas();
+  }catch(e){
+    msg.textContent='Erro ao criar conquista';
+  }
+}
+async function cpAdminToggleConquista(id,novoValor){
+  await fetch('/api/admin-chocopontos-conquistas',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({id,ativa:novoValor})});
+  logAtividade('Status de conquista de chocopontos alterado');
+  cpAdminCarregarConquistas();
+}
+async function cpAdminExcluirConquista(id){
+  if(!confirm('Excluir esta conquista definitivamente?'))return;
+  await fetch('/api/admin-chocopontos-conquistas?id='+encodeURIComponent(id),{method:'DELETE'});
+  logAtividade('Conquista de chocopontos excluída');
+  cpAdminCarregarConquistas();
+}
+
+async function cpAdminCarregarEventos(){
+  const loading=document.getElementById('cpe-loading');
+  const tabela=document.getElementById('cpe-tabela');
+  const vazio=document.getElementById('cpe-vazio');
+  const tbody=document.getElementById('cpe-tbody');
+  loading.style.display='block';tabela.style.display='none';vazio.style.display='none';
+  try{
+    const resp=await fetch('/api/admin-chocopontos-eventos');
+    const data=await resp.json();
+    loading.style.display='none';
+    if(!resp.ok||!Array.isArray(data)||data.length===0){vazio.style.display='block';return;}
+    tbody.innerHTML=data.map(e=>{
+      const agora=new Date(), ini=new Date(e.data_inicio), fim=new Date(e.data_fim);
+      let statusTxt='Ativo agora', statusCls='bdin';
+      if(!e.ativo){statusTxt='Desativado';statusCls='boff';}
+      else if(agora<ini){statusTxt='Agendado';statusCls='bfia';}
+      else if(agora>fim){statusTxt='Encerrado';statusCls='boff';}
+      const dtIni=ini.toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',year:'2-digit',hour:'2-digit',minute:'2-digit'});
+      const dtFim=fim.toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',year:'2-digit',hour:'2-digit',minute:'2-digit'});
+      return `<tr>
+        <td><strong>${e.titulo}</strong></td>
+        <td style="font-size:12px;max-width:200px">${e.descricao||'—'}</td>
+        <td><strong>${e.pontos_bonus}</strong> pts</td>
+        <td style="font-size:12px;white-space:nowrap">${dtIni}</td>
+        <td style="font-size:12px;white-space:nowrap">${dtFim}</td>
+        <td><span class="badge ${statusCls}">${statusTxt}</span></td>
+        <td style="white-space:nowrap">
+          <button class="btn-sm" onclick="cpAdminToggleEvento('${e.id}',${!e.ativo})" style="background:${e.ativo?'#999':'var(--vd)'};color:#fff;border:none;padding:4px 10px;border-radius:6px;cursor:pointer;font-size:11px">${e.ativo?'Desativar':'Ativar'}</button>
+          <button class="btn-sm" onclick="cpAdminExcluirEvento('${e.id}')" style="background:#A93226;color:#fff;border:none;padding:4px 10px;border-radius:6px;cursor:pointer;font-size:11px;margin-left:4px">Excluir</button>
+        </td>
+      </tr>`;
+    }).join('');
+    tabela.style.display='block';
+  }catch(e){
+    loading.style.display='none';vazio.style.display='block';
+  }
+}
+async function cpAdminAddEvento(){
+  const titulo=document.getElementById('cpe-titulo').value.trim();
+  const descricao=document.getElementById('cpe-desc').value.trim();
+  const pontos_bonus=Number(document.getElementById('cpe-bonus').value)||0;
+  const data_inicio=document.getElementById('cpe-inicio').value;
+  const data_fim=document.getElementById('cpe-fim').value;
+  const msg=document.getElementById('cpe-msg');
+  msg.textContent='';
+  if(!titulo){msg.textContent='Título é obrigatório';return;}
+  if(!data_inicio||!data_fim){msg.textContent='Datas de início e fim são obrigatórias';return;}
+  try{
+    const resp=await fetch('/api/admin-chocopontos-eventos',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({titulo,descricao,pontos_bonus,data_inicio,data_fim})});
+    const data=await resp.json();
+    if(!resp.ok){msg.textContent=data.error||'Erro ao criar evento';return;}
+    document.getElementById('cpe-titulo').value='';
+    document.getElementById('cpe-desc').value='';
+    document.getElementById('cpe-bonus').value='';
+    document.getElementById('cpe-inicio').value='';
+    document.getElementById('cpe-fim').value='';
+    logAtividade('Evento de chocopontos criado: '+titulo);
+    cpAdminCarregarEventos();
+  }catch(e){
+    msg.textContent='Erro ao criar evento';
+  }
+}
+async function cpAdminToggleEvento(id,novoValor){
+  await fetch('/api/admin-chocopontos-eventos',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({id,ativo:novoValor})});
+  logAtividade('Status de evento de chocopontos alterado');
+  cpAdminCarregarEventos();
+}
+async function cpAdminExcluirEvento(id){
+  if(!confirm('Excluir este evento definitivamente?'))return;
+  await fetch('/api/admin-chocopontos-eventos?id='+encodeURIComponent(id),{method:'DELETE'});
+  logAtividade('Evento de chocopontos excluído');
+  cpAdminCarregarEventos();
+}
+
+async function cpAdminCarregarHistorico(){
+  const loading=document.getElementById('cph-loading');
+  const tabela=document.getElementById('cph-tabela');
+  const vazio=document.getElementById('cph-vazio');
+  const tbody=document.getElementById('cph-tbody');
+  const cpfFiltro=document.getElementById('cph-filtro-cpf').value.replace(/\D/g,'');
+  loading.style.display='block';tabela.style.display='none';vazio.style.display='none';
+  try{
+    const resp=await fetch('/api/admin-chocopontos-historico'+(cpfFiltro?('?cpf='+cpfFiltro):''));
+    const data=await resp.json();
+    loading.style.display='none';
+    if(!resp.ok||!Array.isArray(data)||data.length===0){vazio.style.display='block';return;}
+    const rotulos={missao:'🎯 Missão',conquista:'🏅 Conquista',evento:'🎉 Evento',ajuste_manual:'🛠️ Ajuste manual'};
+    tbody.innerHTML=data.map(h=>{
+      const dt=h.created_at?new Date(h.created_at).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',year:'2-digit',hour:'2-digit',minute:'2-digit'}):'—';
+      const pos=h.pontos>=0;
+      return `<tr>
+        <td style="font-size:12px;white-space:nowrap">${dt}</td>
+        <td style="font-size:12px">${h.cpf_cliente}</td>
+        <td style="font-size:12px">${rotulos[h.tipo]||h.tipo}</td>
+        <td style="font-size:12px">${h.titulo||'—'}</td>
+        <td class="${pos?'pos':'neg'}">${pos?'+':''}${h.pontos} pts</td>
+      </tr>`;
+    }).join('');
+    tabela.style.display='block';
+  }catch(e){
+    loading.style.display='none';vazio.style.display='block';
+  }
+}
+async function cpAdminAjusteManual(){
+  const cpf=document.getElementById('cph-cpf').value.replace(/\D/g,'');
+  const pontos=Number(document.getElementById('cph-pontos').value);
+  const motivo=document.getElementById('cph-motivo').value.trim();
+  const msg=document.getElementById('cph-msg');
+  msg.textContent='';
+  if(cpf.length!==11){msg.textContent='CPF inválido (11 dígitos)';return;}
+  if(!pontos){msg.textContent='Informe a quantidade de pontos (positivo ou negativo)';return;}
+  try{
+    const resp=await fetch('/api/admin-chocopontos-historico',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({cpf,pontos,motivo})});
+    const data=await resp.json();
+    if(!resp.ok){msg.textContent=data.error||'Erro ao aplicar ajuste';return;}
+    document.getElementById('cph-cpf').value='';
+    document.getElementById('cph-pontos').value='';
+    document.getElementById('cph-motivo').value='';
+    logAtividade('Ajuste manual de chocopontos aplicado ('+(pontos>0?'+':'')+pontos+' pts)');
+    cpAdminCarregarHistorico();
+  }catch(e){
+    msg.textContent='Erro ao aplicar ajuste';
+  }
 }
 
 // ── INIT ──

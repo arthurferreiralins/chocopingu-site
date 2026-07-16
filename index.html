@@ -278,51 +278,76 @@
         <button type="button" id="btnVerSaldoChocopontos">Ver meus chocopontos</button>
         <p class="saldo-chocopontos-resultado" id="saldoChocopontosModal"></p>
       </div>
-      <div class="modal-produtos" style="grid-template-columns:repeat(2,1fr)">
-        <div class="modal-card">
-          <div class="modal-img-wrap">
-            <img src="imagens/barra-coracao.png" alt="Barra Coração" />
+
+      <div class="cp-tabs">
+        <button class="cp-tab ativo" data-cptab="resgatar" onclick="cpMudarAba('resgatar')">🎁 Resgatar</button>
+        <button class="cp-tab" data-cptab="missoes" onclick="cpMudarAba('missoes')">🎯 Missões</button>
+        <button class="cp-tab" data-cptab="conquistas" onclick="cpMudarAba('conquistas')">🏅 Conquistas</button>
+        <button class="cp-tab" data-cptab="historico" onclick="cpMudarAba('historico')">📜 Histórico</button>
+      </div>
+
+      <div class="cp-tab-content ativo" id="cpTab-resgatar">
+        <div class="modal-produtos" style="grid-template-columns:repeat(2,1fr)">
+          <div class="modal-card">
+            <div class="modal-img-wrap">
+              <img src="imagens/barra-coracao.png" alt="Barra Coração" />
+            </div>
+            <div class="modal-info">
+              <h3>Barra Coração</h3>
+              <p>Barra especial em formato de coração. 140g de puro amor.</p>
+              <span class="modal-pontos">8 chocopontos</span>
+              <button class="btn-comprar-chocopontos" onclick="comprarChocopontos(1, 8)">Pagar com Chocopontos</button>
+            </div>
           </div>
-          <div class="modal-info">
-            <h3>Barra Coração</h3>
-            <p>Barra especial em formato de coração. 140g de puro amor.</p>
-            <span class="modal-pontos">8 chocopontos</span>
-            <button class="btn-comprar-chocopontos" onclick="comprarChocopontos(1, 8)">Pagar com Chocopontos</button>
+          <div class="modal-card">
+            <div class="modal-img-wrap">
+              <img src="imagens/barra-normal.png" alt="Barra Normal" />
+            </div>
+            <div class="modal-info">
+              <h3>Barra Normal</h3>
+              <p>Barra clássica de chocolate ao leite. 140g de puro prazer.</p>
+              <span class="modal-pontos">10 chocopontos</span>
+              <button class="btn-comprar-chocopontos" onclick="comprarChocopontos(2, 10)">Pagar com Chocopontos</button>
+            </div>
+          </div>
+          <div class="modal-card">
+            <div class="modal-img-wrap">
+              <img src="imagens/pirulitos-novo.png" alt="Pirulitos" />
+            </div>
+            <div class="modal-info">
+              <h3>Pirulitos</h3>
+              <p>Pirulitos artesanais em formato de estrela. 140g de diversão!</p>
+              <span class="modal-pontos">4 chocopontos</span>
+              <button class="btn-comprar-chocopontos" onclick="comprarChocopontos(3, 4)">Pagar com Chocopontos</button>
+            </div>
+          </div>
+          <div class="modal-card">
+            <div class="modal-img-wrap">
+              <img src="imagens/bonecos-animais.png" alt="Boneco Animais" />
+            </div>
+            <div class="modal-info">
+              <h3>Boneco Animais</h3>
+              <p>Chocolate ao leite em formato de animais fofos. 140g de alegria.</p>
+              <span class="modal-pontos">8 chocopontos</span>
+              <button class="btn-comprar-chocopontos" onclick="comprarChocopontos(4, 8)">Pagar com Chocopontos</button>
+            </div>
           </div>
         </div>
-        <div class="modal-card">
-          <div class="modal-img-wrap">
-            <img src="imagens/barra-normal.png" alt="Barra Normal" />
-          </div>
-          <div class="modal-info">
-            <h3>Barra Normal</h3>
-            <p>Barra clássica de chocolate ao leite. 140g de puro prazer.</p>
-            <span class="modal-pontos">10 chocopontos</span>
-            <button class="btn-comprar-chocopontos" onclick="comprarChocopontos(2, 10)">Pagar com Chocopontos</button>
-          </div>
-        </div>
-        <div class="modal-card">
-          <div class="modal-img-wrap">
-            <img src="imagens/pirulitos-novo.png" alt="Pirulitos" />
-          </div>
-          <div class="modal-info">
-            <h3>Pirulitos</h3>
-            <p>Pirulitos artesanais em formato de estrela. 140g de diversão!</p>
-            <span class="modal-pontos">4 chocopontos</span>
-            <button class="btn-comprar-chocopontos" onclick="comprarChocopontos(3, 4)">Pagar com Chocopontos</button>
-          </div>
-        </div>
-        <div class="modal-card">
-          <div class="modal-img-wrap">
-            <img src="imagens/bonecos-animais.png" alt="Boneco Animais" />
-          </div>
-          <div class="modal-info">
-            <h3>Boneco Animais</h3>
-            <p>Chocolate ao leite em formato de animais fofos. 140g de alegria.</p>
-            <span class="modal-pontos">8 chocopontos</span>
-            <button class="btn-comprar-chocopontos" onclick="comprarChocopontos(4, 8)">Pagar com Chocopontos</button>
-          </div>
-        </div>
+      </div>
+
+      <div class="cp-tab-content" id="cpTab-missoes">
+        <div id="cpEventosArea"></div>
+        <p class="cp-hint" id="cpMissoesHint">Digite seu CPF acima em "Ver meus chocopontos" para liberar o resgate das missões.</p>
+        <div class="cp-lista" id="cpMissoesLista"></div>
+      </div>
+
+      <div class="cp-tab-content" id="cpTab-conquistas">
+        <div class="cp-grid-conquistas" id="cpConquistasGrid"><p class="cp-vazio">Carregando conquistas...</p></div>
+      </div>
+
+      <div class="cp-tab-content" id="cpTab-historico">
+        <p class="cp-hint" id="cpHistoricoHint">Digite seu CPF acima em "Ver meus chocopontos" para ver seu histórico de pontos.</p>
+        <div class="cp-historico-lista" id="cpHistoricoLista"></div>
       </div>
     </div>
   </div>
