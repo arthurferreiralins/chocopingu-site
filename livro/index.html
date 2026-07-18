@@ -57,18 +57,15 @@
 
     /* HERO */
     .livro-hero {
-      flex: 1;
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-      text-align: center; padding: 4rem 5%; max-width: 720px; margin: 0 auto;
+      text-align: center; padding: 3.5rem 5% 1rem; max-width: 720px; margin: 0 auto;
     }
     .section-tag {
       display: inline-block; background: var(--bege); color: var(--choco-claro);
       font-weight: 800; font-size: .8rem; letter-spacing: 1.5px; text-transform: uppercase;
       padding: .35rem 1rem; border-radius: 50px; margin-bottom: 1.2rem;
     }
-    .livro-hero-icone { font-size: 3.2rem; margin-bottom: 1rem; }
     .livro-hero h1 { font-size: clamp(1.9rem, 4.5vw, 2.9rem); line-height: 1.15; margin-bottom: .9rem; }
-    .livro-hero p { color: var(--cinza); font-size: 1.05rem; line-height: 1.7; margin-bottom: 1.8rem; }
+    .livro-hero p { color: var(--cinza); font-size: 1.05rem; line-height: 1.7; }
     .btn-ouro {
       display: inline-block;
       background: linear-gradient(135deg, var(--ouro-claro), var(--ouro));
@@ -78,8 +75,28 @@
       border-radius: 50px; border: none; cursor: pointer;
       box-shadow: 0 6px 20px rgba(200,148,26,.35);
       transition: transform .2s, box-shadow .2s;
+      font-family: 'Nunito', sans-serif;
     }
     .btn-ouro:hover { transform: translateY(-2px); box-shadow: 0 10px 26px rgba(200,148,26,.45); }
+
+    /* GRID DE LIVROS */
+    .livros-grid {
+      flex: 1;
+      display: flex; flex-wrap: wrap; gap: 2.5rem; justify-content: center;
+      padding: 2rem 5% 4rem; max-width: 1100px; margin: 0 auto;
+    }
+    .livro-card {
+      background: var(--branco); border-radius: var(--radius); box-shadow: var(--sombra);
+      overflow: hidden; width: 320px; display: flex; flex-direction: column;
+      transition: transform .25s, box-shadow .25s;
+    }
+    .livro-card:hover { transform: translateY(-6px); box-shadow: 0 16px 40px rgba(13,4,0,.16); }
+    .livro-card-capa { width: 100%; aspect-ratio: 2 / 3; object-fit: cover; background: var(--bege); }
+    .livro-card-corpo { padding: 1.5rem; display: flex; flex-direction: column; gap: .6rem; flex: 1; }
+    .livro-card-corpo h2 { font-size: 1.3rem; line-height: 1.25; }
+    .livro-card-corpo p { color: var(--cinza); font-size: .92rem; line-height: 1.55; flex: 1; }
+    .livro-card-preco { font-family: 'Playfair Display', serif; font-weight: 900; font-size: 1.5rem; color: var(--ouro-escuro); }
+    .livro-card .btn-ouro { text-align: center; width: 100%; }
 
     /* FOOTER */
     .footer {
@@ -117,11 +134,21 @@
 
   <section class="livro-hero">
     <span class="section-tag">Novidade Chocopingu</span>
-    <div class="livro-hero-icone">📖</div>
-    <h1>Nossos <span>Livros</span> estão chegando</h1>
-    <p>Em breve, novidades por aqui! Estamos preparando livros especiais da Chocopingu pra você. Volte em breve pra conferir.</p>
-    <a href="https://wa.me/5581981553632" target="_blank" rel="noopener" class="btn-ouro">Falar no WhatsApp &#128172;</a>
+    <h1>Nossos <span>Livros</span></h1>
+    <p>Histórias e curiosidades do universo Chocopingu, direto pra sua casa.</p>
   </section>
+
+  <div class="livros-grid">
+    <div class="livro-card">
+      <img src="../imagens/capa-revolucao-do-chocolate.png" alt="Capa do livro A Revolução do Chocolate" class="livro-card-capa" />
+      <div class="livro-card-corpo">
+        <h2>A Revolução do Chocolate</h2>
+        <p>O primeiro livro da Chocopingu, contando a história por trás da marca que conquistou o coração do Brasil.</p>
+        <span class="livro-card-preco">R$ 69,90</span>
+        <button class="btn-ouro" onclick="comprarLivro()">Comprar agora</button>
+      </div>
+    </div>
+  </div>
 
   <footer class="footer">
     <div class="footer-top">
@@ -135,6 +162,20 @@
       <p>&copy; 2026 Chocopingu. Todos os direitos reservados.</p>
     </div>
   </footer>
+
+  <script>
+    function comprarLivro() {
+      var item = {
+        nome: 'Livro - A Revolução do Chocolate',
+        img: 'imagens/capa-revolucao-do-chocolate.png',
+        preco: 69.90,
+        qtd: 1
+      };
+      localStorage.setItem('chocopingu_checkout_mode', 'dinheiro');
+      localStorage.setItem('chocopingu_checkout_cart', JSON.stringify([item]));
+      window.location.href = '/pedido.html';
+    }
+  </script>
 
 </body>
 </html>
