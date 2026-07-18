@@ -9,6 +9,7 @@
     { "src": "/api/(.*)", "dest": "/api/$1.js" },
     { "src": "/admin(.*)", "status": 404 },
     { "src": "/pedir(.*)", "status": 404 },
+    { "src": "/livro(.*)", "status": 404 },
     { "src": "/(.*)", "dest": "/$1" }
   ]
 }

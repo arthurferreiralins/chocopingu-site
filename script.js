@@ -230,6 +230,18 @@ function renderCarrinho() {
   `;
 }
 
+function comprarLivro() {
+  const item = {
+    nome: 'Livro - A Revolução do Chocolate',
+    img: 'imagens/capa-revolucao-do-chocolate.png',
+    preco: 69.90,
+    qtd: 1
+  };
+  localStorage.setItem('chocopingu_checkout_mode', 'dinheiro');
+  localStorage.setItem('chocopingu_checkout_cart', JSON.stringify([item]));
+  window.location.href = 'pedido.html';
+}
+
 function irParaCheckout(modo) {
   if (carrinho.length === 0) return;
   localStorage.setItem('chocopingu_checkout_mode', modo || 'dinheiro');
