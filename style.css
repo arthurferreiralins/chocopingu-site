@@ -299,8 +299,14 @@ section[id], footer[id] { scroll-margin-top: 90px; }
   backdrop-filter: blur(6px);
 }
 
+.hero-banner-link {
+  display: block;
+  transition: transform .3s;
+}
+.hero-banner-link:hover { transform: translateY(-6px); }
+
 .hero-banner-img {
-  max-width: min(420px, 80vw);
+  max-width: min(900px, 90vw);
   width: 100%;
   height: auto;
   display: block;
