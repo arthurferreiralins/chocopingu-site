@@ -219,13 +219,6 @@ section[id], footer[id] { scroll-margin-top: 90px; }
   );
 }
 
-.hero-center {
-  position: relative;
-  display: flex; flex-direction: column;
-  align-items: center; text-align: center;
-  gap: 1.4rem;
-}
-
 @keyframes flutua { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-14px)} }
 
 .hero-tagline {
@@ -254,18 +247,19 @@ section[id], footer[id] { scroll-margin-top: 90px; }
 .badge-estrela { font-size: .75rem; opacity: .8; }
 
 .hero-banner-link {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
   display: block;
-  transition: transform .3s;
+  z-index: 0;
 }
-.hero-banner-link:hover { transform: translateY(-6px); }
 
 .hero-banner-img {
-  max-width: min(1100px, 92vw);
   width: 100%;
-  height: auto;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
   display: block;
-  border-radius: 16px;
-  filter: drop-shadow(0 16px 32px rgba(0,0,0,.5));
 }
 
 /* bolhas */
