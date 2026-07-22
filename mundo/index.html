@@ -199,6 +199,24 @@ button{font-family:inherit;cursor:pointer}
 }
 .exit-pessoa.show{display:block}
 
+/* ===== MODAL VISTA REAL (embutido, sem sair do site) ===== */
+.sv-modal{
+  position:fixed;inset:0;z-index:2000;background:rgba(13,4,0,.72);
+  display:none;align-items:center;justify-content:center;padding:20px
+}
+.sv-modal.show{display:flex}
+.sv-modal-box{
+  width:min(920px,100%);height:min(640px,88vh);background:#000;border-radius:18px;
+  overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.5);display:flex;flex-direction:column
+}
+.sv-modal-head{
+  display:flex;align-items:center;justify-content:space-between;
+  background:var(--br);color:#fff;padding:12px 16px;font-family:var(--fd);font-weight:900;font-size:14.5px
+}
+.sv-modal-head button{background:none;border:none;color:rgba(255,255,255,.7);font-size:16px}
+.sv-modal-head button:hover{color:#fff}
+.sv-modal-box iframe{flex:1;width:100%;border:none}
+
 .toggle-mob{display:none}
 
 @media (max-width:860px){
@@ -246,7 +264,7 @@ button{font-family:inherit;cursor:pointer}
     <button class="exit-pessoa" id="btnSairPessoa">&larr; Sair do modo pessoa</button>
     <div class="street-bar" id="streetBar">
       <b id="streetBarRua">Localizando...</b><span id="streetBarBairro"></span>
-      <a class="sv-pessoa-btn" id="btnSVPessoa" href="javascript:void(0)" target="_blank" rel="noopener">👁️ Ver essa rua de verdade</a>
+      <button class="sv-pessoa-btn" id="btnSVPessoa">👁️ Ver essa rua de verdade</button>
     </div>
     <div class="dpad" id="dpad">
       <button class="dp-n" id="dpN">&#8593;</button>
@@ -255,6 +273,16 @@ button{font-family:inherit;cursor:pointer}
       <button class="dp-e" id="dpE">&#8594;</button>
       <button class="dp-s" id="dpS">&#8595;</button>
     </div>
+  </div>
+</div>
+
+<div class="sv-modal" id="svModal">
+  <div class="sv-modal-box">
+    <div class="sv-modal-head">
+      <span id="svModalTitle">👁️ Vista real</span>
+      <button id="svClose">&#10005;</button>
+    </div>
+    <iframe id="svModalFrame" src="about:blank" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
   </div>
 </div>
 
@@ -304,22 +332,38 @@ function distKm(a, b) {
   return R * 2 * Math.atan2(Math.sqrt(s), Math.sqrt(1-s));
 }
 
-function streetViewUrl(lat, lng) {
-  return `https://www.google.com/maps?layer=c&cbll=${lat},${lng}&cbp=12,0,0,0,0`;
+function vistaRealEmbedUrl(lat, lng) {
+  return `https://maps.google.com/maps?q=${lat},${lng}&z=20&t=h&output=embed`;
+}
+
+function abrirVistaReal(lat, lng, titulo) {
+  document.getElementById('svModalTitle').textContent = titulo ? `👁️ ${titulo}` : '👁️ Vista real';
+  document.getElementById('svModalFrame').src = vistaRealEmbedUrl(lat, lng);
+  document.getElementById('svModal').classList.add('show');
+}
+
+function abrirVistaRealPorId(id) {
+  const l = lugares.find(x => String(x.id) === String(id));
+  if (!l) return;
+  abrirVistaReal(l.latitude, l.longitude, l.nome);
+}
+
+function fecharVistaReal() {
+  document.getElementById('svModal').classList.remove('show');
+  document.getElementById('svModalFrame').src = 'about:blank';
 }
 
 function popupHtml(l) {
   const c = CATS[l.categoria] || CATS.loja;
   const wa = l.whatsapp ? `https://wa.me/${String(l.whatsapp).replace(/\D/g,'')}` : null;
   const dir = `https://www.google.com/maps/dir/?api=1&destination=${l.latitude},${l.longitude}`;
-  const sv = streetViewUrl(l.latitude, l.longitude);
   return `
     <div class="pop-name">${c.emoji} ${l.nome}</div>
     <div class="pop-cat">${c.label}</div>
     ${l.endereco ? `<div class="pop-addr">📍 ${l.endereco}</div>` : ''}
     ${l.descricao ? `<div class="pop-desc">${l.descricao}</div>` : ''}
     <div class="pop-actions">
-      <a class="primary" href="${sv}" target="_blank" rel="noopener">👁️ Ver rua real</a>
+      <a class="primary" href="javascript:void(0)" onclick="abrirVistaRealPorId('${l.id}')">👁️ Ver rua real</a>
       <a href="${dir}" target="_blank" rel="noopener">Como chegar</a>
       ${wa ? `<a href="${wa}" target="_blank" rel="noopener">WhatsApp</a>` : ''}
     </div>`;
@@ -399,7 +443,7 @@ function renderLista(visiveis) {
       ${l.descricao ? `<div class="pc-desc">${l.descricao}</div>` : ''}
       <div class="pc-actions">
         <a class="pc-btn primary" href="javascript:void(0)" onclick="focarLugar('${l.id}')">Ver no mapa</a>
-        <a class="pc-btn" href="${streetViewUrl(l.latitude, l.longitude)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">👁️ Rua real</a>
+        <a class="pc-btn" href="javascript:void(0)" onclick="event.stopPropagation();abrirVistaRealPorId('${l.id}')">👁️ Rua real</a>
         ${l.whatsapp ? `<a class="pc-btn" href="https://wa.me/${String(l.whatsapp).replace(/\D/g,'')}" target="_blank" rel="noopener" onclick="event.stopPropagation()">WhatsApp</a>` : ''}
       </div>
     </div>`;
@@ -447,7 +491,6 @@ function mostrarInfoGlobo(l) {
   const c = CATS[l.categoria] || CATS.loja;
   const wa = l.whatsapp ? `https://wa.me/${String(l.whatsapp).replace(/\D/g,'')}` : null;
   const dir = `https://www.google.com/maps/dir/?api=1&destination=${l.latitude},${l.longitude}`;
-  const sv = streetViewUrl(l.latitude, l.longitude);
   const box = document.getElementById('globeInfo');
   box.innerHTML = `
     <button class="gi-close" onclick="document.getElementById('globeInfo').classList.remove('show')">&#10005;</button>
@@ -456,7 +499,7 @@ function mostrarInfoGlobo(l) {
     ${l.endereco ? `<div class="pop-addr">📍 ${l.endereco}</div>` : ''}
     ${l.descricao ? `<div class="pop-desc">${l.descricao}</div>` : ''}
     <div class="pop-actions">
-      <a class="primary" href="${sv}" target="_blank" rel="noopener">👁️ Ver rua real</a>
+      <a class="primary" href="javascript:void(0)" onclick="abrirVistaRealPorId('${l.id}')">👁️ Ver rua real</a>
       <a href="${dir}" target="_blank" rel="noopener">Como chegar</a>
       ${wa ? `<a href="${wa}" target="_blank" rel="noopener">WhatsApp</a>` : ''}
     </div>`;
@@ -572,17 +615,11 @@ function agendarGeocode() {
   geoTimer = setTimeout(() => atualizarRua(avatarPos), 700);
 }
 
-function atualizarBotaoSV() {
-  const btn = document.getElementById('btnSVPessoa');
-  if (btn && avatarPos) btn.href = streetViewUrl(avatarPos[0], avatarPos[1]);
-}
-
 function moverAvatarPara(novaPos) {
   avatarHeading = bearing(avatarPos || novaPos, novaPos);
   avatarPos = novaPos;
   avatarMarker.setLatLng(avatarPos).setIcon(avatarIcon(avatarHeading));
   map.panTo(avatarPos, { animate: true, duration: .4 });
-  atualizarBotaoSV();
   agendarGeocode();
 }
 
@@ -600,7 +637,6 @@ function moverDirecao(dir) {
   avatarHeading = heading;
   avatarMarker.setLatLng(avatarPos).setIcon(avatarIcon(heading));
   map.panTo(avatarPos, { animate: true, duration: .25 });
-  atualizarBotaoSV();
   agendarGeocode();
 }
 
@@ -630,7 +666,6 @@ function entrarModoPessoa() {
   document.getElementById('dpad').classList.add('show');
   document.getElementById('streetBar').classList.add('show');
   document.getElementById('btnSairPessoa').classList.add('show');
-  atualizarBotaoSV();
   atualizarRua(avatarPos);
   document.addEventListener('keydown', onKeyPessoa);
 }
@@ -649,6 +684,11 @@ document.getElementById('dpS').addEventListener('click', () => moverDirecao('s')
 document.getElementById('dpE').addEventListener('click', () => moverDirecao('e'));
 document.getElementById('dpW').addEventListener('click', () => moverDirecao('w'));
 document.getElementById('dpCenter').addEventListener('click', () => map.setView(avatarPos, 18));
+document.getElementById('btnSVPessoa').addEventListener('click', () => {
+  if (avatarPos) abrirVistaReal(avatarPos[0], avatarPos[1], 'Sua localização');
+});
+document.getElementById('svClose').addEventListener('click', fecharVistaReal);
+document.getElementById('svModal').addEventListener('click', (e) => { if (e.target.id === 'svModal') fecharVistaReal(); });
 
 document.getElementById('busca').addEventListener('input', aplicarFiltro);
 
