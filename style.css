@@ -204,26 +204,10 @@ section[id], footer[id] { scroll-margin-top: 90px; }
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   position: relative;
   overflow: hidden;
   padding: 6rem 5% 2rem;
-}
-.hero-video-bg {
-  position: absolute;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  object-fit: cover;
-  object-position: center;
-  z-index: 0;
-  pointer-events: none;
-}
-.hero-overlay {
-  position: absolute;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  background: rgba(10, 3, 0, .3);
-  z-index: 1;
 }
 
 /* textura sutil */
@@ -242,16 +226,6 @@ section[id], footer[id] { scroll-margin-top: 90px; }
   gap: 1.4rem;
 }
 
-.hero-logo-wrap {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-.hero-logo {
-  width: min(240px, 55vw);
-  display: block;
-  animation: flutua 4s ease-in-out infinite;
-}
 @keyframes flutua { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-14px)} }
 
 .hero-tagline {
@@ -279,26 +253,6 @@ section[id], footer[id] { scroll-margin-top: 90px; }
 .hero-preco-badge strong { color: var(--ouro-claro); font-weight: 900; }
 .badge-estrela { font-size: .75rem; opacity: .8; }
 
-/* preview dos produtos no rodapé do hero */
-.hero-produtos-preview {
-  position: relative; z-index: 2;
-  display: flex; flex-direction: column; align-items: center; gap: .8rem;
-}
-
-.hero-novos-label {
-  font-family: 'Nunito', sans-serif;
-  font-size: .78rem;
-  font-weight: 900;
-  letter-spacing: .25em;
-  text-transform: uppercase;
-  color: var(--ouro-claro);
-  background: rgba(13,4,0,.55);
-  border: 1px solid rgba(200,148,26,.35);
-  border-radius: 50px;
-  padding: .35rem 1.2rem;
-  backdrop-filter: blur(6px);
-}
-
 .hero-banner-link {
   display: block;
   transition: transform .3s;
@@ -306,60 +260,12 @@ section[id], footer[id] { scroll-margin-top: 90px; }
 .hero-banner-link:hover { transform: translateY(-6px); }
 
 .hero-banner-img {
-  max-width: min(900px, 90vw);
+  max-width: min(1100px, 92vw);
   width: 100%;
   height: auto;
   display: block;
   border-radius: 16px;
   filter: drop-shadow(0 16px 32px rgba(0,0,0,.5));
-}
-
-.hero-preview-row {
-  display: flex; gap: 1.2rem; align-items: flex-end;
-}
-.hero-preview-row--4 {
-  gap: 0.7rem;
-  flex-wrap: nowrap;
-  max-width: 94vw;
-}
-.hero-preview-row--4 .preview-wrap img {
-  height: min(130px, 9vw) !important;
-  width: auto !important;
-}
-.hero-preview-row--4 .preview-novo img {
-  height: min(160px, 12vw) !important;
-  width: auto !important;
-}
-
-.preview-wrap {
-  display: flex; flex-direction: column; align-items: center; gap: .6rem;
-  transform: translateY(20px);
-  transition: transform .3s;
-}
-.preview-wrap:hover { transform: translateY(8px); }
-
-.preview-wrap img {
-  height: 170px; width: auto; object-fit: contain;
-  filter: drop-shadow(0 16px 32px rgba(0,0,0,.5));
-  border-radius: 12px;
-}
-.preview-wrap span {
-  color: rgba(255,255,255,.7); font-size: .8rem;
-  font-weight: 700; letter-spacing: .5px;
-}
-.preview-center img { height: 220px; }
-.preview-center { transform: translateY(0px); }
-.preview-center:hover { transform: translateY(-12px); }
-
-.preview-novo { position: relative; }
-.preview-novo img { height: 210px !important; }
-.preview-badge-novo {
-  position: absolute; top: -10px; left: 50%; transform: translateX(-50%);
-  background: linear-gradient(135deg, #e74c3c, #c0392b);
-  color: #fff; font-size: .62rem; font-weight: 900;
-  letter-spacing: .15em; padding: .22rem .7rem;
-  border-radius: 50px; white-space: nowrap; z-index: 3;
-  box-shadow: 0 2px 8px rgba(231,76,60,.5);
 }
 
 /* bolhas */
@@ -1723,9 +1629,6 @@ section[id], footer[id] { scroll-margin-top: 90px; }
 
 /* ===== RESPONSIVO ===== */
 @media (max-width: 900px) {
-  .hero-preview-row { gap: 1rem; }
-  .preview-wrap img { height: 130px; }
-  .preview-center img { height: 170px; }
   .banner-chocopontos { flex-direction: column; text-align: center; padding: 4rem 5%; }
   .banner-pingu { width: 150px; }
   .banner-livro { flex-direction: column-reverse; text-align: center; padding: 4rem 5%; }
@@ -1750,7 +1653,6 @@ section[id], footer[id] { scroll-margin-top: 90px; }
   }
   .nav-links a { color: var(--texto) !important; }
   .nav-links.aberto { display: flex; }
-  .hero-produtos-preview { display: none; }
   .pilares-grid, .produtos-grid { grid-template-columns: 1fr; }
   .produto-card.destaque { transform: none; }
 }
