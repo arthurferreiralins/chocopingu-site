@@ -361,6 +361,21 @@ tr:hover td{background:#FDFAF7}tr:last-child td{border-bottom:none}
 .promo-btn-salvar{background:var(--vd);color:#fff}
 .promo-btn-remover{background:var(--vm);color:#fff}
 
+/* DETALHES DO PEDIDO (linha expansível) */
+.ped-detail-row{display:none}
+.ped-detail-row.on{display:table-row}
+.ped-detail{padding:16px 18px;background:#FDFAF7;border-radius:12px;border:1px solid var(--bd);margin:4px 0;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
+.ped-detail-col h4{font-size:10px;font-weight:800;color:var(--gold);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px}
+.ped-detail-col p{font-size:12.5px;color:var(--txt);margin:0 0 4px}
+.ped-detail-col a{color:var(--az);text-decoration:none;font-weight:700}
+.ped-detail-col a:hover{text-decoration:underline}
+.ped-item-row{display:flex;justify-content:space-between;font-size:12.5px;padding:3px 0;border-bottom:1px dashed var(--bd)}
+.ped-item-row:last-child{border-bottom:none}
+.ped-code-box{display:flex;align-items:center;gap:6px;margin-top:4px}
+.ped-code-box code{flex:1;background:#fff;border:1px solid var(--bd);border-radius:6px;padding:5px 8px;font-size:11px;word-break:break-all}
+.btn-copiar-ped{background:var(--gold);color:#000;border:none;border-radius:6px;padding:5px 9px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap}
+.btn-detalhes-ped{background:var(--azl);color:var(--az);border:none;padding:4px 10px;border-radius:6px;cursor:pointer;font-size:11px;font-weight:700}
+
 /* GRÁFICOS — altura aumentada */
 .chbox canvas{max-height:280px}
 .chbox-tall canvas{max-height:340px}
@@ -2613,7 +2628,7 @@ async function carregarPedidos(){
       const clienteId=p.cpf_cliente||p.email_cliente||p.nome_cliente||'';
       return `<tr data-oid="${p.id}" data-cliente="${clienteId}">
         <td style="font-size:12px;white-space:nowrap">${dt}</td>
-        <td style="font-size:11px;color:#888">${(p.order_id||'').slice(-8)}</td>
+        <td style="font-size:11px;color:#888" title="${p.order_id||''}">${(p.order_id||'').slice(-8)}</td>
         <td>${p.nome_cliente||'—'}<br><span style="font-size:11px;color:#888">${p.metodo==='chocopontos'?('CPF '+(p.cpf_cliente||'—')):(p.email_cliente||'')}</span></td>
         <td>${metodoLabel[p.metodo]||p.metodo||'—'}</td>
         <td>
@@ -2623,13 +2638,70 @@ async function carregarPedidos(){
         </td>
         <td><strong>${total}</strong></td>
         <td style="font-size:12px">${itens}</td>
-        <td style="white-space:nowrap"><button class="btn-sm" onclick="excluirPedido('${p.id}')" style="background:#A93226;color:#fff;border:none;padding:4px 10px;border-radius:6px;cursor:pointer">Excluir</button></td>
+        <td style="white-space:nowrap;display:flex;gap:6px">
+          <button class="btn-detalhes-ped" onclick="toggleDetalhesPedido('${p.id}')">🔍 Detalhes</button>
+          <button class="btn-sm" onclick="excluirPedido('${p.id}')" style="background:#A93226;color:#fff;border:none;padding:4px 10px;border-radius:6px;cursor:pointer">Excluir</button>
+        </td>
+      </tr>
+      <tr class="ped-detail-row" id="ped-detail-row-${p.id}">
+        <td colspan="8">${renderDetalhePedido(p)}</td>
       </tr>`;
     }).join('');
     tabela.style.display='block';
   }catch(e){
     loading.style.display='none';erro.style.display='block';erro.textContent='Erro: '+e.message;
   }
+}
+function formatarEndereco(e){
+  if(!e||typeof e!=='object')return null;
+  const linha1=[e.rua,e.numero].filter(Boolean).join(', ');
+  const linha2=[e.complemento].filter(Boolean).join('');
+  const linha3=[e.bairro,e.cidade&&e.estado?`${e.cidade} - ${e.estado}`:(e.cidade||e.estado)].filter(Boolean).join(', ');
+  const linha4=e.cep?`CEP ${e.cep}`:'';
+  return [linha1,linha2,linha3,linha4].filter(Boolean).join('<br>')||null;
+}
+function renderDetalhePedido(p){
+  const endereco=formatarEndereco(p.endereco);
+  const itens=Array.isArray(p.itens)?p.itens:[];
+  const itensHtml=itens.length?itens.map(i=>{
+    const sub=i.preco!=null?'R$ '+((Number(i.preco)||0)*(i.qtd||1)).toFixed(2).replace('.',','):(i.pontos?(i.pontos)+' pts':'—');
+    return `<div class="ped-item-row"><span>${i.qtd||1}x ${i.nome||'?'}</span><span><strong>${sub}</strong></span></div>`;
+  }).join(''):'<p>Nenhum item registrado.</p>';
+  const waLink=p.whatsapp_cliente?`<a href="https://wa.me/55${String(p.whatsapp_cliente).replace(/\D/g,'')}" target="_blank" rel="noopener">📱 ${p.whatsapp_cliente}</a>`:null;
+  return `<div class="ped-detail">
+    <div class="ped-detail-col">
+      <h4>Itens do pedido</h4>
+      ${itensHtml}
+    </div>
+    <div class="ped-detail-col">
+      <h4>Contato</h4>
+      <p>${p.nome_cliente||'—'}</p>
+      ${p.cpf_cliente?`<p>CPF: ${p.cpf_cliente}</p>`:''}
+      ${p.email_cliente?`<p>✉️ ${p.email_cliente}</p>`:''}
+      ${waLink?`<p>${waLink}</p>`:''}
+      ${!p.cpf_cliente&&!p.email_cliente&&!p.whatsapp_cliente?'<p>Sem dados de contato.</p>':''}
+      <p style="margin-top:8px;font-size:11px;color:#888">ID completo: ${p.order_id||p.id||'—'}</p>
+    </div>
+    <div class="ped-detail-col">
+      <h4>Entrega</h4>
+      <p>${endereco||'Endereço não informado.'}</p>
+    </div>
+    ${(p.boleto_linha||p.boleto_pdf||p.pix_qr_code)?`<div class="ped-detail-col">
+      <h4>Pagamento</h4>
+      ${p.pix_qr_code?`<p>Código PIX copia-e-cola:</p><div class="ped-code-box"><code>${p.pix_qr_code}</code><button class="btn-copiar-ped" onclick="copiarTextoPed(this,'${p.pix_qr_code.replace(/'/g,"\\'")}')">Copiar</button></div>`:''}
+      ${p.boleto_linha?`<p style="margin-top:${p.pix_qr_code?'10px':'0'}">Linha digitável do boleto:</p><div class="ped-code-box"><code>${p.boleto_linha}</code><button class="btn-copiar-ped" onclick="copiarTextoPed(this,'${p.boleto_linha.replace(/'/g,"\\'")}')">Copiar</button></div>`:''}
+      ${p.boleto_pdf?`<p style="margin-top:8px"><a href="${p.boleto_pdf}" target="_blank" rel="noopener">📄 Abrir PDF do boleto</a></p>`:''}
+    </div>`:''}
+  </div>`;
+}
+function toggleDetalhesPedido(id){
+  const row=document.getElementById('ped-detail-row-'+id);
+  if(row)row.classList.toggle('on');
+}
+function copiarTextoPed(btn,texto){
+  const done=()=>{const orig=btn.textContent;btn.textContent='Copiado!';setTimeout(()=>{btn.textContent=orig;},1500);};
+  if(navigator.clipboard)navigator.clipboard.writeText(texto).then(done);
+  else done();
 }
 async function atualizarStatusPedido(id,status){
   try{
