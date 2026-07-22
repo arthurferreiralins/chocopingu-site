@@ -101,6 +101,32 @@ button{font-family:inherit;cursor:pointer}
 /* ===== MAP ===== */
 .mapwrap{flex:1;position:relative;min-width:0}
 #map{position:absolute;inset:0}
+#globeContainer{position:absolute;inset:0;background:#000;display:none}
+#globeContainer.on{display:block}
+
+.view-toggle{
+  position:absolute;top:16px;right:16px;z-index:500;display:flex;gap:6px;
+  background:rgba(255,255,255,.92);backdrop-filter:blur(6px);padding:5px;border-radius:14px;
+  box-shadow:var(--sh)
+}
+.vt-btn{
+  border:none;background:transparent;color:var(--text2);padding:8px 14px;border-radius:10px;
+  font-size:12.5px;font-weight:800;display:flex;align-items:center;gap:6px;transition:.15s
+}
+.vt-btn.on{background:var(--br);color:#fff}
+
+.globe-info{
+  position:absolute;left:20px;bottom:20px;z-index:500;max-width:320px;
+  background:var(--card);border-radius:16px;box-shadow:var(--sh);padding:16px 18px;
+  border-left:4px solid var(--gold);display:none
+}
+.globe-info.show{display:block}
+.gi-close{position:absolute;top:8px;right:10px;background:none;border:none;color:var(--text2);font-size:15px}
+.globe-hint{
+  position:absolute;left:50%;top:16px;transform:translateX(-50%);z-index:400;
+  background:rgba(0,0,0,.5);color:#fff;padding:7px 16px;border-radius:999px;font-size:11.5px;font-weight:700;
+  pointer-events:none;transition:opacity .4s
+}
 .leaflet-popup-content-wrapper{border-radius:14px;font-family:var(--fb)}
 .pop-name{font-family:var(--fd);font-weight:900;font-size:14.5px;margin-bottom:2px}
 .pop-cat{font-size:10.5px;font-weight:800;text-transform:uppercase;color:var(--golds);margin-bottom:6px}
@@ -155,11 +181,19 @@ button{font-family:inherit;cursor:pointer}
   </aside>
 
   <div class="mapwrap">
+    <div class="view-toggle">
+      <button class="vt-btn on" id="btnViewMap">🗺️ Mapa</button>
+      <button class="vt-btn" id="btnViewGlobe">🌍 Globo 3D</button>
+    </div>
     <div id="map"></div>
+    <div id="globeContainer"></div>
+    <div class="globe-hint" id="globeHint" style="display:none">Arraste para girar o globo &middot; clique num ponto</div>
+    <div class="globe-info" id="globeInfo"></div>
   </div>
 </div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script src="https://unpkg.com/globe.gl@2"></script>
 <script>
 const CATS = {
   loja:     { label: 'Loja Chocopingu',   emoji: '🏪', color: '#C8941A' },
@@ -252,6 +286,7 @@ function aplicarFiltro() {
     if (!show && map.hasLayer(m)) map.removeLayer(m);
   });
   renderLista(visiveis);
+  atualizarGlobo();
 }
 
 function renderLista(visiveis) {
@@ -308,11 +343,97 @@ function renderLista(visiveis) {
 window.focarLugar = function(id) {
   const l = lugares.find(x => String(x.id) === String(id));
   if (!l) return;
-  map.flyTo([l.latitude, l.longitude], 16, { duration: .6 });
-  const m = markers[id];
-  if (m) setTimeout(() => m.openPopup(), 350);
+  if (currentView === 'globe') {
+    mostrarInfoGlobo(l);
+    if (world) world.pointOfView({ lat: l.latitude, lng: l.longitude, altitude: 0.35 }, 900);
+  } else {
+    map.flyTo([l.latitude, l.longitude], 16, { duration: .6 });
+    const m = markers[id];
+    if (m) setTimeout(() => m.openPopup(), 350);
+  }
   document.querySelectorAll('.place-card').forEach(c => c.classList.toggle('active', c.dataset.id === String(id)));
 };
+
+// ===== GLOBO 3D (estilo Google Earth) =====
+let world = null;
+let currentView = 'map';
+
+function pontosGlobo() {
+  const termo = normaliza(document.getElementById('busca').value);
+  return lugares.filter(l =>
+    ativos.has(l.categoria) &&
+    (!termo || normaliza(l.nome).includes(termo) || normaliza(l.endereco).includes(termo))
+  );
+}
+
+function mostrarInfoGlobo(l) {
+  const c = CATS[l.categoria] || CATS.loja;
+  const wa = l.whatsapp ? `https://wa.me/${String(l.whatsapp).replace(/\D/g,'')}` : null;
+  const dir = `https://www.google.com/maps/dir/?api=1&destination=${l.latitude},${l.longitude}`;
+  const box = document.getElementById('globeInfo');
+  box.innerHTML = `
+    <button class="gi-close" onclick="document.getElementById('globeInfo').classList.remove('show')">&#10005;</button>
+    <div class="pop-name">${c.emoji} ${l.nome}</div>
+    <div class="pop-cat">${c.label}</div>
+    ${l.endereco ? `<div class="pop-addr">📍 ${l.endereco}</div>` : ''}
+    ${l.descricao ? `<div class="pop-desc">${l.descricao}</div>` : ''}
+    <div class="pop-actions">
+      <a class="primary" href="${dir}" target="_blank" rel="noopener">Como chegar</a>
+      ${wa ? `<a href="${wa}" target="_blank" rel="noopener">WhatsApp</a>` : ''}
+    </div>`;
+  box.classList.add('show');
+}
+
+function initGlobe() {
+  if (world) return;
+  const container = document.getElementById('globeContainer');
+  world = Globe()(container)
+    .globeImageUrl('https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg')
+    .bumpImageUrl('https://unpkg.com/three-globe/example/img/earth-topology.png')
+    .backgroundImageUrl('https://unpkg.com/three-globe/example/img/night-sky.png')
+    .width(container.clientWidth)
+    .height(container.clientHeight)
+    .pointAltitude(0.02)
+    .pointRadius(0.45)
+    .pointColor(d => (CATS[d.categoria] || CATS.loja).color)
+    .pointLabel(d => `${(CATS[d.categoria] || CATS.loja).emoji} ${d.nome}`)
+    .onPointClick(d => {
+      mostrarInfoGlobo(d);
+      world.pointOfView({ lat: d.latitude, lng: d.longitude, altitude: 0.35 }, 900);
+      document.querySelectorAll('.place-card').forEach(c => c.classList.toggle('active', c.dataset.id === String(d.id)));
+    });
+  world.controls().autoRotate = true;
+  world.controls().autoRotateSpeed = 0.6;
+  world.pointOfView({ lat: RECIFE[0], lng: RECIFE[1], altitude: lugares.length ? 1.6 : 2.2 }, 0);
+  window.addEventListener('resize', () => {
+    if (currentView === 'globe') world.width(container.clientWidth).height(container.clientHeight);
+  });
+}
+
+function atualizarGlobo() {
+  if (!world) return;
+  world.pointsData(pontosGlobo().map(l => ({ ...l, lat: l.latitude, lng: l.longitude })));
+}
+
+function trocarView(view) {
+  currentView = view;
+  document.getElementById('btnViewMap').classList.toggle('on', view === 'map');
+  document.getElementById('btnViewGlobe').classList.toggle('on', view === 'globe');
+  document.getElementById('map').style.display = view === 'map' ? 'block' : 'none';
+  document.getElementById('globeContainer').classList.toggle('on', view === 'globe');
+  document.getElementById('globeHint').style.display = view === 'globe' ? 'block' : 'none';
+  if (view === 'globe') {
+    initGlobe();
+    atualizarGlobo();
+    setTimeout(() => { document.getElementById('globeHint').style.opacity = '0'; }, 3500);
+  } else {
+    document.getElementById('globeInfo').classList.remove('show');
+    setTimeout(() => map.invalidateSize(), 50);
+  }
+}
+
+document.getElementById('btnViewMap').addEventListener('click', () => trocarView('map'));
+document.getElementById('btnViewGlobe').addEventListener('click', () => trocarView('globe'));
 
 document.getElementById('busca').addEventListener('input', aplicarFiltro);
 
