@@ -422,6 +422,7 @@ tr:hover td{background:#FDFAF7}tr:last-child td{border-bottom:none}
       <button class="tab"     data-tab="duv"      onclick="go(this,'duv');carregarDuvidas()"><span class="ti">❓</span> Dúvidas</button>
       <button class="tab"     data-tab="copaprod" onclick="go(this,'copaprod')"><span class="ti">⚽</span> Produtos Copa</button>
       <button class="tab"     data-tab="insta"    onclick="go(this,'insta');carregarInstagramAdmin()"><span class="ti">📸</span> Instagram</button>
+      <button class="tab"     data-tab="mundo"    onclick="go(this,'mundo');carregarLugares()"><span class="ti">🗺️</span> Mundo</button>
       <button class="tab"     data-tab="cpadm"    onclick="go(this,'cpadm');cpAdminCarregarTudo()"><span class="ti">⭐</span> Chocopontos</button>
     </nav>
     <div class="sb-spacer"></div>
@@ -1212,6 +1213,67 @@ tr:hover td{background:#FDFAF7}tr:last-child td{border-bottom:none}
         <table id="ig-tabela" style="display:none">
           <thead><tr><th>URL</th><th>Adicionado em</th><th>Ações</th></tr></thead>
           <tbody id="ig-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ── MUNDO CHOCOPINGU (mapa) ── -->
+    <div id="s-mundo" class="sec">
+      <div class="ptitle">🗺️ Mundo Chocopingu</div>
+      <div class="cat-banner">
+        <div>
+          <h2>Lugares no mapa público (chocopingu.com.br/mundo)</h2>
+          <p>Cadastre lojas, pontos de revenda, retirada e áreas de entrega. Digite o endereço e clique em "Buscar no mapa" para localizar automaticamente (sem precisar de latitude/longitude manual).</p>
+          <span class="cb-tag">🔒 Área restrita ao admin</span>
+        </div>
+      </div>
+
+      <div class="tbox">
+        <div class="thdr"><h3 id="mu-form-titulo">Novo lugar</h3></div>
+        <input type="hidden" id="mu-id" />
+        <div class="frow">
+          <div class="fg" style="flex:1;min-width:200px"><label>Nome</label>
+            <input type="text" id="mu-nome" placeholder="Ex: Loja Chocopingu - Boa Viagem"></div>
+          <div class="fg" style="min-width:180px"><label>Categoria</label>
+            <select class="auth-input" id="mu-categoria">
+              <option value="loja">🏪 Loja Chocopingu</option>
+              <option value="revenda">🛍️ Ponto de Revenda</option>
+              <option value="retirada">📦 Ponto de Retirada</option>
+              <option value="entrega">🚚 Área de Entrega</option>
+            </select></div>
+        </div>
+        <div class="frow">
+          <div class="fg" style="flex:2;min-width:260px"><label>Endereço</label>
+            <input type="text" id="mu-endereco" placeholder="Rua, número, bairro, cidade - UF"></div>
+          <button class="btn" style="align-self:flex-end;margin-bottom:2px" onclick="buscarNoMapaAdmin()">🔍 Buscar no mapa</button>
+        </div>
+        <p id="mu-geo-msg" style="padding:0 4px;font-size:12.5px;color:#888"></p>
+        <div class="frow">
+          <div class="fg"><label>Latitude</label><input type="text" id="mu-lat" placeholder="-8.0476"></div>
+          <div class="fg"><label>Longitude</label><input type="text" id="mu-lng" placeholder="-34.8770"></div>
+          <div class="fg" style="flex:1;min-width:160px"><label>Telefone</label><input type="text" id="mu-telefone" placeholder="(81) 0000-0000"></div>
+          <div class="fg" style="flex:1;min-width:160px"><label>WhatsApp</label><input type="text" id="mu-whatsapp" placeholder="5581900000000"></div>
+        </div>
+        <div class="frow">
+          <div class="fg" style="flex:1;min-width:260px"><label>Descrição curta</label>
+            <input type="text" id="mu-descricao" placeholder="Ex: Aberto de seg a sáb, 9h às 18h"></div>
+          <div class="fg" style="flex:1;min-width:220px"><label>Foto (URL, opcional)</label>
+            <input type="text" id="mu-foto" placeholder="https://..."></div>
+        </div>
+        <div class="frow">
+          <button class="btn badd" onclick="salvarLugar()" id="mu-btn-salvar">+ Adicionar</button>
+          <button class="btn" onclick="limparFormLugar()" id="mu-btn-cancelar" style="display:none">Cancelar edição</button>
+        </div>
+        <p id="mu-msg" style="padding:0 4px;color:#c0392b"></p>
+      </div>
+
+      <div class="tbox">
+        <div class="thdr"><h3>Lugares cadastrados</h3></div>
+        <div id="mu-loading" style="padding:24px;text-align:center;color:#888">Carregando...</div>
+        <div id="mu-vazio" style="display:none;padding:32px;text-align:center;color:#aaa">Nenhum lugar cadastrado ainda.</div>
+        <table id="mu-tabela" style="display:none">
+          <thead><tr><th>Nome</th><th>Categoria</th><th>Endereço</th><th>Ativo</th><th>Ações</th></tr></thead>
+          <tbody id="mu-tbody"></tbody>
         </table>
       </div>
     </div>
@@ -2708,6 +2770,145 @@ async function excluirInstagramPost(id){
   await fetch('/api/instagram-posts?id='+encodeURIComponent(id),{method:'DELETE'});
   logAtividade('Post do Instagram removido');
   carregarInstagramAdmin();
+}
+
+// ── MUNDO CHOCOPINGU (mapa) ──
+const MU_CATS = { loja:'🏪 Loja Chocopingu', revenda:'🛍️ Ponto de Revenda', retirada:'📦 Ponto de Retirada', entrega:'🚚 Área de Entrega' };
+
+async function buscarNoMapaAdmin(){
+  const endereco = document.getElementById('mu-endereco').value.trim();
+  const msg = document.getElementById('mu-geo-msg');
+  if(!endereco){ msg.textContent = 'Digite um endereço primeiro.'; msg.style.color = '#c0392b'; return; }
+  msg.textContent = 'Buscando...'; msg.style.color = '#888';
+  try{
+    const resp = await fetch('https://nominatim.openstreetmap.org/search?format=json&limit=1&q=' + encodeURIComponent(endereco));
+    const data = await resp.json();
+    if(!Array.isArray(data) || data.length === 0){
+      msg.textContent = 'Endereço não encontrado. Tente ser mais específico ou preencha latitude/longitude manualmente.';
+      msg.style.color = '#c0392b';
+      return;
+    }
+    document.getElementById('mu-lat').value = Number(data[0].lat).toFixed(6);
+    document.getElementById('mu-lng').value = Number(data[0].lon).toFixed(6);
+    msg.textContent = '✅ Localização encontrada: ' + data[0].display_name;
+    msg.style.color = '#2F6B3A';
+  }catch(e){
+    msg.textContent = 'Erro ao buscar endereço.'; msg.style.color = '#c0392b';
+  }
+}
+
+function limparFormLugar(){
+  document.getElementById('mu-id').value = '';
+  document.getElementById('mu-nome').value = '';
+  document.getElementById('mu-categoria').value = 'loja';
+  document.getElementById('mu-endereco').value = '';
+  document.getElementById('mu-lat').value = '';
+  document.getElementById('mu-lng').value = '';
+  document.getElementById('mu-telefone').value = '';
+  document.getElementById('mu-whatsapp').value = '';
+  document.getElementById('mu-descricao').value = '';
+  document.getElementById('mu-foto').value = '';
+  document.getElementById('mu-geo-msg').textContent = '';
+  document.getElementById('mu-msg').textContent = '';
+  document.getElementById('mu-form-titulo').textContent = 'Novo lugar';
+  document.getElementById('mu-btn-salvar').textContent = '+ Adicionar';
+  document.getElementById('mu-btn-cancelar').style.display = 'none';
+}
+
+async function salvarLugar(){
+  const btn = document.getElementById('mu-btn-salvar');
+  const msg = document.getElementById('mu-msg');
+  if(btn.disabled) return;
+  const id = document.getElementById('mu-id').value;
+  const body = {
+    nome: document.getElementById('mu-nome').value.trim(),
+    categoria: document.getElementById('mu-categoria').value,
+    endereco: document.getElementById('mu-endereco').value.trim(),
+    latitude: document.getElementById('mu-lat').value,
+    longitude: document.getElementById('mu-lng').value,
+    telefone: document.getElementById('mu-telefone').value.trim(),
+    whatsapp: document.getElementById('mu-whatsapp').value.replace(/\D/g,''),
+    descricao: document.getElementById('mu-descricao').value.trim(),
+    foto_url: document.getElementById('mu-foto').value.trim()
+  };
+  msg.textContent = '';
+  btn.disabled = true;
+  try{
+    let resp;
+    if(id){
+      resp = await fetch('/api/admin-chocopontos-config?tipo=lugares', {method:'PATCH', headers:{'Content-Type':'application/json'}, body: JSON.stringify({id, ...body})});
+    } else {
+      resp = await fetch('/api/admin-chocopontos-config?tipo=lugares', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body)});
+    }
+    const data = await resp.json();
+    if(!resp.ok){ msg.textContent = data.error || 'Erro ao salvar lugar'; return; }
+    logAtividade(id ? 'Lugar do mapa editado' : 'Lugar adicionado ao mapa');
+    limparFormLugar();
+    carregarLugares();
+  }catch(e){
+    msg.textContent = 'Erro ao salvar lugar';
+  }finally{
+    btn.disabled = false;
+  }
+}
+
+function editarLugar(id){
+  const l = window.MU_CACHE.find(x => String(x.id) === String(id));
+  if(!l) return;
+  document.getElementById('mu-id').value = l.id;
+  document.getElementById('mu-nome').value = l.nome || '';
+  document.getElementById('mu-categoria').value = l.categoria || 'loja';
+  document.getElementById('mu-endereco').value = l.endereco || '';
+  document.getElementById('mu-lat').value = l.latitude;
+  document.getElementById('mu-lng').value = l.longitude;
+  document.getElementById('mu-telefone').value = l.telefone || '';
+  document.getElementById('mu-whatsapp').value = l.whatsapp || '';
+  document.getElementById('mu-descricao').value = l.descricao || '';
+  document.getElementById('mu-foto').value = l.foto_url || '';
+  document.getElementById('mu-form-titulo').textContent = 'Editando lugar';
+  document.getElementById('mu-btn-salvar').textContent = 'Salvar alterações';
+  document.getElementById('mu-btn-cancelar').style.display = '';
+  document.getElementById('s-mundo').scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+async function alternarAtivoLugar(id, ativo){
+  await fetch('/api/admin-chocopontos-config?tipo=lugares', {method:'PATCH', headers:{'Content-Type':'application/json'}, body: JSON.stringify({id, ativo})});
+  carregarLugares();
+}
+
+async function excluirLugar(id){
+  if(!confirm('Remover este lugar do mapa?')) return;
+  await fetch('/api/admin-chocopontos-config?tipo=lugares&id=' + encodeURIComponent(id), {method:'DELETE'});
+  logAtividade('Lugar removido do mapa');
+  carregarLugares();
+}
+
+async function carregarLugares(){
+  const loading = document.getElementById('mu-loading');
+  const tabela = document.getElementById('mu-tabela');
+  const vazio = document.getElementById('mu-vazio');
+  const tbody = document.getElementById('mu-tbody');
+  loading.style.display = 'block'; tabela.style.display = 'none'; vazio.style.display = 'none';
+  try{
+    const resp = await fetch('/api/admin-chocopontos-config?tipo=lugares');
+    const data = await resp.json();
+    loading.style.display = 'none';
+    if(!resp.ok || !Array.isArray(data) || data.length === 0){ vazio.style.display = 'block'; window.MU_CACHE = []; return; }
+    window.MU_CACHE = data;
+    tbody.innerHTML = data.map(l => `<tr>
+        <td>${l.nome}</td>
+        <td style="font-size:12px">${MU_CATS[l.categoria] || l.categoria}</td>
+        <td style="font-size:12px">${l.endereco || '—'}</td>
+        <td><label style="display:flex;align-items:center;gap:4px;cursor:pointer"><input type="checkbox" ${l.ativo ? 'checked' : ''} onchange="alternarAtivoLugar('${l.id}', this.checked)"> ${l.ativo ? 'Sim' : 'Não'}</label></td>
+        <td style="white-space:nowrap">
+          <button class="btn-sm" onclick="editarLugar('${l.id}')" style="background:var(--gold,#C8941A);color:#fff;border:none;padding:4px 10px;border-radius:6px;cursor:pointer;margin-right:4px">Editar</button>
+          <button class="btn-sm" onclick="excluirLugar('${l.id}')" style="background:#A93226;color:#fff;border:none;padding:4px 10px;border-radius:6px;cursor:pointer">Excluir</button>
+        </td>
+      </tr>`).join('');
+    tabela.style.display = 'block';
+  }catch(e){
+    loading.style.display = 'none'; vazio.style.display = 'block';
+  }
 }
 
 // ── CHOCOPONTOS ADMIN ──

@@ -170,6 +170,96 @@ module.exports = async (req, res) => {
     return res.status(405).json({ error: 'Método não permitido' });
   }
 
+  // ── LUGARES (mapa "Mundo Chocopingu") ──
+  if (tipo === 'lugares') {
+    if (req.method === 'GET') {
+      try {
+        const resp = await fetch(`${SB_URL}/rest/v1/lugares?order=nome.asc`, { headers });
+        const data = await resp.json();
+        if (!resp.ok) return res.status(resp.status).json({ error: data });
+        return res.json(data);
+      } catch (err) {
+        return res.status(500).json({ error: err?.message || String(err) });
+      }
+    }
+    if (req.method === 'POST') {
+      const b = req.body || {};
+      const nome = String(b.nome || '').trim();
+      const lat = Number(b.latitude);
+      const lng = Number(b.longitude);
+      if (!nome) return res.status(400).json({ error: 'Nome é obrigatório' });
+      if (!isFinite(lat) || !isFinite(lng)) return res.status(400).json({ error: 'Localização (latitude/longitude) é obrigatória — use o botão de buscar endereço no mapa' });
+      try {
+        const resp = await fetch(`${SB_URL}/rest/v1/lugares`, {
+          method: 'POST',
+          headers: { ...headers, 'Content-Type': 'application/json', Prefer: 'return=minimal' },
+          body: JSON.stringify({
+            nome,
+            categoria: b.categoria || 'loja',
+            endereco: b.endereco || '',
+            latitude: lat,
+            longitude: lng,
+            telefone: b.telefone || '',
+            whatsapp: b.whatsapp || '',
+            descricao: b.descricao || '',
+            foto_url: b.foto_url || '',
+            ativo: b.ativo !== false
+          })
+        });
+        if (!resp.ok) {
+          const detail = await resp.text();
+          return res.status(resp.status).json({ error: 'Erro ao criar lugar', detail });
+        }
+        return res.json({ ok: true });
+      } catch (err) {
+        return res.status(500).json({ error: err?.message || String(err) });
+      }
+    }
+    if (req.method === 'PATCH') {
+      const { id, ...b } = req.body || {};
+      if (!id) return res.status(400).json({ error: 'id obrigatório' });
+      const campos = {};
+      ['nome', 'categoria', 'endereco', 'telefone', 'whatsapp', 'descricao', 'foto_url'].forEach(k => {
+        if (b[k] !== undefined) campos[k] = b[k];
+      });
+      if (b.latitude !== undefined) campos.latitude = Number(b.latitude);
+      if (b.longitude !== undefined) campos.longitude = Number(b.longitude);
+      if (b.ativo !== undefined) campos.ativo = !!b.ativo;
+      try {
+        const resp = await fetch(`${SB_URL}/rest/v1/lugares?id=eq.${encodeURIComponent(id)}`, {
+          method: 'PATCH',
+          headers: { ...headers, 'Content-Type': 'application/json', Prefer: 'return=minimal' },
+          body: JSON.stringify(campos)
+        });
+        if (!resp.ok) {
+          const detail = await resp.text();
+          return res.status(resp.status).json({ error: 'Erro ao atualizar lugar', detail });
+        }
+        return res.json({ ok: true });
+      } catch (err) {
+        return res.status(500).json({ error: err?.message || String(err) });
+      }
+    }
+    if (req.method === 'DELETE') {
+      const id = req.query?.id || req.body?.id;
+      if (!id) return res.status(400).json({ error: 'id obrigatório' });
+      try {
+        const resp = await fetch(`${SB_URL}/rest/v1/lugares?id=eq.${encodeURIComponent(id)}`, {
+          method: 'DELETE',
+          headers: { ...headers, Prefer: 'return=minimal' }
+        });
+        if (!resp.ok) {
+          const detail = await resp.text();
+          return res.status(resp.status).json({ error: 'Erro ao excluir lugar', detail });
+        }
+        return res.json({ ok: true });
+      } catch (err) {
+        return res.status(500).json({ error: err?.message || String(err) });
+      }
+    }
+    return res.status(405).json({ error: 'Método não permitido' });
+  }
+
   // ── MISSÕES / CONQUISTAS / EVENTOS: CRUD genérico ──
   const cfg = TABELAS[tipo];
   if (!cfg) return res.status(400).json({ error: 'tipo inválido (use missoes, conquistas, eventos ou historico)' });

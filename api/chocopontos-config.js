@@ -19,8 +19,10 @@ module.exports = async (req, res) => {
   } else if (tipo === 'eventos') {
     const agora = new Date().toISOString();
     queryUrl = `${SB_URL}/rest/v1/chocopontos_eventos?ativo=eq.true&data_inicio=lte.${agora}&data_fim=gte.${agora}&order=data_fim.asc&select=id,titulo,descricao,pontos_bonus,data_inicio,data_fim`;
+  } else if (tipo === 'lugares') {
+    queryUrl = `${SB_URL}/rest/v1/lugares?ativo=eq.true&order=nome.asc&select=id,nome,categoria,endereco,latitude,longitude,telefone,whatsapp,descricao,foto_url`;
   } else {
-    return res.status(400).json({ error: 'tipo inválido (use missoes, conquistas ou eventos)' });
+    return res.status(400).json({ error: 'tipo inválido (use missoes, conquistas, eventos ou lugares)' });
   }
 
   try {

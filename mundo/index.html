@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Mundo Chocopingu — Encontre a gente no mapa</title>
+<meta name="description" content="Mapa interativo Chocopingu: lojas, pontos de revenda, retirada e áreas de entrega perto de você." />
+<link rel="icon" href="../imagens/logo2.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+<style>
+:root{
+  --br:#1A0A00;--br2:#2A1508;--br3:#6B3300;
+  --gold:#C8941A;--goldl:#E5B84A;--golds:#A07015;
+  --bg:#FFF8F2;--card:#ffffff;--bgsub:#F5EDE0;
+  --text:#1a0800;--text2:#8a7364;
+  --border:rgba(107,51,0,.14);
+  --sh:0 8px 28px rgba(13,4,0,.1);
+  --sbw:380px;
+  --fd:'Playfair Display',Georgia,serif;
+  --fb:'Nunito',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;
+  --cloja:#C8941A;--crevenda:#6B3300;--cretirada:#2F6B3A;--centrega:#2A5C8A;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{font-family:var(--fb);background:var(--bg);color:var(--text)}
+a{color:inherit}
+img{max-width:100%;display:block}
+button{font-family:inherit;cursor:pointer}
+
+.app{display:flex;height:100vh;width:100vw}
+
+/* ===== SIDEBAR ===== */
+.side{
+  width:var(--sbw);flex-shrink:0;background:var(--card);
+  display:flex;flex-direction:column;z-index:20;
+  box-shadow:6px 0 24px rgba(13,4,0,.08);
+}
+.side-head{background:linear-gradient(150deg,var(--br) 0%,var(--br3) 100%);padding:20px 20px 18px;color:#fff;position:relative;overflow:hidden}
+.side-head::before{content:'🐧';position:absolute;right:-14px;bottom:-24px;font-size:96px;opacity:.08}
+.side-brand{display:flex;align-items:center;gap:10px;margin-bottom:12px;position:relative}
+.side-brand img{width:34px;height:34px;border-radius:9px}
+.side-brand b{font-family:var(--fd);font-weight:900;font-size:16.5px}
+.side-back{font-size:11.5px;color:rgba(255,255,255,.55);text-decoration:none;display:inline-block;margin-bottom:10px}
+.side-back:hover{color:#fff}
+.side-title{font-family:var(--fd);font-weight:900;font-size:1.3rem;position:relative}
+.side-sub{font-size:12.5px;color:rgba(255,255,255,.6);margin-top:4px;position:relative}
+
+.search-box{padding:14px 16px 10px}
+.search-box input{
+  width:100%;padding:11px 14px;border-radius:12px;border:1px solid var(--border);
+  background:var(--bgsub);font-size:13.5px;font-family:inherit;color:var(--text)
+}
+.search-box input:focus{outline:2px solid var(--gold)}
+
+.chips{display:flex;gap:6px;padding:2px 16px 12px;flex-wrap:wrap}
+.chip{
+  border:1px solid var(--border);background:var(--card);color:var(--text2);
+  padding:6px 11px;border-radius:999px;font-size:11.5px;font-weight:800;
+  display:flex;align-items:center;gap:5px;transition:.15s
+}
+.chip.on{background:var(--br);color:#fff;border-color:var(--br)}
+.chip:hover:not(.on){background:var(--bgsub)}
+
+.geo-btn{
+  margin:0 16px 12px;padding:9px 12px;border-radius:12px;border:1px dashed var(--gold);
+  background:#FFF3DC;color:var(--golds);font-size:12.5px;font-weight:800;text-align:center
+}
+.geo-btn:hover{background:#FBE7C6}
+.geo-btn.active{background:var(--gold);color:#fff;border-style:solid}
+
+.list{flex:1;overflow-y:auto;padding:0 12px 16px}
+.place-card{
+  background:var(--card);border:1px solid var(--border);border-left:4px solid var(--gold);
+  border-radius:14px;padding:13px 14px;margin-bottom:9px;transition:.15s;
+}
+.place-card:hover{box-shadow:var(--sh);transform:translateY(-1px)}
+.place-card.active{background:var(--bgsub);box-shadow:var(--sh)}
+.pc-top{display:flex;align-items:flex-start;gap:9px}
+.pc-icon{width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;color:#fff}
+.pc-name{font-family:var(--fd);font-weight:900;font-size:14.5px;line-height:1.25;flex:1}
+.pc-dist{font-size:10.5px;font-weight:800;color:var(--golds);white-space:nowrap}
+.pc-cat{font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.03em;color:var(--text2);margin:3px 0 2px}
+.pc-addr{font-size:12px;color:var(--text2);line-height:1.4}
+.pc-desc{font-size:12px;color:var(--text2);margin-top:5px;line-height:1.45}
+.pc-actions{display:flex;gap:6px;margin-top:9px}
+.pc-btn{
+  flex:1;text-align:center;padding:7px 8px;border-radius:9px;font-size:11.5px;font-weight:800;
+  text-decoration:none;border:1px solid var(--border);color:var(--text)
+}
+.pc-btn.primary{background:var(--br);color:#fff;border-color:var(--br)}
+.pc-btn:hover{opacity:.85}
+
+.empty-state{padding:44px 22px;text-align:center;color:var(--text2)}
+.empty-state .es-emoji{font-size:44px;margin-bottom:10px}
+.empty-state b{display:block;font-family:var(--fd);font-size:15px;color:var(--text);margin-bottom:6px}
+.empty-state p{font-size:12.5px;line-height:1.5}
+
+/* ===== MAP ===== */
+.mapwrap{flex:1;position:relative;min-width:0}
+#map{position:absolute;inset:0}
+.leaflet-popup-content-wrapper{border-radius:14px;font-family:var(--fb)}
+.pop-name{font-family:var(--fd);font-weight:900;font-size:14.5px;margin-bottom:2px}
+.pop-cat{font-size:10.5px;font-weight:800;text-transform:uppercase;color:var(--golds);margin-bottom:6px}
+.pop-addr{font-size:12px;color:var(--text2);margin-bottom:6px}
+.pop-desc{font-size:12px;color:var(--text2);margin-bottom:8px;line-height:1.4}
+.pop-actions{display:flex;gap:6px}
+.pop-actions a{
+  flex:1;text-align:center;padding:6px 8px;border-radius:8px;font-size:11px;font-weight:800;
+  text-decoration:none;border:1px solid var(--border)
+}
+.pop-actions a.primary{background:var(--br);color:#fff;border-color:var(--br)}
+
+.marker-pin{
+  width:32px;height:32px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);
+  display:flex;align-items:center;justify-content:center;box-shadow:0 3px 10px rgba(0,0,0,.35);
+  border:2px solid #fff
+}
+.marker-pin span{transform:rotate(45deg);font-size:14px}
+.user-dot{width:16px;height:16px;border-radius:50%;background:#2A5C8A;border:3px solid #fff;box-shadow:0 0 0 4px rgba(42,92,138,.25)}
+
+.toggle-mob{display:none}
+
+@media (max-width:860px){
+  .app{flex-direction:column}
+  .side{width:100%;height:52vh;box-shadow:0 6px 20px rgba(13,4,0,.1)}
+  .mapwrap{flex:1;height:48vh}
+  :root{--sbw:100%}
+}
+</style>
+</head>
+<body>
+
+<div class="app">
+  <aside class="side">
+    <div class="side-head">
+      <a href="/" class="side-back">&larr; Voltar ao site</a>
+      <div class="side-brand">
+        <img src="../imagens/logo2.png" alt="Chocopingu" />
+        <b>Chocopingu</b>
+      </div>
+      <div class="side-title">&#127757; Mundo Chocopingu</div>
+      <div class="side-sub">Lojas, revendas, retirada e entrega perto de você.</div>
+    </div>
+
+    <div class="search-box">
+      <input type="text" id="busca" placeholder="Buscar por nome ou endereço..." />
+    </div>
+    <div class="chips" id="chips"></div>
+    <button class="geo-btn" id="btnGeo">&#128205; Usar minha localização</button>
+
+    <div class="list" id="lista"></div>
+  </aside>
+
+  <div class="mapwrap">
+    <div id="map"></div>
+  </div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script>
+const CATS = {
+  loja:     { label: 'Loja Chocopingu',   emoji: '🏪', color: '#C8941A' },
+  revenda:  { label: 'Ponto de Revenda',  emoji: '🛍️', color: '#6B3300' },
+  retirada: { label: 'Ponto de Retirada', emoji: '📦', color: '#2F6B3A' },
+  entrega:  { label: 'Área de Entrega',   emoji: '🚚', color: '#2A5C8A' }
+};
+const RECIFE = [-8.0476, -34.8770];
+
+let lugares = [];
+let markers = {};
+let ativos = new Set(Object.keys(CATS));
+let userPos = null;
+let userMarker = null;
+
+const map = L.map('map', { zoomControl: true }).setView(RECIFE, 12);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  maxZoom: 19,
+  attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+}).addTo(map);
+
+function pinIcon(categoria) {
+  const c = CATS[categoria] || CATS.loja;
+  return L.divIcon({
+    className: '',
+    html: `<div class="marker-pin" style="background:${c.color}"><span>${c.emoji}</span></div>`,
+    iconSize: [32, 32],
+    iconAnchor: [16, 30],
+    popupAnchor: [0, -28]
+  });
+}
+
+function normaliza(s) {
+  return String(s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+}
+
+function distKm(a, b) {
+  const R = 6371;
+  const dLat = (b[0]-a[0]) * Math.PI/180;
+  const dLng = (b[1]-a[1]) * Math.PI/180;
+  const s = Math.sin(dLat/2)**2 + Math.cos(a[0]*Math.PI/180)*Math.cos(b[0]*Math.PI/180)*Math.sin(dLng/2)**2;
+  return R * 2 * Math.atan2(Math.sqrt(s), Math.sqrt(1-s));
+}
+
+function popupHtml(l) {
+  const c = CATS[l.categoria] || CATS.loja;
+  const wa = l.whatsapp ? `https://wa.me/${String(l.whatsapp).replace(/\D/g,'')}` : null;
+  const dir = `https://www.google.com/maps/dir/?api=1&destination=${l.latitude},${l.longitude}`;
+  return `
+    <div class="pop-name">${c.emoji} ${l.nome}</div>
+    <div class="pop-cat">${c.label}</div>
+    ${l.endereco ? `<div class="pop-addr">📍 ${l.endereco}</div>` : ''}
+    ${l.descricao ? `<div class="pop-desc">${l.descricao}</div>` : ''}
+    <div class="pop-actions">
+      <a class="primary" href="${dir}" target="_blank" rel="noopener">Como chegar</a>
+      ${wa ? `<a href="${wa}" target="_blank" rel="noopener">WhatsApp</a>` : ''}
+    </div>`;
+}
+
+function renderChips() {
+  const el = document.getElementById('chips');
+  const total = `<button class="chip on" data-cat="__all">Todos</button>`;
+  const rest = Object.entries(CATS).map(([k, c]) =>
+    `<button class="chip on" data-cat="${k}">${c.emoji} ${c.label}</button>`
+  ).join('');
+  el.innerHTML = total + rest;
+  el.querySelectorAll('.chip').forEach(btn => btn.addEventListener('click', () => {
+    const cat = btn.dataset.cat;
+    if (cat === '__all') {
+      ativos = new Set(Object.keys(CATS));
+      el.querySelectorAll('.chip').forEach(b => b.classList.add('on'));
+    } else {
+      if (ativos.has(cat)) ativos.delete(cat); else ativos.add(cat);
+      btn.classList.toggle('on');
+      el.querySelector('.chip[data-cat="__all"]').classList.toggle('on', ativos.size === Object.keys(CATS).length);
+    }
+    aplicarFiltro();
+  }));
+}
+
+function aplicarFiltro() {
+  const termo = normaliza(document.getElementById('busca').value);
+  const visiveis = lugares.filter(l =>
+    ativos.has(l.categoria) &&
+    (!termo || normaliza(l.nome).includes(termo) || normaliza(l.endereco).includes(termo))
+  );
+  Object.entries(markers).forEach(([id, m]) => {
+    const show = visiveis.some(v => String(v.id) === id);
+    if (show && !map.hasLayer(m)) m.addTo(map);
+    if (!show && map.hasLayer(m)) map.removeLayer(m);
+  });
+  renderLista(visiveis);
+}
+
+function renderLista(visiveis) {
+  const el = document.getElementById('lista');
+  if (lugares.length === 0) {
+    el.innerHTML = `<div class="empty-state">
+      <div class="es-emoji">🗺️</div>
+      <b>O mapa está sendo montado</b>
+      <p>Em breve você encontra aqui as lojas, pontos de revenda e retirada da Chocopingu perto de você.</p>
+    </div>`;
+    return;
+  }
+  if (visiveis.length === 0) {
+    el.innerHTML = `<div class="empty-state">
+      <div class="es-emoji">🔍</div>
+      <b>Nada encontrado</b>
+      <p>Tente outro termo de busca ou ative mais categorias.</p>
+    </div>`;
+    return;
+  }
+  let ordenados = visiveis;
+  if (userPos) {
+    ordenados = [...visiveis].sort((a, b) =>
+      distKm(userPos, [a.latitude, a.longitude]) - distKm(userPos, [b.latitude, b.longitude])
+    );
+  }
+  el.innerHTML = ordenados.map(l => {
+    const c = CATS[l.categoria] || CATS.loja;
+    const dist = userPos ? distKm(userPos, [l.latitude, l.longitude]) : null;
+    return `<div class="place-card" data-id="${l.id}">
+      <div class="pc-top">
+        <div class="pc-icon" style="background:${c.color}">${c.emoji}</div>
+        <div class="pc-name">${l.nome}</div>
+        ${dist !== null ? `<div class="pc-dist">${dist < 1 ? Math.round(dist*1000)+' m' : dist.toFixed(1)+' km'}</div>` : ''}
+      </div>
+      <div class="pc-cat">${c.label}</div>
+      ${l.endereco ? `<div class="pc-addr">${l.endereco}</div>` : ''}
+      ${l.descricao ? `<div class="pc-desc">${l.descricao}</div>` : ''}
+      <div class="pc-actions">
+        <a class="pc-btn primary" href="javascript:void(0)" onclick="focarLugar('${l.id}')">Ver no mapa</a>
+        ${l.whatsapp ? `<a class="pc-btn" href="https://wa.me/${String(l.whatsapp).replace(/\D/g,'')}" target="_blank" rel="noopener">WhatsApp</a>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+
+  el.querySelectorAll('.place-card').forEach(card => {
+    card.addEventListener('click', (e) => {
+      if (e.target.closest('a')) return;
+      focarLugar(card.dataset.id);
+    });
+  });
+}
+
+window.focarLugar = function(id) {
+  const l = lugares.find(x => String(x.id) === String(id));
+  if (!l) return;
+  map.flyTo([l.latitude, l.longitude], 16, { duration: .6 });
+  const m = markers[id];
+  if (m) setTimeout(() => m.openPopup(), 350);
+  document.querySelectorAll('.place-card').forEach(c => c.classList.toggle('active', c.dataset.id === String(id)));
+};
+
+document.getElementById('busca').addEventListener('input', aplicarFiltro);
+
+document.getElementById('btnGeo').addEventListener('click', function() {
+  const btn = this;
+  if (!navigator.geolocation) { alert('Seu navegador não suporta localização.'); return; }
+  btn.textContent = '📍 Localizando...';
+  navigator.geolocation.getCurrentPosition(pos => {
+    userPos = [pos.coords.latitude, pos.coords.longitude];
+    btn.textContent = '✅ Localização ativa';
+    btn.classList.add('active');
+    if (userMarker) map.removeLayer(userMarker);
+    userMarker = L.marker(userPos, {
+      icon: L.divIcon({ className: '', html: '<div class="user-dot"></div>', iconSize: [16,16], iconAnchor: [8,8] })
+    }).addTo(map).bindPopup('Você está aqui');
+    map.setView(userPos, 13);
+    aplicarFiltro();
+  }, () => {
+    btn.textContent = '📍 Usar minha localização';
+    alert('Não foi possível obter sua localização.');
+  });
+});
+
+async function carregar() {
+  try {
+    const resp = await fetch('/api/chocopontos-config?tipo=lugares');
+    const data = await resp.json();
+    lugares = Array.isArray(data) ? data : [];
+  } catch (e) {
+    lugares = [];
+  }
+  markers = {};
+  lugares.forEach(l => {
+    const m = L.marker([l.latitude, l.longitude], { icon: pinIcon(l.categoria) })
+      .bindPopup(popupHtml(l));
+    markers[l.id] = m;
+  });
+  renderChips();
+  aplicarFiltro();
+  if (lugares.length > 0) {
+    const bounds = L.latLngBounds(lugares.map(l => [l.latitude, l.longitude]));
+    map.fitBounds(bounds, { padding: [40, 40], maxZoom: 14 });
+  }
+}
+carregar();
+</script>
+</body>
+</html>
