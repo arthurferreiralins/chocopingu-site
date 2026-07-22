@@ -85,7 +85,8 @@ button{font-family:inherit;cursor:pointer}
 .pc-cat{font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.03em;color:var(--text2);margin:3px 0 2px}
 .pc-addr{font-size:12px;color:var(--text2);line-height:1.4}
 .pc-desc{font-size:12px;color:var(--text2);margin-top:5px;line-height:1.45}
-.pc-actions{display:flex;gap:6px;margin-top:9px}
+.pc-actions{display:flex;gap:6px;margin-top:9px;flex-wrap:wrap}
+.pc-actions .pc-btn{flex:1 1 auto;min-width:84px}
 .pc-btn{
   flex:1;text-align:center;padding:7px 8px;border-radius:9px;font-size:11.5px;font-weight:800;
   text-decoration:none;border:1px solid var(--border);color:var(--text)
@@ -132,9 +133,9 @@ button{font-family:inherit;cursor:pointer}
 .pop-cat{font-size:10.5px;font-weight:800;text-transform:uppercase;color:var(--golds);margin-bottom:6px}
 .pop-addr{font-size:12px;color:var(--text2);margin-bottom:6px}
 .pop-desc{font-size:12px;color:var(--text2);margin-bottom:8px;line-height:1.4}
-.pop-actions{display:flex;gap:6px}
+.pop-actions{display:flex;gap:6px;flex-wrap:wrap}
 .pop-actions a{
-  flex:1;text-align:center;padding:6px 8px;border-radius:8px;font-size:11px;font-weight:800;
+  flex:1 1 auto;min-width:78px;text-align:center;padding:6px 8px;border-radius:8px;font-size:11px;font-weight:800;
   text-decoration:none;border:1px solid var(--border)
 }
 .pop-actions a.primary{background:var(--br);color:#fff;border-color:var(--br)}
@@ -169,6 +170,11 @@ button{font-family:inherit;cursor:pointer}
 .street-bar.show{display:block}
 .street-bar b{font-family:var(--fd);font-size:14px;display:block}
 .street-bar span{font-size:11px;color:rgba(255,255,255,.65)}
+.sv-pessoa-btn{
+  display:inline-block;margin-top:7px;background:var(--gold);color:#fff;border:none;
+  padding:6px 14px;border-radius:9px;font-size:11.5px;font-weight:800;text-decoration:none
+}
+.sv-pessoa-btn:hover{background:var(--goldl)}
 
 .dpad{
   position:absolute;left:50%;bottom:26px;transform:translateX(-50%);z-index:500;
@@ -238,7 +244,10 @@ button{font-family:inherit;cursor:pointer}
     <div class="globe-info" id="globeInfo"></div>
 
     <button class="exit-pessoa" id="btnSairPessoa">&larr; Sair do modo pessoa</button>
-    <div class="street-bar" id="streetBar"><b id="streetBarRua">Localizando...</b><span id="streetBarBairro"></span></div>
+    <div class="street-bar" id="streetBar">
+      <b id="streetBarRua">Localizando...</b><span id="streetBarBairro"></span>
+      <a class="sv-pessoa-btn" id="btnSVPessoa" href="javascript:void(0)" target="_blank" rel="noopener">👁️ Ver essa rua de verdade</a>
+    </div>
     <div class="dpad" id="dpad">
       <button class="dp-n" id="dpN">&#8593;</button>
       <button class="dp-w" id="dpW">&#8592;</button>
@@ -295,17 +304,23 @@ function distKm(a, b) {
   return R * 2 * Math.atan2(Math.sqrt(s), Math.sqrt(1-s));
 }
 
+function streetViewUrl(lat, lng) {
+  return `https://www.google.com/maps?layer=c&cbll=${lat},${lng}&cbp=12,0,0,0,0`;
+}
+
 function popupHtml(l) {
   const c = CATS[l.categoria] || CATS.loja;
   const wa = l.whatsapp ? `https://wa.me/${String(l.whatsapp).replace(/\D/g,'')}` : null;
   const dir = `https://www.google.com/maps/dir/?api=1&destination=${l.latitude},${l.longitude}`;
+  const sv = streetViewUrl(l.latitude, l.longitude);
   return `
     <div class="pop-name">${c.emoji} ${l.nome}</div>
     <div class="pop-cat">${c.label}</div>
     ${l.endereco ? `<div class="pop-addr">📍 ${l.endereco}</div>` : ''}
     ${l.descricao ? `<div class="pop-desc">${l.descricao}</div>` : ''}
     <div class="pop-actions">
-      <a class="primary" href="${dir}" target="_blank" rel="noopener">Como chegar</a>
+      <a class="primary" href="${sv}" target="_blank" rel="noopener">👁️ Ver rua real</a>
+      <a href="${dir}" target="_blank" rel="noopener">Como chegar</a>
       ${wa ? `<a href="${wa}" target="_blank" rel="noopener">WhatsApp</a>` : ''}
     </div>`;
 }
@@ -384,7 +399,8 @@ function renderLista(visiveis) {
       ${l.descricao ? `<div class="pc-desc">${l.descricao}</div>` : ''}
       <div class="pc-actions">
         <a class="pc-btn primary" href="javascript:void(0)" onclick="focarLugar('${l.id}')">Ver no mapa</a>
-        ${l.whatsapp ? `<a class="pc-btn" href="https://wa.me/${String(l.whatsapp).replace(/\D/g,'')}" target="_blank" rel="noopener">WhatsApp</a>` : ''}
+        <a class="pc-btn" href="${streetViewUrl(l.latitude, l.longitude)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">👁️ Rua real</a>
+        ${l.whatsapp ? `<a class="pc-btn" href="https://wa.me/${String(l.whatsapp).replace(/\D/g,'')}" target="_blank" rel="noopener" onclick="event.stopPropagation()">WhatsApp</a>` : ''}
       </div>
     </div>`;
   }).join('');
@@ -431,6 +447,7 @@ function mostrarInfoGlobo(l) {
   const c = CATS[l.categoria] || CATS.loja;
   const wa = l.whatsapp ? `https://wa.me/${String(l.whatsapp).replace(/\D/g,'')}` : null;
   const dir = `https://www.google.com/maps/dir/?api=1&destination=${l.latitude},${l.longitude}`;
+  const sv = streetViewUrl(l.latitude, l.longitude);
   const box = document.getElementById('globeInfo');
   box.innerHTML = `
     <button class="gi-close" onclick="document.getElementById('globeInfo').classList.remove('show')">&#10005;</button>
@@ -439,7 +456,8 @@ function mostrarInfoGlobo(l) {
     ${l.endereco ? `<div class="pop-addr">📍 ${l.endereco}</div>` : ''}
     ${l.descricao ? `<div class="pop-desc">${l.descricao}</div>` : ''}
     <div class="pop-actions">
-      <a class="primary" href="${dir}" target="_blank" rel="noopener">Como chegar</a>
+      <a class="primary" href="${sv}" target="_blank" rel="noopener">👁️ Ver rua real</a>
+      <a href="${dir}" target="_blank" rel="noopener">Como chegar</a>
       ${wa ? `<a href="${wa}" target="_blank" rel="noopener">WhatsApp</a>` : ''}
     </div>`;
   box.classList.add('show');
@@ -554,11 +572,17 @@ function agendarGeocode() {
   geoTimer = setTimeout(() => atualizarRua(avatarPos), 700);
 }
 
+function atualizarBotaoSV() {
+  const btn = document.getElementById('btnSVPessoa');
+  if (btn && avatarPos) btn.href = streetViewUrl(avatarPos[0], avatarPos[1]);
+}
+
 function moverAvatarPara(novaPos) {
   avatarHeading = bearing(avatarPos || novaPos, novaPos);
   avatarPos = novaPos;
   avatarMarker.setLatLng(avatarPos).setIcon(avatarIcon(avatarHeading));
   map.panTo(avatarPos, { animate: true, duration: .4 });
+  atualizarBotaoSV();
   agendarGeocode();
 }
 
@@ -576,6 +600,7 @@ function moverDirecao(dir) {
   avatarHeading = heading;
   avatarMarker.setLatLng(avatarPos).setIcon(avatarIcon(heading));
   map.panTo(avatarPos, { animate: true, duration: .25 });
+  atualizarBotaoSV();
   agendarGeocode();
 }
 
@@ -605,6 +630,7 @@ function entrarModoPessoa() {
   document.getElementById('dpad').classList.add('show');
   document.getElementById('streetBar').classList.add('show');
   document.getElementById('btnSairPessoa').classList.add('show');
+  atualizarBotaoSV();
   atualizarRua(avatarPos);
   document.addEventListener('keydown', onKeyPessoa);
 }
