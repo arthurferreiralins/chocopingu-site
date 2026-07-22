@@ -147,6 +147,52 @@ button{font-family:inherit;cursor:pointer}
 .marker-pin span{transform:rotate(45deg);font-size:14px}
 .user-dot{width:16px;height:16px;border-radius:50%;background:#2A5C8A;border:3px solid #fff;box-shadow:0 0 0 4px rgba(42,92,138,.25)}
 
+/* ===== MODO PESSOA (andar pelas ruas) ===== */
+.avatar-pin{
+  width:38px;height:38px;display:flex;align-items:center;justify-content:center;
+  filter:drop-shadow(0 3px 8px rgba(0,0,0,.45));transition:transform .25s
+}
+.avatar-pin .cone{
+  position:absolute;width:0;height:0;border-left:19px solid transparent;border-right:19px solid transparent;
+  border-bottom:34px solid rgba(42,92,138,.22);top:-2px;transform-origin:50% 100%
+}
+.avatar-pin .dot{
+  width:26px;height:26px;border-radius:50%;background:var(--br);border:3px solid #fff;
+  display:flex;align-items:center;justify-content:center;font-size:14px;box-shadow:0 0 0 3px rgba(26,10,0,.18);z-index:2
+}
+
+.street-bar{
+  position:absolute;top:16px;left:50%;transform:translateX(-50%);z-index:500;
+  background:rgba(26,10,0,.88);color:#fff;padding:10px 20px;border-radius:14px;
+  text-align:center;min-width:220px;max-width:88vw;display:none;box-shadow:var(--sh)
+}
+.street-bar.show{display:block}
+.street-bar b{font-family:var(--fd);font-size:14px;display:block}
+.street-bar span{font-size:11px;color:rgba(255,255,255,.65)}
+
+.dpad{
+  position:absolute;left:50%;bottom:26px;transform:translateX(-50%);z-index:500;
+  display:none;grid-template-columns:repeat(3,48px);grid-template-rows:repeat(3,48px);gap:4px
+}
+.dpad.show{display:grid}
+.dpad button{
+  background:rgba(26,10,0,.82);color:#fff;border:none;border-radius:12px;font-size:18px;
+  display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(0,0,0,.25)
+}
+.dpad button:active{background:var(--gold)}
+.dpad .dp-n{grid-column:2;grid-row:1}
+.dpad .dp-w{grid-column:1;grid-row:2}
+.dpad .dp-center{grid-column:2;grid-row:2;background:var(--gold);font-size:20px}
+.dpad .dp-e{grid-column:3;grid-row:2}
+.dpad .dp-s{grid-column:2;grid-row:3}
+
+.exit-pessoa{
+  position:absolute;top:16px;left:20px;z-index:500;display:none;
+  background:rgba(255,255,255,.92);color:var(--text);border:none;padding:9px 15px;
+  border-radius:12px;font-size:12px;font-weight:800;box-shadow:var(--sh)
+}
+.exit-pessoa.show{display:block}
+
 .toggle-mob{display:none}
 
 @media (max-width:860px){
@@ -184,11 +230,22 @@ button{font-family:inherit;cursor:pointer}
     <div class="view-toggle">
       <button class="vt-btn on" id="btnViewMap">🗺️ Mapa</button>
       <button class="vt-btn" id="btnViewGlobe">🌍 Globo 3D</button>
+      <button class="vt-btn" id="btnViewPessoa">🚶 Modo Pessoa</button>
     </div>
     <div id="map"></div>
     <div id="globeContainer"></div>
     <div class="globe-hint" id="globeHint" style="display:none">Arraste para girar o globo &middot; clique num ponto</div>
     <div class="globe-info" id="globeInfo"></div>
+
+    <button class="exit-pessoa" id="btnSairPessoa">&larr; Sair do modo pessoa</button>
+    <div class="street-bar" id="streetBar"><b id="streetBarRua">Localizando...</b><span id="streetBarBairro"></span></div>
+    <div class="dpad" id="dpad">
+      <button class="dp-n" id="dpN">&#8593;</button>
+      <button class="dp-w" id="dpW">&#8592;</button>
+      <button class="dp-center" id="dpCenter">🚶</button>
+      <button class="dp-e" id="dpE">&#8594;</button>
+      <button class="dp-s" id="dpS">&#8595;</button>
+    </div>
   </div>
 </div>
 
@@ -343,9 +400,13 @@ function renderLista(visiveis) {
 window.focarLugar = function(id) {
   const l = lugares.find(x => String(x.id) === String(id));
   if (!l) return;
+  ultimoFoco = l;
   if (currentView === 'globe') {
     mostrarInfoGlobo(l);
     if (world) world.pointOfView({ lat: l.latitude, lng: l.longitude, altitude: 0.35 }, 900);
+  } else if (currentView === 'pessoa') {
+    moverAvatarPara([l.latitude, l.longitude]);
+    map.setView([l.latitude, l.longitude], 18);
   } else {
     map.flyTo([l.latitude, l.longitude], 16, { duration: .6 });
     const m = markers[id];
@@ -416,24 +477,152 @@ function atualizarGlobo() {
 }
 
 function trocarView(view) {
+  const anterior = currentView;
   currentView = view;
   document.getElementById('btnViewMap').classList.toggle('on', view === 'map');
   document.getElementById('btnViewGlobe').classList.toggle('on', view === 'globe');
-  document.getElementById('map').style.display = view === 'map' ? 'block' : 'none';
+  document.getElementById('btnViewPessoa').classList.toggle('on', view === 'pessoa');
+  document.getElementById('map').style.display = view === 'globe' ? 'none' : 'block';
   document.getElementById('globeContainer').classList.toggle('on', view === 'globe');
   document.getElementById('globeHint').style.display = view === 'globe' ? 'block' : 'none';
+
+  if (anterior === 'pessoa' && view !== 'pessoa') sairModoPessoa();
+
   if (view === 'globe') {
+    document.getElementById('globeHint').style.opacity = '1';
     initGlobe();
     atualizarGlobo();
     setTimeout(() => { document.getElementById('globeHint').style.opacity = '0'; }, 3500);
   } else {
     document.getElementById('globeInfo').classList.remove('show');
     setTimeout(() => map.invalidateSize(), 50);
+    if (view === 'pessoa') entrarModoPessoa();
   }
 }
 
 document.getElementById('btnViewMap').addEventListener('click', () => trocarView('map'));
 document.getElementById('btnViewGlobe').addEventListener('click', () => trocarView('globe'));
+document.getElementById('btnViewPessoa').addEventListener('click', () => trocarView('pessoa'));
+document.getElementById('btnSairPessoa').addEventListener('click', () => trocarView('map'));
+
+// ===== MODO PESSOA (andar pelas ruas como um pedestre) =====
+let ultimoFoco = null;
+let avatarPos = null;
+let avatarHeading = 0;
+let avatarMarker = null;
+let geoTimer = null;
+
+function avatarIcon(heading) {
+  return L.divIcon({
+    className: '',
+    html: `<div class="avatar-pin"><div class="cone" style="transform:rotate(${heading}deg)"></div><div class="dot">🐧</div></div>`,
+    iconSize: [38, 38],
+    iconAnchor: [19, 19]
+  });
+}
+
+function bearing(a, b) {
+  const lat1 = a[0] * Math.PI / 180, lat2 = b[0] * Math.PI / 180;
+  const dLng = (b[1] - a[1]) * Math.PI / 180;
+  const y = Math.sin(dLng) * Math.cos(lat2);
+  const x = Math.cos(lat1) * Math.sin(lat2) - Math.sin(lat1) * Math.cos(lat2) * Math.cos(dLng);
+  return (Math.atan2(y, x) * 180 / Math.PI + 360) % 360;
+}
+
+async function atualizarRua(pos) {
+  const ruaEl = document.getElementById('streetBarRua');
+  const bairroEl = document.getElementById('streetBarBairro');
+  ruaEl.textContent = '📍 Localizando...';
+  bairroEl.textContent = '';
+  try {
+    const resp = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${pos[0]}&lon=${pos[1]}&zoom=18&addressdetails=1`);
+    const data = await resp.json();
+    const a = data.address || {};
+    const rua = a.road || a.pedestrian || a.footway || a.path || 'Rua sem nome no mapa';
+    const bairro = a.suburb || a.neighbourhood || a.city_district || a.village || '';
+    const cidade = a.city || a.town || a.municipality || '';
+    ruaEl.textContent = '📍 ' + rua;
+    bairroEl.textContent = [bairro, cidade].filter(Boolean).join(' — ') || 'Bairro não identificado';
+  } catch (e) {
+    ruaEl.textContent = '📍 Não foi possível identificar a rua';
+    bairroEl.textContent = '';
+  }
+}
+
+function agendarGeocode() {
+  clearTimeout(geoTimer);
+  geoTimer = setTimeout(() => atualizarRua(avatarPos), 700);
+}
+
+function moverAvatarPara(novaPos) {
+  avatarHeading = bearing(avatarPos || novaPos, novaPos);
+  avatarPos = novaPos;
+  avatarMarker.setLatLng(avatarPos).setIcon(avatarIcon(avatarHeading));
+  map.panTo(avatarPos, { animate: true, duration: .4 });
+  agendarGeocode();
+}
+
+function moverDirecao(dir) {
+  const metros = 18;
+  const dLat = metros / 111320;
+  const dLng = metros / (111320 * Math.cos(avatarPos[0] * Math.PI / 180));
+  const novaPos = [...avatarPos];
+  let heading = avatarHeading;
+  if (dir === 'n') { novaPos[0] += dLat; heading = 0; }
+  if (dir === 's') { novaPos[0] -= dLat; heading = 180; }
+  if (dir === 'e') { novaPos[1] += dLng; heading = 90; }
+  if (dir === 'w') { novaPos[1] -= dLng; heading = 270; }
+  avatarPos = novaPos;
+  avatarHeading = heading;
+  avatarMarker.setLatLng(avatarPos).setIcon(avatarIcon(heading));
+  map.panTo(avatarPos, { animate: true, duration: .25 });
+  agendarGeocode();
+}
+
+function onMapClickPessoa(e) {
+  if (currentView !== 'pessoa') return;
+  moverAvatarPara([e.latlng.lat, e.latlng.lng]);
+}
+
+function onKeyPessoa(e) {
+  if (currentView !== 'pessoa') return;
+  if (e.key === 'ArrowUp') moverDirecao('n');
+  if (e.key === 'ArrowDown') moverDirecao('s');
+  if (e.key === 'ArrowLeft') moverDirecao('w');
+  if (e.key === 'ArrowRight') moverDirecao('e');
+}
+
+function entrarModoPessoa() {
+  if (!avatarPos) {
+    avatarPos = userPos || (ultimoFoco ? [ultimoFoco.latitude, ultimoFoco.longitude] : RECIFE);
+  }
+  map.setView(avatarPos, 18);
+  if (!avatarMarker) {
+    avatarMarker = L.marker(avatarPos, { icon: avatarIcon(avatarHeading), zIndexOffset: 1000 }).addTo(map);
+  } else {
+    avatarMarker.setLatLng(avatarPos).addTo(map);
+  }
+  document.getElementById('dpad').classList.add('show');
+  document.getElementById('streetBar').classList.add('show');
+  document.getElementById('btnSairPessoa').classList.add('show');
+  atualizarRua(avatarPos);
+  document.addEventListener('keydown', onKeyPessoa);
+}
+
+function sairModoPessoa() {
+  document.getElementById('dpad').classList.remove('show');
+  document.getElementById('streetBar').classList.remove('show');
+  document.getElementById('btnSairPessoa').classList.remove('show');
+  document.removeEventListener('keydown', onKeyPessoa);
+  if (avatarMarker) map.removeLayer(avatarMarker);
+}
+
+map.on('click', onMapClickPessoa);
+document.getElementById('dpN').addEventListener('click', () => moverDirecao('n'));
+document.getElementById('dpS').addEventListener('click', () => moverDirecao('s'));
+document.getElementById('dpE').addEventListener('click', () => moverDirecao('e'));
+document.getElementById('dpW').addEventListener('click', () => moverDirecao('w'));
+document.getElementById('dpCenter').addEventListener('click', () => map.setView(avatarPos, 18));
 
 document.getElementById('busca').addEventListener('input', aplicarFiltro);
 
