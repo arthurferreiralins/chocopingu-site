@@ -4,6 +4,13 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Chocopingu — Chocolate que diverte!</title>
+  <meta name="description" content="Chocolates artesanais Chocopingu: barras, pirulitos e bonecos de chocolate ao leite. Peça online com entrega, PIX, boleto ou cartão." />
+  <meta property="og:title" content="Chocopingu — Chocolate que diverte!" />
+  <meta property="og:description" content="Chocolates artesanais Chocopingu: barras, pirulitos e bonecos de chocolate ao leite. Peça online com entrega, PIX, boleto ou cartão." />
+  <meta property="og:image" content="https://chocopingu.com.br/imagens/logo2.png" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://chocopingu.com.br/" />
+  <meta name="twitter:card" content="summary" />
   <link rel="icon" href="imagens/logo2.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -192,7 +199,7 @@
       <span class="banner-livro-preco">R$ 69,90</span>
       <button class="btn-ouro" onclick="comprarLivro()">Comprar agora</button>
     </div>
-    <img src="imagens/capa-revolucao-do-chocolate.png" alt="Capa do livro A Revolução do Chocolate" class="banner-livro-capa" />
+    <img src="imagens/capa-revolucao-do-chocolate.png" alt="Capa do livro A Revolução do Chocolate" class="banner-livro-capa" loading="lazy" />
   </div>
 
   <!-- ===== PRODUTOS ===== -->
@@ -244,7 +251,7 @@
       <p>Compre seus chocolates favoritos, acumule pontos e troque por produtos incríveis. Quanto mais você come, mais você ganha!</p>
       <button class="btn-ouro" id="btnChocopontosBanner">Ver como funciona &#9733;</button>
     </div>
-    <img src="imagens/pingu_squared.png" alt="Pingu" class="banner-pingu" />
+    <img src="imagens/pingu_squared.png" alt="Pingu" class="banner-pingu" loading="lazy" />
   </div>
 
   <!-- ===== MODAL CHOCOPONTOS ===== -->
@@ -274,7 +281,7 @@
         <div class="modal-produtos" style="grid-template-columns:repeat(2,1fr)">
           <div class="modal-card">
             <div class="modal-img-wrap">
-              <img src="imagens/barra-coracao.png" alt="Barra Coração" />
+              <img src="imagens/barra-coracao.png" alt="Barra Coração" loading="lazy" />
             </div>
             <div class="modal-info">
               <h3>Barra Coração</h3>
@@ -285,7 +292,7 @@
           </div>
           <div class="modal-card">
             <div class="modal-img-wrap">
-              <img src="imagens/barra-normal.png" alt="Barra Normal" />
+              <img src="imagens/barra-normal.png" alt="Barra Normal" loading="lazy" />
             </div>
             <div class="modal-info">
               <h3>Barra Normal</h3>
@@ -296,7 +303,7 @@
           </div>
           <div class="modal-card">
             <div class="modal-img-wrap">
-              <img src="imagens/pirulitos-novo.png" alt="Pirulitos" />
+              <img src="imagens/pirulitos-novo.png" alt="Pirulitos" loading="lazy" />
             </div>
             <div class="modal-info">
               <h3>Pirulitos</h3>
@@ -307,7 +314,7 @@
           </div>
           <div class="modal-card">
             <div class="modal-img-wrap">
-              <img src="imagens/bonecos-animais.png" alt="Boneco Animais" />
+              <img src="imagens/bonecos-animais.png" alt="Boneco Animais" loading="lazy" />
             </div>
             <div class="modal-info">
               <h3>Boneco Animais</h3>
@@ -549,7 +556,7 @@
           : '<span class="produto-preco">' + precoFmt + '</span>';
         return '<div class="' + cardClass + '" data-prod-id="' + p.id + '">' +
           '<span class="' + badgeClass + '" id="badge-prod-' + p.id + '">' + badgeText + '</span>' +
-          '<div class="produto-img-wrap"><img src="' + p.img + '" alt="' + p.nome + ' Chocopingu" /></div>' +
+          '<div class="produto-img-wrap"><img src="' + p.img + '" alt="' + p.nome + ' Chocopingu" loading="lazy" /></div>' +
           '<div class="produto-info">' +
             '<h3>' + p.nome + '</h3>' +
             '<p>' + p.desc + '</p>' +
