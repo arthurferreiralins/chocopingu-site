@@ -32,7 +32,6 @@
     <button class="menu-toggle" id="menuToggle" aria-label="Menu">&#9776;</button>
     <nav class="nav-links" id="navLinks">
       <a href="#inicio">Início</a>
-      <a href="#copa">Copa do Mundo</a>
       <a href="#pilares">Sobre</a>
       <a href="#produtos">Produtos</a>
       <a href="#instagram">Instagram</a>
@@ -112,39 +111,6 @@
     </svg>
   </div>
 
-  <!-- ===== COPA DO MUNDO 2026 ===== -->
-  <section class="copa-section" id="copa">
-    <div class="copa-flags-strip">
-      <div class="copa-flags-track">
-        <span>🇧🇷</span><span>🇦🇷</span><span>🇫🇷</span><span>🇩🇪</span><span>🇵🇹</span><span>🇪🇸</span><span>🇺🇾</span><span>🇯🇵</span><span>🇲🇽</span><span>🇳🇱</span><span>🇲🇦</span><span>🇬🇧</span><span>🇺🇸</span><span>🇨🇦</span><span>🇨🇴</span><span>🇸🇳</span>
-        <span>🇧🇷</span><span>🇦🇷</span><span>🇫🇷</span><span>🇩🇪</span><span>🇵🇹</span><span>🇪🇸</span><span>🇺🇾</span><span>🇯🇵</span><span>🇲🇽</span><span>🇳🇱</span><span>🇲🇦</span><span>🇬🇧</span><span>🇺🇸</span><span>🇨🇦</span><span>🇨🇴</span><span>🇸🇳</span>
-      </div>
-    </div>
-    <div class="copa-main">
-      <div class="copa-esq reveal reveal-esq">
-        <span class="copa-pill">⚽ Edição Especial 2026</span>
-        <h2>Copa do <span>Mundo</span></h2>
-        <p>Chocolates Chocopingu com a cara de cada seleção. Torça com sabor em cada mordida!</p>
-        <button class="btn-ouro btn-copa-cta" onclick="document.getElementById('produtos').scrollIntoView({behavior:'smooth'});setTimeout(()=>mudarAba('copa'),700)">
-          Ver coleção Copa &#127942;
-        </button>
-      </div>
-      <div class="copa-dir reveal reveal-dir">
-        <div class="copa-trofeu">🏆</div>
-        <div class="copa-paises">
-          <span>🇧🇷</span><span>🇦🇷</span><span>🇫🇷</span><span>🇩🇪</span>
-          <span>🇵🇹</span><span>🇪🇸</span><span>🇳🇱</span><span>🇯🇵</span>
-        </div>
-      </div>
-    </div>
-    <div class="copa-flags-strip copa-flags-bottom">
-      <div class="copa-flags-track copa-flags-rtl">
-        <span>🇸🇳</span><span>🇨🇴</span><span>🇨🇦</span><span>🇺🇸</span><span>🇬🇧</span><span>🇲🇦</span><span>🇳🇱</span><span>🇲🇽</span><span>🇯🇵</span><span>🇺🇾</span><span>🇪🇸</span><span>🇵🇹</span><span>🇩🇪</span><span>🇫🇷</span><span>🇦🇷</span><span>🇧🇷</span>
-        <span>🇸🇳</span><span>🇨🇴</span><span>🇨🇦</span><span>🇺🇸</span><span>🇬🇧</span><span>🇲🇦</span><span>🇳🇱</span><span>🇲🇽</span><span>🇯🇵</span><span>🇺🇾</span><span>🇪🇸</span><span>🇵🇹</span><span>🇩🇪</span><span>🇫🇷</span><span>🇦🇷</span><span>🇧🇷</span>
-      </div>
-    </div>
-  </section>
-
   <!-- ===== INSTAGRAM ===== -->
   <section class="instagram-feed" id="instagram">
     <div class="section-header reveal">
@@ -212,7 +178,6 @@
 
     <div class="catalogo-tabs">
       <button class="catalogo-tab ativo" id="tabTodos" onclick="mudarAba('todos')">Todos os produtos</button>
-      <button class="catalogo-tab" id="tabCopa" onclick="mudarAba('copa')">⚽ Copa do Mundo 2026</button>
     </div>
 
     <div class="categoria-filtros" id="categoriaFiltros">
@@ -223,23 +188,6 @@
     </div>
 
     <div class="produtos-grid reveal" id="gridTodos"></div>
-
-    <!-- ===== COPA DO MUNDO — VOTAÇÃO ===== -->
-    <div class="hidden" id="gridCopa">
-      <div class="copa-vote-section">
-        <div class="copa-vote-hero">
-          <span class="copa-pill-cat">⚽ Copa do Mundo 2026</span>
-          <h3 class="copa-vote-titulo">Quem vai ganhar a Copa?</h3>
-          <p class="copa-vote-sub">Vote no seu favorito e veja o placar em tempo real!</p>
-          <div id="copaVotadoInfo" class="copa-votado-info hidden">
-            Você votou em <strong id="copaVotadoNome"></strong> <span id="copaVotadoFlag"></span>
-            <button class="copa-mudar-voto" onclick="mudarVotoCopa()">Mudar voto</button>
-          </div>
-          <p class="copa-total-votos"><span id="copaTotalVotos">0</span> votos registrados</p>
-        </div>
-        <div class="copa-paises-grid" id="copaPaisesGrid"></div>
-      </div>
-    </div>
 
   </section>
 

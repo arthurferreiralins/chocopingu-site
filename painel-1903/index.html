@@ -470,7 +470,6 @@ tr:hover td{background:rgba(255,255,255,.045)}tr:last-child td{border-bottom:non
       <button class="tab"     data-tab="econ"     onclick="go(this,'econ')"><span class="ti">💡</span> Economia</button>
       <button class="tab"     data-tab="ped"      onclick="go(this,'ped');carregarPedidos()"><span class="ti">📋</span> Pedidos</button>
       <button class="tab"     data-tab="duv"      onclick="go(this,'duv');carregarDuvidas()"><span class="ti">❓</span> Dúvidas</button>
-      <button class="tab"     data-tab="copaprod" onclick="go(this,'copaprod')"><span class="ti">⚽</span> Produtos Copa</button>
       <button class="tab"     data-tab="insta"    onclick="go(this,'insta');carregarInstagramAdmin()"><span class="ti">📸</span> Instagram</button>
       <button class="tab"     data-tab="mundo"    onclick="go(this,'mundo');carregarLugares()"><span class="ti">🗺️</span> Mundo</button>
       <button class="tab"     data-tab="cpadm"    onclick="go(this,'cpadm');cpAdminCarregarTudo()"><span class="ti">⭐</span> Chocopontos</button>
@@ -1208,34 +1207,6 @@ tr:hover td{background:rgba(255,255,255,.045)}tr:last-child td{border-bottom:non
       </div>
     </div>
 
-    <!-- ── PRODUTOS COPA (prévia — não aparece no site público) ── -->
-    <div id="s-copaprod" class="sec">
-      <div class="ptitle">⚽ Produtos Copa do Mundo 2026</div>
-      <div class="cat-banner">
-        <div>
-          <h2>Coleção Copa — em preparação</h2>
-          <p>Cadastre aqui os produtos temáticos antes de publicá-los no site. Só aparece pra você, logado no admin.</p>
-          <span class="cb-tag">🔒 Área restrita ao admin</span>
-        </div>
-      </div>
-
-      <div class="tbox">
-        <div class="thdr"><h3>Adicionar Produto da Copa</h3></div>
-        <div class="frow">
-          <div class="fg" style="flex:1;min-width:160px"><label>Nome</label>
-            <input type="text" id="cp-nome" placeholder="Ex: Barra Seleção Brasil"></div>
-          <div class="fg"><label>Preço (R$)</label><input type="number" id="cp-preco" placeholder="0,00" min="0" step="0.50"></div>
-          <div class="fg" style="flex:1;min-width:160px"><label>Imagem (caminho/URL)</label>
-            <input type="text" id="cp-img" placeholder="imagens/exemplo.png"></div>
-          <div class="fg" style="flex:2;min-width:200px"><label>Descrição</label>
-            <input type="text" id="cp-desc" placeholder="Descrição curta do produto"></div>
-          <button class="btn badd" onclick="addCopaProd()">+ Adicionar</button>
-        </div>
-      </div>
-
-      <div class="pgrid" id="pgrid-copa"></div>
-    </div>
-
     <!-- ── INSTAGRAM ── -->
     <div id="s-insta" class="sec">
       <div class="ptitle">📸 Feed do Instagram</div>
@@ -1491,7 +1462,6 @@ if(matchMedia('(hover:hover) and (pointer:fine)').matches){
 const DEF={
   gastos:[],
   vendas:[],
-  produtosCopa:[],
   atividades:[],
   produtos:[
     {id:1,nome:'Barra Coração',  img:'../imagens/barra-coracao.png',   emoji:'❤️🍫',custo:0,venda:0,preVenda:true,desc:'Barra especial em formato de coração, feita com chocolate ao leite. 140g de puro amor.'},
@@ -1527,7 +1497,6 @@ function loadDB(){
     });
     if(!Array.isArray(saved.gastos))saved.gastos=JSON.parse(JSON.stringify(DEF.gastos));
     if(!Array.isArray(saved.vendas))saved.vendas=[];
-    if(!Array.isArray(saved.produtosCopa))saved.produtosCopa=[];
     if(!Array.isArray(saved.atividades))saved.atividades=[];
     // salva imediatamente na chave estável
     localStorage.setItem(DBKEY,JSON.stringify(saved));
@@ -1579,7 +1548,6 @@ function go(btn,name){
   if(name==='gast'){renderFbBanner();fbSync().then(()=>renderG());}
   if(name==='prod') renderP();
   if(name==='econ'){renderEcon();calcCompra();}
-  if(name==='copaprod') renderCopaProd();
 }
 
 // ── CHART HELPERS ──
@@ -1759,53 +1727,6 @@ function savePreco(id){
   renderCat();
 }
 
-// ── PRODUTOS COPA (prévia admin, não sincroniza com o site público) ──
-function addCopaProd(){
-  const nome=document.getElementById('cp-nome').value.trim();
-  const preco=Math.max(0,parseFloat(document.getElementById('cp-preco').value)||0);
-  const img=document.getElementById('cp-img').value.trim();
-  const desc=document.getElementById('cp-desc').value.trim();
-  if(!nome){alert('Escreva o nome do produto!');return;}
-  db.produtosCopa.push({id:nid.p++,nome,preco,img,desc,criadoEm:new Date().toISOString()});
-  save();
-  logAtividade(`Produto "${nome}" adicionado (Copa do Mundo)`);
-  ['cp-nome','cp-preco','cp-img','cp-desc'].forEach(id=>document.getElementById(id).value='');
-  renderCopaProd();
-}
-function delCopaProd(id){
-  if(!confirm('Apagar este produto da Copa?'))return;
-  const p=db.produtosCopa.find(x=>x.id===id);
-  db.produtosCopa=db.produtosCopa.filter(p=>p.id!==id);
-  save();
-  if(p)logAtividade(`Produto "${p.nome}" removido (Copa do Mundo)`);
-  renderCopaProd();
-}
-function renderCopaProd(){
-  const grid=document.getElementById('pgrid-copa');
-  if(!db.produtosCopa.length){
-    grid.innerHTML=`<div class="estate" style="grid-column:1/-1"><p>Nenhum produto da Copa cadastrado ainda.<br>Use o formulário acima para adicionar.</p></div>`;
-    return;
-  }
-  grid.innerHTML=db.produtosCopa.map((p,i)=>{
-    const imgContent=p.img
-      ?`<img src="${p.img.startsWith('imagens/')?'../'+p.img:p.img}" alt="${p.nome}" style="max-height:140px;max-width:85%;object-fit:contain;">`
-      :`<span style="font-size:84px">⚽</span>`;
-    return `<div class="pcard">
-      <div class="pcard-img" style="background:${CAT_BG[i%CAT_BG.length]};position:relative">
-        ${imgContent}
-        <span class="avail-badge" style="background:var(--az)">⚽ Copa 2026</span>
-      </div>
-      <div class="pcard-body">
-        <div class="pcard-name">${p.nome}</div>
-        <div class="pcard-desc">${p.desc||'Produto da coleção Copa do Mundo'}</div>
-        <div class="pcard-bottom">
-          <span class="pcard-price">${p.preco>0?f(p.preco):'Sem preço'}</span>
-          <button class="bdel" onclick="delCopaProd(${p.id})">🗑 Apagar</button>
-        </div>
-      </div>
-    </div>`;
-  }).join('');
-}
 
 // ── DASHBOARD ──
 function logAtividade(texto){
@@ -2545,8 +2466,7 @@ async function renderBuscaGlobal(){
   if(!q){cont.classList.remove('on');cont.innerHTML='';return;}
 
   GS_PRODUTOS=[
-    ...db.produtos.filter(p=>normBusca(p.nome).includes(q)).map(p=>({nome:p.nome,sub:'Catálogo',tab:'cat'})),
-    ...(db.produtosCopa||[]).filter(p=>normBusca(p.nome).includes(q)).map(p=>({nome:p.nome,sub:'Produtos Copa',tab:'copaprod'}))
+    ...db.produtos.filter(p=>normBusca(p.nome).includes(q)).map(p=>({nome:p.nome,sub:'Catálogo',tab:'cat'}))
   ].slice(0,6);
 
   GS_PEDIDOS=[];GS_CLIENTES=[];
