@@ -28,12 +28,24 @@ body{
   background:
     radial-gradient(circle at 100% 0%, rgba(190,127,60,.08), transparent 42%),
     radial-gradient(circle at 0% 100%, rgba(31,122,70,.05), transparent 38%),
+    radial-gradient(rgba(46,22,8,.05) 1px, transparent 1px) 0 0/22px 22px,
     var(--bg);
   background-attachment:fixed
 }
 h1,.lcard h1,.sb-name,.ptitle,.pcard-name,.cat-banner h2,.eb-title,.mp-banner-t,
 .dic-title,.mp-info .mp-prod-nome,.cval,.mp-prec-badge .pbv,.calc-hdr h3,.thdr h3{
   font-family:'Fraunces',serif;letter-spacing:0
+}
+
+/* CURSOR CUSTOMIZADO */
+@media (hover:hover) and (pointer:fine){
+  body,a,button,.tab,.btn,.pcard,.card,input,select,textarea{cursor:none}
+  input,select,textarea{cursor:text}
+  #cb1,#cb2{position:fixed;top:0;left:0;border-radius:50%;pointer-events:none;z-index:99999;transform:translate(-50%,-50%);transition:width .18s,height .18s,opacity .18s,background .18s}
+  #cb1{width:8px;height:8px;background:var(--gold)}
+  #cb2{width:32px;height:32px;border:1.5px solid var(--gold);opacity:.4}
+  #cb1.cb-hov{width:0;height:0;opacity:0}
+  #cb2.cb-hov{width:52px;height:52px;background:rgba(190,127,60,.14);opacity:1}
 }
 
 /* LOGIN */
@@ -67,8 +79,9 @@ h1,.lcard h1,.sb-name,.ptitle,.pcard-name,.cat-banner h2,.eb-title,.mp-banner-t,
   display:flex;flex-direction:column;padding:28px 16px 18px;
   overflow-y:auto;box-shadow:4px 0 24px rgba(46,22,8,.18)
 }
-.sb-brand{display:flex;align-items:center;gap:12px;padding:2px 8px 22px;margin-bottom:12px;border-bottom:1px solid rgba(255,255,255,.08)}
-.sb-logo{line-height:1;display:flex}
+.sb-brand{display:flex;align-items:center;gap:12px;padding:2px 8px 22px;margin-bottom:12px;border-bottom:1px solid rgba(255,255,255,.08);position:relative}
+.sb-brand::before{content:'';position:absolute;left:-20px;top:-20px;width:90px;height:90px;background:radial-gradient(circle,rgba(190,127,60,.35),transparent 70%);pointer-events:none}
+.sb-logo{line-height:1;display:flex;position:relative}
 .sb-logo img{width:38px;height:38px;object-fit:contain;border-radius:50%;box-shadow:0 0 0 3px rgba(255,255,255,.08)}
 .sb-name{font-size:17px;font-weight:600;color:#fff;letter-spacing:-.1px}
 .sb-tag{font-size:10.5px;color:rgba(255,255,255,.4);font-style:italic;margin-top:1px}
@@ -120,13 +133,14 @@ h1,.lcard h1,.sb-name,.ptitle,.pcard-name,.cat-banner h2,.eb-title,.mp-banner-t,
 .sec{display:none;animation:fadeIn .25s ease}
 .sec.on{display:block}
 @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
-.ptitle{font-size:20px;font-weight:800;color:var(--br);margin-bottom:4px;letter-spacing:-.3px;display:flex;align-items:center;gap:8px}
+.ptitle{font-size:26px;font-weight:600;color:var(--br);margin-bottom:6px;letter-spacing:-.3px;display:flex;align-items:center;gap:10px;position:relative;padding-bottom:12px}
+.ptitle::after{content:'';position:absolute;left:0;bottom:0;width:46px;height:4px;border-radius:4px;background:linear-gradient(90deg,var(--gold),var(--goldl))}
 .psub{font-size:13px;color:var(--txt2);margin-bottom:22px}
 
 /* CARDS ROW */
 .crow{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px}
-.card{background:var(--card);border-radius:18px;padding:22px 20px;box-shadow:var(--sh);display:flex;flex-direction:column;gap:5px;border-top:4px solid;transition:all .2s}
-.card:hover{transform:translateY(-3px);box-shadow:var(--sh2)}
+.card{background:var(--card);border-radius:20px;padding:22px 20px;box-shadow:var(--sh);display:flex;flex-direction:column;gap:5px;border-top:4px solid;transition:all .25s}
+.card:hover{transform:translateY(-4px);box-shadow:var(--sh2),0 0 0 1px rgba(190,127,60,.15)}
 .cv{border-top-color:var(--vd)}.cr{border-top-color:var(--vm)}.ca{border-top-color:var(--az)}.cg{border-top-color:var(--gold)}
 .cic{font-size:26px}.clb{font-size:10px;color:var(--txt2);font-weight:700;text-transform:uppercase;letter-spacing:.6px}.cval{font-size:21px;font-weight:800;letter-spacing:-.3px}
 
@@ -409,6 +423,8 @@ tr:hover td{background:#FDFAF7}tr:last-child td{border-bottom:none}
 </style>
 </head>
 <body>
+
+<div id="cb1"></div><div id="cb2"></div>
 
 <!-- LOGIN -->
 <div id="ls">
@@ -1453,6 +1469,20 @@ tr:hover td{background:#FDFAF7}tr:last-child td{border-bottom:none}
 </div><!-- /ap -->
 
 <script>
+// ── CURSOR ──
+if(matchMedia('(hover:hover) and (pointer:fine)').matches){
+  let mx=innerWidth/2,my=innerHeight/2,bx=mx,by=my;
+  const c1=document.getElementById('cb1'),c2=document.getElementById('cb2');
+  document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;c1.style.left=mx+'px';c1.style.top=my+'px';});
+  (function L(){bx+=(mx-bx)*.16;by+=(my-by)*.16;c2.style.left=bx+'px';c2.style.top=by+'px';requestAnimationFrame(L);})();
+  document.addEventListener('mouseover',e=>{
+    if(e.target.closest('a,button,.tab,.btn,.pcard,.card,.gs-item,.cp-subtab')){c1.classList.add('cb-hov');c2.classList.add('cb-hov');}
+  });
+  document.addEventListener('mouseout',e=>{
+    if(e.target.closest('a,button,.tab,.btn,.pcard,.card,.gs-item,.cp-subtab')){c1.classList.remove('cb-hov');c2.classList.remove('cb-hov');}
+  });
+}
+
 // ── DADOS ──
 const DEF={
   gastos:[],
