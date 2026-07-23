@@ -1,3 +1,4 @@
 User-agent: *
 Disallow: /painel-1903
+Disallow: /painel-1903-celular
 Allow: /
